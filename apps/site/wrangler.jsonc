@@ -1,0 +1,27 @@
+{
+  // jononeill-site workers.dev preview.
+  // Cloudflare Workers Static Assets. NOT Pages.
+  // Do NOT attach the custom domain jononeill.dev here.
+  // Do NOT add website DNS. Preview only on *.workers.dev.
+
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "jononeill-site",
+  "compatibility_date": "2026-08-01",
+  "workers_dev": true,
+  "preview_urls": true,
+
+  "assets": {
+    "directory": "./dist",
+
+    // "404-page" NOT "single-page-application".
+    // Real multi-page static site. SPA fallback would swallow genuine 404s.
+    "not_found_handling": "404-page",
+
+    // Serve /preview/tokens/ as directory index.
+    "html_handling": "auto-trailing-slash"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}

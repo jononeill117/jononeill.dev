@@ -10,9 +10,11 @@
     "dev": "pnpm --filter site dev",
     "build": "pnpm --filter site build",
     "check": "pnpm -r check",
-    "fonts:sync": "node scripts/sync-fonts.mjs"
+    "fonts:sync": "node scripts/sync-fonts.mjs",
+    "deploy:site": "pnpm --filter site deploy"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.127.0"
   }
 }
