@@ -393,10 +393,10 @@ import DemoFrame from "./DemoFrame.astro";
   ] as const;
 
   const FEEDS: { id: SpFeed; label: string; progressMs: number; resolveMs: number }[] = [
-    { id: "public", label: "Public Record", progressMs: 1520, resolveMs: 1120 },
-    { id: "mls", label: "MLS", progressMs: 1580, resolveMs: 1140 },
-    { id: "third", label: "3rd Party", progressMs: 1500, resolveMs: 1100 },
-    { id: "final", label: "Final Data", progressMs: 1620, resolveMs: 1160 },
+    { id: "public", label: "Public Record", progressMs: 1320, resolveMs: 920 },
+    { id: "mls", label: "MLS", progressMs: 1380, resolveMs: 940 },
+    { id: "third", label: "3rd Party", progressMs: 1300, resolveMs: 900 },
+    { id: "final", label: "Final Data", progressMs: 1420, resolveMs: 960 },
   ];
 
   function sleep(ms: number) {
@@ -657,7 +657,7 @@ import DemoFrame from "./DemoFrame.astro";
       // 1. File opens
       setStep("File opening…");
       if (addrEl) addrEl.textContent = "Loading #4418…";
-      await sleep(1700);
+      await sleep(1100);
       if (my !== token) return;
 
       if (addrEl) addrEl.textContent = ADDRESS;
@@ -668,7 +668,7 @@ import DemoFrame from "./DemoFrame.astro";
       if (descBody) descBody.style.opacity = "1";
       mapEl?.classList.add("is-live");
       setStep("File open · Home Fact Verification");
-      await sleep(1500);
+      await sleep(1100);
       if (my !== token) return;
 
       // 2. Feeds resolve into table cells (working → live)
@@ -687,18 +687,18 @@ import DemoFrame from "./DemoFrame.astro";
       }
       if (feedPill) feedPill.textContent = "Feeds live";
       setStep("Vendor feeds resolved");
-      await sleep(1250);
+      await sleep(1050);
       if (my !== token) return;
 
       // 3. Valuation calculates
       setStep("Calculating Stoa valuation…");
       setValuation(0, true);
-      await sleep(2200);
+      await sleep(2000);
       if (my !== token) return;
       setValuation(0, false);
       hexes?.setAttribute("opacity", "1");
       setStep("Stoa valuation locked at $392,547");
-      await sleep(1600);
+      await sleep(1400);
       if (my !== token) return;
 
       // 4. Flags / contingencies
@@ -724,13 +724,13 @@ import DemoFrame from "./DemoFrame.astro";
         if (my !== token) return;
       }
       setStep("Contingencies ready for review");
-      await sleep(1300);
+      await sleep(1100);
       if (my !== token) return;
 
       // 5. Accept
       setStep("Analyst review");
       if (acceptBtn) acceptBtn.disabled = false;
-      await sleep(1900);
+      await sleep(1700);
       if (my !== token) return;
 
       if (acceptBtn) {
@@ -738,7 +738,7 @@ import DemoFrame from "./DemoFrame.astro";
         acceptBtn.textContent = "Accepted";
       }
       setStep("Decision recorded");
-      await sleep(1500);
+      await sleep(1100);
       if (my !== token) return;
 
       finish();
@@ -783,7 +783,7 @@ import DemoFrame from "./DemoFrame.astro";
       setStep("Recalculating valuation…");
       setValuation(valuationIdx, true);
       recalcBtn?.classList.add("is-nudge");
-      await sleep(1900);
+      await sleep(1700);
       const nextIdx = (valuationIdx + 1) % VALUATIONS.length;
       setValuation(nextIdx, false);
       setStep(`Valuation updated to ${VALUATIONS[nextIdx]!.price}`);
@@ -882,9 +882,9 @@ import DemoFrame from "./DemoFrame.astro";
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.4rem 0.65rem;
+    padding: 0.45rem 0.75rem;
     border-bottom: 1px solid var(--sp-line);
-    background: linear-gradient(180deg, #faf8ff, #fff);
+    background: #fff;
   }
 
   .sp__brand {
@@ -933,9 +933,9 @@ import DemoFrame from "./DemoFrame.astro";
   .sp__tab {
     white-space: nowrap;
     color: var(--sp-muted);
-    padding-bottom: 0.15rem;
+    padding: 0.35rem 0.1rem 0.4rem;
     border-bottom: 2px solid transparent;
-    font-size: 0.62rem;
+    font-size: 0.64rem;
   }
 
   .sp__tab.is-active {
@@ -972,10 +972,10 @@ import DemoFrame from "./DemoFrame.astro";
 
   .sp__status {
     margin: 0;
-    padding: 0.28rem 0.65rem;
+    padding: 0.28rem 0.75rem;
     border-bottom: 1px solid var(--sp-line);
-    background: var(--sp-purple-wash);
-    color: var(--sp-purple);
+    background: #f8f7fc;
+    color: var(--sp-ink);
     font-size: 0.58rem;
     font-weight: 600;
     letter-spacing: 0.02em;
@@ -984,7 +984,7 @@ import DemoFrame from "./DemoFrame.astro";
 
   .sp__workspace {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.4fr) minmax(11rem, 0.95fr);
     min-height: 0;
     overflow: hidden;
   }
@@ -1100,10 +1100,11 @@ import DemoFrame from "./DemoFrame.astro";
   }
 
   .sp__val {
-    padding: 0.4rem 0.5rem;
+    padding: 0.55rem 0.65rem;
     border: 1px solid var(--sp-line);
-    border-radius: 0.45rem;
-    background: linear-gradient(180deg, #faf8ff, #fff);
+    border-radius: 0.5rem;
+    background: #fff;
+    box-shadow: 0 1px 2px color-mix(in srgb, #000 4%, transparent);
     transition:
       border-color 220ms ease,
       box-shadow 220ms ease;
@@ -1214,13 +1215,13 @@ import DemoFrame from "./DemoFrame.astro";
   .sp__table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.55rem;
+    font-size: 0.6rem;
     white-space: nowrap;
   }
 
   .sp__table th,
   .sp__table td {
-    padding: 0.28rem 0.35rem;
+    padding: 0.32rem 0.4rem;
     border-bottom: 1px solid var(--sp-line);
     text-align: left;
     color: var(--sp-ink);
@@ -1362,6 +1363,10 @@ import DemoFrame from "./DemoFrame.astro";
     font-weight: 600;
     font-size: 0.58rem;
     cursor: pointer;
+  }
+
+  .sp__replay {
+    display: none !important;
   }
 
   .sp__accept:disabled {

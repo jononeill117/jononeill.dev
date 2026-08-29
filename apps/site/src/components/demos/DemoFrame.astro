@@ -37,6 +37,33 @@ const {
   }
   <p class="demo-frame__cta">{cta}</p>
   <div class="demo-frame__board">
+    <button
+      type="button"
+      class="demo-frame__replay"
+      data-demo-replay
+      hidden
+      aria-label="Replay walkthrough"
+      title="Replay"
+    >
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+        <path
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.75"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4.5 12a7.5 7.5 0 0 1 12.6-5.5M19.5 12a7.5 7.5 0 0 1-12.6 5.5"
+        ></path>
+        <path
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.75"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M16.5 3.5v4h4M7.5 20.5v-4h-4"
+        ></path>
+      </svg>
+    </button>
     <div class="demo-frame__cover" data-demo-cover>
       <button type="button" class="demo-frame__play" data-demo-play>
         <span class="demo-frame__play-icon" aria-hidden="true">
@@ -64,13 +91,23 @@ const {
 
     const cover = root.querySelector<HTMLElement>("[data-demo-cover]");
     const stage = root.querySelector<HTMLElement>("[data-demo-stage]");
+    const replayBtn = root.querySelector<HTMLButtonElement>("[data-demo-replay]");
     if (!cover || !stage) return;
 
     let mode: DemoMode = "cover";
+    let settleTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const cancelSettle = () => {
+      if (settleTimer) {
+        clearTimeout(settleTimer);
+        settleTimer = null;
+      }
+    };
 
     const setMode = (next: DemoMode) => {
       mode = next;
       root.dataset.demoMode = next;
+      if (replayBtn) replayBtn.hidden = next === "cover";
       if (next === "cover") {
         cover.hidden = false;
         stage.hidden = true;
@@ -81,6 +118,7 @@ const {
     };
 
     const startWalkthrough = () => {
+      cancelSettle();
       setMode("walkthrough");
       root.dispatchEvent(new CustomEvent("demo-play", { bubbles: true }));
     };
@@ -92,19 +130,23 @@ const {
     };
 
     const replay = () => {
+      cancelSettle();
       setMode("walkthrough");
       root.dispatchEvent(new CustomEvent("demo-replay", { bubbles: true }));
     };
 
     cover.addEventListener("click", (e) => {
       e.preventDefault();
-      cancelSettle();
       startWalkthrough();
     });
     root.querySelector("[data-demo-play]")?.addEventListener("click", (e) => {
       e.stopPropagation();
-      cancelSettle();
       startWalkthrough();
+    });
+    replayBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      replay();
     });
 
     // Child demos may still emit demo-reset for legacy wiring. Never return to cover.
@@ -126,16 +168,8 @@ const {
     setMode("cover");
 
     // Auto-play once when ~55% of the board is on screen. Manual play still works.
-    // Settle ~800ms so scroll-into-view does not instantly fire the walkthrough.
-    const AUTOPLAY_SETTLE_MS = 800;
+    const AUTOPLAY_SETTLE_MS = 600;
     let autoPlayed = false;
-    let settleTimer: ReturnType<typeof setTimeout> | null = null;
-    const cancelSettle = () => {
-      if (settleTimer) {
-        clearTimeout(settleTimer);
-        settleTimer = null;
-      }
-    };
     const io = new IntersectionObserver(
       (entries) => {
         const hit = entries.some((e) => e.isIntersecting && e.intersectionRatio >= 0.55);
@@ -215,6 +249,30 @@ const {
       max-height: min(42rem, 88vh);
       min-height: 26rem;
     }
+  }
+
+  .demo-frame__replay {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    color: var(--fg);
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .demo-frame__replay:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .demo-frame__cover {

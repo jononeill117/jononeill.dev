@@ -411,19 +411,19 @@ import DemoFrame from "./DemoFrame.astro";
         paintStage("sources");
         setLine(0, 100);
       }, 1100);
-      schedule(() => setChips(0), 1400);
-      schedule(() => setChips(1), 1760);
-      schedule(() => setChips(2), 2120);
-      schedule(() => setChips(3), 2480);
+      schedule(() => setChips(0), 1500);
+      schedule(() => setChips(1), 2000);
+      schedule(() => setChips(2), 2500);
+      schedule(() => setChips(3), 3000);
       schedule(() => {
         paintStage("model");
         setLine(1, 100);
-      }, 3150);
+      }, 3800);
       schedule(() => {
         paintStage("email");
         setLine(2, 100);
-      }, 4500);
-      schedule(() => finish(), 5400);
+      }, 5600);
+      schedule(() => finish(), 7200);
     };
 
     const paintFinal = () => {
@@ -513,6 +513,10 @@ import DemoFrame from "./DemoFrame.astro";
     font-size: 13px;
     line-height: 1.4;
     overflow: hidden;
+  }
+
+  [data-cc-replay] {
+    display: none !important;
   }
 
   .cc__head {

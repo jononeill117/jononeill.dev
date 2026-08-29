@@ -90,7 +90,6 @@ LIMIT 5;</pre>
       <button type="button" class="zl__btn zl__btn--pulse" data-zl-try hidden>
         Select a row
       </button>
-      <button type="button" class="zl__btn" data-zl-replay hidden>Replay</button>
     </div>
   </div>
 </DemoFrame>
@@ -146,16 +145,16 @@ LIMIT 5;</pre>
   const EMPTY = "-";
   const CALC = "…";
 
-  /** Full walkthrough target: ≥10s */
-  const PENDING_MS = 1900;
-  const MODEL_PROGRESS_MS = 2600;
-  const MODEL_RESOLVE_MS = 1500;
-  const HUMAN_PROGRESS_MS = 2600;
-  const HUMAN_RESOLVE_MS = 1500;
-  const DELTA_PROGRESS_MS = 2200;
-  const DELTA_RESOLVE_MS = 1500;
-  const ACCEPT_MS = 1700;
-  const CHIP_MS = 1700;
+  /** Full walkthrough — ~600ms beat pad from baseline */
+  const PENDING_MS = 1700;
+  const MODEL_PROGRESS_MS = 2400;
+  const MODEL_RESOLVE_MS = 1300;
+  const HUMAN_PROGRESS_MS = 2400;
+  const HUMAN_RESOLVE_MS = 1300;
+  const DELTA_PROGRESS_MS = 2000;
+  const DELTA_RESOLVE_MS = 1300;
+  const ACCEPT_MS = 1500;
+  const CHIP_MS = 1500;
 
   /** Faster beats for try-mode row resolve */
   const TRY_PENDING_MS = 400;
@@ -180,7 +179,6 @@ LIMIT 5;</pre>
     const chipEl = root.querySelector<HTMLElement>("[data-zl-chip]");
     const detail = root.querySelector<HTMLElement>("[data-zl-detail]");
     const tryBtn = root.querySelector<HTMLButtonElement>("[data-zl-try]");
-    const replayBtn = root.querySelector<HTMLButtonElement>("[data-zl-replay]");
     const hint = root.querySelector<HTMLElement>("[data-zl-hint]");
     const rowBtns = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-zl-row]"));
 
@@ -210,9 +208,9 @@ LIMIT 5;</pre>
 
     const clearRowState = (els: RowEls) => {
       els.btn.classList.remove("is-working", "is-live", "is-accepted", "is-active");
-      els.model?.classList.remove("is-working", "is-live");
-      els.human?.classList.remove("is-working", "is-live");
-      els.delta?.classList.remove("is-working", "is-live");
+      els.model?.classList.remove("is-working", "is-live", "is-shimmer");
+      els.human?.classList.remove("is-working", "is-live", "is-shimmer");
+      els.delta?.classList.remove("is-working", "is-live", "is-shimmer");
     };
 
     const clearSelection = () => {
@@ -237,7 +235,6 @@ LIMIT 5;</pre>
       if (stepEl) stepEl.textContent = "Ready";
       if (detail) detail.textContent = "Select a row after the walkthrough.";
       if (tryBtn) tryBtn.hidden = true;
-      if (replayBtn) replayBtn.hidden = true;
       if (hint) hint.hidden = true;
       tryBtn?.classList.remove("is-pulse");
       tryMode = false;
@@ -275,7 +272,6 @@ LIMIT 5;</pre>
       clearSelection();
       rowEls(WALK_INDEX)?.btn.classList.add("is-active");
       if (tryBtn) tryBtn.hidden = false;
-      if (replayBtn) replayBtn.hidden = false;
       if (hint) hint.hidden = false;
       tryBtn?.classList.add("is-pulse");
       frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
@@ -308,21 +304,31 @@ LIMIT 5;</pre>
         els.btn.classList.add("is-active");
       }
       els.btn.classList.add("is-working");
-      if (els.status) els.status.textContent = "Pending";
+      if (els.status) els.status.textContent = "Working";
       if (opts.announce) {
-        if (stepEl) stepEl.textContent = "Pending";
-        if (detail) detail.textContent = `${data.address} waiting on model`;
+        if (stepEl) {
+          stepEl.textContent = "Loading queue…";
+          stepEl.classList.add("is-pulse");
+        }
+        if (detail) detail.textContent = `${data.address} — starting resolve`;
       }
+      els.model?.classList.add("is-shimmer");
+      els.human?.classList.add("is-shimmer");
+      els.delta?.classList.add("is-shimmer");
+      if (els.model) els.model.textContent = "";
+      if (els.human) els.human.textContent = "";
+      if (els.delta) els.delta.textContent = "";
       await sleep(timing.pendingMs);
       if (my !== token) return false;
 
       // Model estimating
       els.model?.classList.add("is-working");
+      els.model?.classList.remove("is-shimmer");
       if (els.model) els.model.textContent = CALC;
       if (els.status) els.status.textContent = "Model";
       if (opts.announce) {
-        if (stepEl) stepEl.textContent = "Model estimating…";
-        if (detail) detail.textContent = "Model estimating…";
+        if (stepEl) stepEl.textContent = "Pulling model estimate…";
+        if (detail) detail.textContent = "Model running comps + AVM…";
       } else if (detail) {
         detail.textContent = "Model estimating…";
       }
@@ -339,12 +345,13 @@ LIMIT 5;</pre>
 
       // Human / analyst reviewing
       els.human?.classList.add("is-working");
+      els.human?.classList.remove("is-shimmer");
       if (els.human) els.human.textContent = CALC;
       if (els.status) els.status.textContent = "Human";
       if (opts.announce) {
-        if (stepEl) stepEl.textContent = "Analyst reviewing…";
+        if (stepEl) stepEl.textContent = "Human analyst reviewing…";
       }
-      if (detail) detail.textContent = "Analyst reviewing…";
+      if (detail) detail.textContent = "Analyst checking model vs comps…";
       await sleep(timing.humanProgressMs);
       if (my !== token) return false;
 
@@ -358,19 +365,23 @@ LIMIT 5;</pre>
 
       // Delta
       els.delta?.classList.add("is-working");
+      els.delta?.classList.remove("is-shimmer");
       if (els.delta) els.delta.textContent = CALC;
       if (els.status) els.status.textContent = "Delta";
       if (opts.announce) {
-        if (stepEl) stepEl.textContent = "Comparing…";
+        if (stepEl) stepEl.textContent = "Comparing model vs human…";
       }
-      if (detail) detail.textContent = "Comparing model vs human…";
+      if (detail) detail.textContent = "Computing delta…";
       await sleep(timing.deltaProgressMs);
       if (my !== token) return false;
 
       els.delta?.classList.remove("is-working");
       els.delta?.classList.add("is-live");
       if (els.delta) els.delta.textContent = data.delta;
-      if (opts.announce && stepEl) stepEl.textContent = `Delta ${data.delta}`;
+      if (opts.announce && stepEl) {
+        stepEl.textContent = `Delta ${data.delta}`;
+        stepEl.classList.remove("is-pulse");
+      }
       if (detail) detail.textContent = data.deltaNote;
       await sleep(timing.deltaResolveMs);
       if (my !== token) return false;
@@ -378,8 +389,14 @@ LIMIT 5;</pre>
       // Accepted
       els.btn.classList.remove("is-working");
       els.btn.classList.add("is-live", "is-accepted");
+      els.human?.classList.remove("is-shimmer");
+      els.model?.classList.remove("is-shimmer");
+      els.delta?.classList.remove("is-shimmer");
       if (els.status) els.status.textContent = "Accepted";
-      if (opts.announce && stepEl) stepEl.textContent = "Accepted";
+      if (opts.announce && stepEl) {
+        stepEl.textContent = "Accepted";
+        stepEl.classList.remove("is-pulse");
+      }
       if (detail) detail.textContent = "Delta within tolerance · Accepted";
       await sleep(timing.acceptMs);
       return my === token;
@@ -433,7 +450,6 @@ LIMIT 5;</pre>
       running = true;
       tryBtn?.classList.remove("is-pulse");
       if (tryBtn) tryBtn.hidden = true;
-      if (replayBtn) replayBtn.hidden = true;
       if (hint) hint.hidden = true;
 
       const ok = await resolveRow(index, my, tryTiming, {
@@ -446,7 +462,6 @@ LIMIT 5;</pre>
       tryMode = true;
       if (chipEl) chipEl.hidden = false;
       if (tryBtn) tryBtn.hidden = false;
-      if (replayBtn) replayBtn.hidden = false;
       if (hint) hint.hidden = false;
       tryBtn?.classList.add("is-pulse");
     };
@@ -480,9 +495,6 @@ LIMIT 5;</pre>
         ? (Number(active.getAttribute("data-zl-row") ?? "0") + 1) % ROWS.length
         : 0;
       void runTryRow(next);
-    });
-    replayBtn?.addEventListener("click", () => {
-      frame.dispatchEvent(new CustomEvent("demo-request-replay", { bubbles: true }));
     });
   }
 
@@ -556,6 +568,32 @@ LIMIT 5;</pre>
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--zl-muted);
+  }
+
+  .zl__kicker.is-pulse {
+    color: var(--zl-accent);
+    animation: zl-pulse 1.2s ease-out infinite;
+  }
+
+  .zl__model.is-shimmer,
+  .zl__human.is-shimmer,
+  .zl__delta.is-shimmer {
+    min-height: 0.85rem;
+    border-radius: 0.25rem;
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--zl-line) 70%, transparent) 0%,
+      color-mix(in srgb, var(--zl-accent) 18%, #fff) 50%,
+      color-mix(in srgb, var(--zl-line) 70%, transparent) 100%
+    );
+    background-size: 200% 100%;
+    animation: zl-shimmer 1.1s linear infinite;
+    color: transparent !important;
+  }
+
+  @keyframes zl-shimmer {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
   }
 
   .zl__table {

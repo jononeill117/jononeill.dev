@@ -593,7 +593,7 @@ import DemoFrame from "./DemoFrame.astro";
       setStatus(label);
       setWorking(statsEl);
       blankStats();
-      await sleep(1280);
+      await sleep(1080);
       if (my !== token) {
         filterBusy = false;
         return;
@@ -615,7 +615,7 @@ import DemoFrame from "./DemoFrame.astro";
 
       setStatus("Loading Ecclesio dashboard…");
       setWorking(status);
-      await sleep(1700);
+      await sleep(1300);
       if (my !== token) return;
       setLive(status);
 
@@ -623,20 +623,20 @@ import DemoFrame from "./DemoFrame.astro";
       setWorking(statsPanel);
       setWorking(statsEl);
       blankStats();
-      await sleep(1900);
+      await sleep(1700);
       if (my !== token) return;
       applySnapshot(BASE.all);
       setLive(statsEl);
       setLive(statsPanel);
       setStatus("Stats loaded");
-      await sleep(1300);
+      await sleep(1100);
       if (my !== token) return;
 
       setStatus("Drawing health score…");
       setWorking(healthPanel);
       setWorking(healthScore);
       resetChart();
-      await sleep(1200);
+      await sleep(1000);
       if (my !== token) return;
       if (vals.health) vals.health.textContent = "76%";
       drawChart();
@@ -644,8 +644,59 @@ import DemoFrame from "./DemoFrame.astro";
       setLive(healthScore);
       setLive(healthPanel);
       setStatus("Health score ready (demo data)");
-      await sleep(1700);
+      await sleep(1300);
       if (my !== token) return;
+
+      // Cycle Assimilation → Member Care → Both with moving score line
+      const viewCycle: EcView[] = ["assimilation", "memberCare", "both"];
+      const viewHealth: Record<EcView, string> = {
+        assimilation: "68%",
+        memberCare: "81%",
+        both: "76%",
+      };
+      for (const next of viewCycle) {
+        if (my !== token) return;
+        view = next;
+        viewBtns.forEach((b) => b.classList.toggle("is-active", b.dataset.ecView === next));
+        setStatus(`View: ${VIEW_LABEL[next]}`);
+        setWorking(healthPanel);
+        setWorking(healthScore);
+        resetChart();
+        blankStats();
+        await sleep(400);
+        if (my !== token) return;
+        applySnapshot(snapshotFor());
+        if (vals.health) vals.health.textContent = viewHealth[next];
+        if (dot) {
+          const cy = next === "assimilation" ? "28" : next === "memberCare" ? "8" : "12";
+          dot.setAttribute("cy", cy);
+        }
+        if (line) {
+          const d =
+            next === "assimilation"
+              ? "M0 70 L18 64 L36 68 L54 55 L72 58 L90 48 L108 52 L126 42 L144 46 L162 36 L180 40 L198 32 L216 34 L234 30 L252 32 L280 28"
+              : next === "memberCare"
+                ? "M0 66 L18 58 L36 60 L54 42 L72 48 L90 30 L108 36 L126 22 L144 28 L162 16 L180 20 L198 12 L216 16 L234 8 L252 12 L280 8"
+                : "M0 70 L18 62 L36 66 L54 48 L72 55 L90 38 L108 44 L126 30 L144 36 L162 24 L180 28 L198 18 L216 22 L234 14 L252 20 L280 12";
+          line.setAttribute("d", d);
+        }
+        if (area) {
+          const ad =
+            next === "assimilation"
+              ? "M0 70 L18 64 L36 68 L54 55 L72 58 L90 48 L108 52 L126 42 L144 46 L162 36 L180 40 L198 32 L216 34 L234 30 L252 32 L280 28 L280 88 L0 88 Z"
+              : next === "memberCare"
+                ? "M0 66 L18 58 L36 60 L54 42 L72 48 L90 30 L108 36 L126 22 L144 28 L162 16 L180 20 L198 12 L216 16 L234 8 L252 12 L280 8 L280 88 L0 88 Z"
+                : "M0 70 L18 62 L36 66 L54 48 L72 55 L90 38 L108 44 L126 30 L144 36 L162 24 L180 28 L198 18 L216 22 L234 14 L252 20 L280 12 L280 88 L0 88 Z";
+          area.setAttribute("d", ad);
+        }
+        drawChart();
+        setLive(chart);
+        setLive(healthScore);
+        setLive(healthPanel);
+        setLive(statsEl);
+        await sleep(1100);
+        if (my !== token) return;
+      }
 
       setStatus("Surfacing actionable insights…");
       setWorking(insightsPanel);
@@ -659,14 +710,14 @@ import DemoFrame from "./DemoFrame.astro";
       setLive(insightsPanel);
       if (insightMeta) insightMeta.textContent = "47 open";
       setStatus("Insights ready");
-      await sleep(1250);
+      await sleep(1050);
       if (my !== token) return;
 
       setStatus("Picking a follow-up…");
       insightEls[0]?.classList.remove("is-live");
       insightEls[0]?.classList.add("is-active", "is-working");
       pickBtns[0]?.classList.add("is-press");
-      await sleep(1500);
+      await sleep(1300);
       if (my !== token) return;
       selectedInsight = 0;
       insightEls[0]?.classList.remove("is-working");
@@ -676,7 +727,7 @@ import DemoFrame from "./DemoFrame.astro";
         setLive(picked);
       }
       setStatus("Follow-up queued for staff");
-      await sleep(1500);
+      await sleep(1300);
       if (my !== token) return;
 
       paintFinal();
@@ -1311,21 +1362,7 @@ import DemoFrame from "./DemoFrame.astro";
   }
 
   .ec__replay {
-    border: 1px solid var(--ec-line);
-    border-radius: 0.4rem;
-    background: rgba(255, 255, 255, 0.04);
-    color: var(--ec-ink);
-    font: inherit;
-    font-size: 0.58rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 0.25rem 0.55rem;
-    cursor: pointer;
-  }
-
-  .ec__replay:hover {
-    border-color: rgba(244, 114, 182, 0.45);
-    color: var(--ec-pink);
+    display: none !important;
   }
 
   @keyframes ec-glow {

@@ -5,154 +5,311 @@ import DemoFrame from "./DemoFrame.astro";
 <DemoFrame
   class="zoom-drain-demo"
   aspect="16 / 10"
-  system="Vendor intake → automation → dispatch"
-  cta="Watch a work order move from portal to a tech on a truck."
-  caption="See the operating system in action"
+  system="Agents + systems → booked job"
+  cta="Watch agents hand a job from email to the board."
+  caption="See agents coordinate across Gmail, ServiceTitan, Quo, and the board"
 >
   <div class="zd" data-zd>
-    <header class="zd__header">
-      <div class="zd__brand">
-        <span class="zd__live-dot" data-zd-live-dot aria-hidden="true"></span>
-        <span class="zd__title">DISPATCH OS</span>
-        <span class="zd__sub">FIELD SERVICE · DRAIN CO.</span>
+    <nav class="zd__agents" aria-label="Agent strip">
+      <div class="zd__agent" data-zd-agent="gary">
+        <span class="zd__agent-pulse" aria-hidden="true"></span>
+        <span class="zd__agent-name">Gary</span>
+        <span class="zd__agent-sys">Gmail</span>
       </div>
-      <span class="zd__ver">DEMO · v0.1</span>
-    </header>
+      <div class="zd__agent" data-zd-agent="steve">
+        <span class="zd__agent-pulse" aria-hidden="true"></span>
+        <span class="zd__agent-name">Steve</span>
+        <span class="zd__agent-sys">ServiceTitan</span>
+      </div>
+      <div class="zd__agent" data-zd-agent="quinn">
+        <span class="zd__agent-pulse" aria-hidden="true"></span>
+        <span class="zd__agent-name">Quinn</span>
+        <span class="zd__agent-sys">Quo</span>
+      </div>
+      <div class="zd__agent" data-zd-agent="lisa">
+        <span class="zd__agent-pulse" aria-hidden="true"></span>
+        <span class="zd__agent-name">Lisa</span>
+        <span class="zd__agent-sys">Board</span>
+      </div>
+    </nav>
 
-    <div class="zd__body">
-      <aside class="zd__col zd__col--intake">
-        <div class="zd__col-label zd__col-label--copper">INTAKE</div>
-
-        <div class="zd__card">
-          <div class="zd__card-top">
-            <span class="zd__wo">WO-1842</span>
-            <span class="zd__wo-dot" data-zd-wo-dot aria-hidden="true"></span>
-          </div>
-          <div class="zd__job">Slow drain - kitchen</div>
-          <div class="zd__addr">14th Ave.</div>
-          <span class="zd__tag">VENDOR PORTAL</span>
-        </div>
-
-        <div class="zd__status" data-zd-status>
-          <span class="zd__status-dot" aria-hidden="true">●</span>
-          <span data-zd-status-text>Active dispatch</span>
-        </div>
-
-        <div class="zd__spacer"></div>
-
-        <button type="button" class="zd__action" data-zd-action hidden>
-          ↩  REPLAY
-        </button>
-      </aside>
-
-      <section class="zd__col zd__col--pipeline">
-        <div class="zd__col-label zd__col-label--muted">DISPATCH PIPELINE</div>
-
-        <div class="zd__pipeline" data-zd-pipeline>
-          <div class="zd__node" data-zd-node="0">
-            <div class="zd__node-circle">
-              <span class="zd__pulse" data-zd-pulse aria-hidden="true"></span>
-              <span>1</span>
+    <main class="zd__stage" data-zd-stage>
+      <!-- Beat 1: inbound email -->
+      <section class="zd__scene is-active" data-zd-scene="email" aria-label="Inbound email">
+        <div class="zd__scene-label">INBOUND · GMAIL</div>
+        <article class="zd__email">
+          <header class="zd__email-head">
+            <div class="zd__email-from">
+              <span class="zd__avatar">PM</span>
+              <div>
+                <strong>Property Mgmt Co.</strong>
+                <span>to dispatch@zoomdrain.com</span>
+              </div>
             </div>
-            <div class="zd__node-label">Vendor Portal</div>
-            <div class="zd__node-cap" data-zd-cap>Intake received</div>
+            <time>9:14 AM</time>
+          </header>
+          <h3 class="zd__email-subj">Slow drain — kitchen · 14th Ave</h3>
+          <div class="zd__email-body">
+            <p>Hi team,</p>
+            <p>
+              Tenant at <strong>14th Ave</strong> reports a <strong>slow drain in the kitchen</strong>.
+              Water pools when running the sink. Please schedule service.
+            </p>
+            <p>Thanks,<br />A. Reyes</p>
           </div>
-
-          <div class="zd__seg" data-zd-seg="0">
-            <div class="zd__seg-track"></div>
-            <div class="zd__seg-fill" data-zd-fill></div>
-          </div>
-
-          <div class="zd__node" data-zd-node="1">
-            <div class="zd__node-circle">
-              <span class="zd__pulse" data-zd-pulse aria-hidden="true"></span>
-              <span>2</span>
-            </div>
-            <div class="zd__node-label">CSM</div>
-            <div class="zd__node-cap" data-zd-cap>Tenant confirmed</div>
-          </div>
-
-          <div class="zd__seg" data-zd-seg="1">
-            <div class="zd__seg-track"></div>
-            <div class="zd__seg-fill" data-zd-fill></div>
-          </div>
-
-          <div class="zd__node" data-zd-node="2">
-            <div class="zd__node-circle">
-              <span class="zd__pulse" data-zd-pulse aria-hidden="true"></span>
-              <span>3</span>
-            </div>
-            <div class="zd__node-label">VOIP Text</div>
-            <div class="zd__node-cap" data-zd-cap>Tech assigned</div>
-          </div>
-
-          <div class="zd__seg" data-zd-seg="2">
-            <div class="zd__seg-track"></div>
-            <div class="zd__seg-fill" data-zd-fill></div>
-          </div>
-
-          <div class="zd__node" data-zd-node="3">
-            <div class="zd__node-circle">
-              <span class="zd__pulse" data-zd-pulse aria-hidden="true"></span>
-              <span>4</span>
-            </div>
-            <div class="zd__node-label">Tech on Truck</div>
-            <div class="zd__node-cap" data-zd-cap>En route</div>
-          </div>
-        </div>
+          <div class="zd__email-badge">Unread · no agent assigned</div>
+        </article>
       </section>
 
-      <aside class="zd__col zd__col--outcome">
-        <div class="zd__col-label" data-zd-outcome-label>OUTCOME</div>
-
-        <div class="zd__stat" data-zd-stat="0">
-          <div class="zd__stat-label">BOOKING TIME</div>
-          <div class="zd__stat-vals">
-            <div class="zd__stat-before" data-zd-before>3h</div>
-            <div class="zd__stat-after" data-zd-after>12 min</div>
+      <!-- Beat 2: Gary work packet -->
+      <section class="zd__scene" data-zd-scene="packet" hidden aria-label="Work packet">
+        <div class="zd__scene-label">WORK PACKET · GARY</div>
+        <article class="zd__packet">
+          <div class="zd__packet-row">
+            <span class="zd__packet-id">WO-1842</span>
+            <span class="zd__packet-tag">Extracted</span>
           </div>
-        </div>
-
-        <div class="zd__stat" data-zd-stat="1">
-          <div class="zd__stat-label">SPEED TO LEAD</div>
-          <div class="zd__stat-vals">
-            <div class="zd__stat-before" data-zd-before>-</div>
-            <div class="zd__stat-after" data-zd-after>+300%</div>
+          <h3 class="zd__packet-title">Slow drain — kitchen</h3>
+          <p class="zd__packet-addr">14th Ave</p>
+          <dl class="zd__packet-fields">
+            <div><dt>Source</dt><dd>Gmail intake</dd></div>
+            <div><dt>Priority</dt><dd class="zd__copper">Standard · SLA 4hr</dd></div>
+            <div><dt>Contact</dt><dd>Tenant on-site</dd></div>
+            <div><dt>Notes</dt><dd>Water pools at sink; kitchen only</dd></div>
+          </dl>
+          <div class="zd__packet-status">
+            <span class="zd__dot" aria-hidden="true"></span>
+            Packet ready — routing to dispatch
           </div>
-        </div>
+        </article>
+      </section>
 
-        <div class="zd__stat" data-zd-stat="2">
-          <div class="zd__stat-label">WEEKLY REVENUE</div>
-          <div class="zd__stat-vals">
-            <div class="zd__stat-before" data-zd-before>baseline</div>
-            <div class="zd__stat-after" data-zd-after>+12%</div>
+      <!-- Beat 3: Steve availability -->
+      <section class="zd__scene" data-zd-scene="availability" hidden aria-label="ServiceTitan availability">
+        <div class="zd__scene-label">AVAILABILITY · SERVICETITAN</div>
+        <article class="zd__st">
+          <header class="zd__st-head">
+            <span>Dispatch · WO-1842</span>
+            <span class="zd__st-sla is-match">SLA match ✓</span>
+          </header>
+          <div class="zd__st-slots">
+            <div class="zd__st-slot is-best">
+              <span class="zd__st-slot-time">Today · 2–4 PM</span>
+              <span class="zd__st-slot-meta">Soonest · 2.1 mi</span>
+              <span class="zd__st-slot-tech">Tech: Martinez</span>
+            </div>
+            <div class="zd__st-slot">
+              <span class="zd__st-slot-time">Today · 4–6 PM</span>
+              <span class="zd__st-slot-meta">Backup window</span>
+            </div>
+            <div class="zd__st-slot">
+              <span class="zd__st-slot-time">Tomorrow · 8–10 AM</span>
+              <span class="zd__st-slot-meta">Outside SLA</span>
+            </div>
           </div>
-        </div>
+          <div class="zd__st-footer">
+            <span>Response SLA: &lt; 4 hr</span>
+            <span class="zd__copper">Best fit: 2–4 PM</span>
+          </div>
+        </article>
+      </section>
 
-        <div class="zd__done-mark" data-zd-done-mark>✓ DISPATCH COMPLETE</div>
-      </aside>
-    </div>
+      <!-- Beat 4: Quinn texts customer -->
+      <section class="zd__scene" data-zd-scene="sms-out" hidden aria-label="Outbound SMS">
+        <div class="zd__scene-label">OUTBOUND · QUO</div>
+        <article class="zd__sms">
+          <header class="zd__sms-head">
+            <span class="zd__avatar zd__avatar--quo">Q</span>
+            <div>
+              <strong>Tenant · 14th Ave</strong>
+              <span>+1 (614) 555-0182</span>
+            </div>
+          </header>
+          <div class="zd__sms-thread">
+            <div class="zd__bubble zd__bubble--out is-visible">
+              <p>
+                Hi! This is Zoom Drain. We can address your kitchen drain
+                <strong>today between 2–4 PM</strong>. Does that window work for you?
+              </p>
+              <time>9:18 AM</time>
+            </div>
+          </div>
+          <div class="zd__sms-foot">Awaiting customer reply…</div>
+        </article>
+      </section>
+
+      <!-- Beat 5: customer reply -->
+      <section class="zd__scene" data-zd-scene="sms-reply" hidden aria-label="Customer SMS reply">
+        <div class="zd__scene-label">INBOUND · QUO</div>
+        <article class="zd__sms">
+          <header class="zd__sms-head">
+            <span class="zd__avatar zd__avatar--quo">Q</span>
+            <div>
+              <strong>Tenant · 14th Ave</strong>
+              <span>+1 (614) 555-0182</span>
+            </div>
+          </header>
+          <div class="zd__sms-thread">
+            <div class="zd__bubble zd__bubble--out">
+              <p>
+                Hi! This is Zoom Drain. We can address your kitchen drain
+                <strong>today between 2–4 PM</strong>. Does that window work for you?
+              </p>
+              <time>9:18 AM</time>
+            </div>
+            <div class="zd__bubble zd__bubble--in is-visible">
+              <p>Yes, 2–4 works. I'll be home.</p>
+              <time>9:19 AM</time>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Beat 6: Quinn confirms with Steve -->
+      <section class="zd__scene" data-zd-scene="confirm" hidden aria-label="Agent coordination">
+        <div class="zd__scene-label">COORDINATION</div>
+        <article class="zd__coord">
+          <div class="zd__coord-line">
+            <span class="zd__coord-who">Quinn · Quo</span>
+            <p>Customer confirmed <strong>2–4 PM</strong> arrival window.</p>
+          </div>
+          <div class="zd__coord-arrow" aria-hidden="true">↓</div>
+          <div class="zd__coord-line is-steve">
+            <span class="zd__coord-who">Steve · ServiceTitan</span>
+            <p>Booking job on calendar…</p>
+            <div class="zd__coord-progress">
+              <span class="zd__coord-bar"></span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Beat 7: booked board -->
+      <section class="zd__scene" data-zd-scene="booked" hidden aria-label="Booked job board">
+        <div class="zd__scene-label">BOARD · CONFIRMED</div>
+        <article class="zd__board-card">
+          <header class="zd__board-head">
+            <span class="zd__board-id">WO-1842</span>
+            <span class="zd__board-status">BOOKED</span>
+          </header>
+          <h3 class="zd__board-title">Slow drain — kitchen</h3>
+          <p class="zd__board-addr">14th Ave</p>
+          <div class="zd__board-grid">
+            <div><span>Window</span><strong>Today 2–4 PM</strong></div>
+            <div><span>Tech</span><strong>Martinez</strong></div>
+            <div><span>Source</span><strong>Gmail → Quo</strong></div>
+            <div><span>SLA</span><strong class="zd__copper">Met</strong></div>
+          </div>
+          <div class="zd__board-note">Posted to dispatch board · 9:20 AM</div>
+        </article>
+      </section>
+
+      <!-- Beat 8: Lisa notifies humans -->
+      <section class="zd__scene" data-zd-scene="lisa" hidden aria-label="Lisa office update">
+        <div class="zd__scene-label">HANDOFF · LISA</div>
+        <article class="zd__lisa">
+          <div class="zd__lisa-board">
+            <span class="zd__lisa-check" aria-hidden="true">✓</span>
+            <div>
+              <strong>WO-1842 on the board</strong>
+              <p>14th Ave · 2–4 PM · Martinez</p>
+            </div>
+          </div>
+          <div class="zd__lisa-divider" aria-hidden="true"></div>
+          <div class="zd__lisa-notify">
+            <span class="zd__lisa-label">Office manager</span>
+            <p>
+              Job booked and confirmed. Tenant expects tech
+              <strong>today 2–4 PM</strong>. No further action needed unless reschedule.
+            </p>
+            <div class="zd__lisa-recipients">
+              <span class="zd__lisa-pill">D. Walsh · Office Mgr</span>
+              <span class="zd__lisa-pill">Dispatch channel</span>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <p class="zd__nudge" data-zd-nudge hidden>Replay anytime from the corner control.</p>
   </div>
 </DemoFrame>
 
 <script>
-  // Steps 1-8 advance the animation:
-  //   node i lights at step 2i+1   (steps 1, 3, 5, 7)
-  //   seg  i burns  at step 2i+2   (steps 2, 4, 6)
-  //   seg  i done   at step 2i+3+
-  const STEP_MS = [50, 1280, 2880, 3980, 5580, 6680, 8280, 9680];
+  type Scene =
+    | "email"
+    | "packet"
+    | "availability"
+    | "sms-out"
+    | "sms-reply"
+    | "confirm"
+    | "booked"
+    | "lisa";
 
-  function nodeIsLit(s: number, i: number) {
-    return s >= 2 * i + 1;
+  type Agent = "none" | "gary" | "steve" | "quinn" | "lisa";
+
+  const SCENES: Scene[] = [
+    "email",
+    "packet",
+    "availability",
+    "sms-out",
+    "sms-reply",
+    "confirm",
+    "booked",
+    "lisa",
+  ];
+
+  /** Eight transitions (email → lisa); ~900ms between beats, ~7.2s total walk */
+  const BEAT_MS = [600, 1500, 2400, 3300, 4200, 5100, 6000, 6900];
+
+  function sceneForBeat(beat: number): Scene {
+    switch (beat) {
+      case 0:
+        return "email";
+      case 1:
+        return "packet";
+      case 2:
+        return "availability";
+      case 3:
+        return "sms-out";
+      case 4:
+        return "sms-reply";
+      case 5:
+        return "confirm";
+      case 6:
+        return "booked";
+      case 7:
+        return "lisa";
+      default: {
+        const _exhaustive: never = beat;
+        return _exhaustive;
+      }
+    }
   }
-  function segIsLit(s: number, i: number) {
-    return s >= 2 * i + 3;
-  }
-  function segIsBurning(s: number, i: number) {
-    return s === 2 * i + 2;
-  }
-  function activeCap(s: number) {
-    return s > 0 ? Math.min(3, Math.floor((s - 1) / 2)) : -1;
+
+  function agentsForBeat(beat: number): Agent | Agent[] {
+    switch (beat) {
+      case 0:
+        return "none";
+      case 1:
+        return "gary";
+      case 2:
+        return "steve";
+      case 3:
+        return "quinn";
+      case 4:
+        return "quinn";
+      case 5:
+        return ["quinn", "steve"];
+      case 6:
+        return "steve";
+      case 7:
+        return "lisa";
+      default: {
+        const _exhaustive: never = beat;
+        return _exhaustive;
+      }
+    }
   }
 
   function wireZoomDrain(root: HTMLElement) {
@@ -160,20 +317,25 @@ import DemoFrame from "./DemoFrame.astro";
     if (!frame || frame.hasAttribute("data-zd-wired")) return;
     frame.setAttribute("data-zd-wired", "true");
 
-    const liveDot = root.querySelector<HTMLElement>("[data-zd-live-dot]");
-    const woDot = root.querySelector<HTMLElement>("[data-zd-wo-dot]");
-    const statusEl = root.querySelector<HTMLElement>("[data-zd-status]");
-    const statusText = root.querySelector<HTMLElement>("[data-zd-status-text]");
-    const actionBtn = root.querySelector<HTMLButtonElement>("[data-zd-action]");
-    const outcomeLabel = root.querySelector<HTMLElement>("[data-zd-outcome-label]");
-    const doneMark = root.querySelector<HTMLElement>("[data-zd-done-mark]");
-    const nodes = Array.from(root.querySelectorAll<HTMLElement>("[data-zd-node]"));
-    const segs = Array.from(root.querySelectorAll<HTMLElement>("[data-zd-seg]"));
-    const stats = Array.from(root.querySelectorAll<HTMLElement>("[data-zd-stat]"));
+    const scenes = new Map<Scene, HTMLElement>();
+    SCENES.forEach((id) => {
+      const el = root.querySelector<HTMLElement>(`[data-zd-scene="${id}"]`);
+      if (el) scenes.set(id, el);
+    });
+
+    const agents = {
+      gary: root.querySelector<HTMLElement>("[data-zd-agent='gary']"),
+      steve: root.querySelector<HTMLElement>("[data-zd-agent='steve']"),
+      quinn: root.querySelector<HTMLElement>("[data-zd-agent='quinn']"),
+      lisa: root.querySelector<HTMLElement>("[data-zd-agent='lisa']"),
+    };
+
+    const nudge = root.querySelector<HTMLElement>("[data-zd-nudge]");
 
     let running = false;
     let done = false;
-    let step = 0;
+    let beat = 0;
+    let tryMode = false;
     const timers: ReturnType<typeof setTimeout>[] = [];
 
     const clearTimers = () => {
@@ -181,107 +343,71 @@ import DemoFrame from "./DemoFrame.astro";
       timers.length = 0;
     };
 
-    const remountFills = () => {
-      segs.forEach((seg) => {
-        const old = seg.querySelector<HTMLElement>("[data-zd-fill]");
-        if (!old) return;
-        const next = old.cloneNode(false) as HTMLElement;
-        next.className = "zd__seg-fill";
-        next.setAttribute("data-zd-fill", "");
-        old.replaceWith(next);
+    const setAgentActive = (active: Agent | Agent[]) => {
+      const activeSet = new Set(
+        Array.isArray(active) ? active : active === "none" ? [] : [active],
+      );
+      (Object.entries(agents) as [Exclude<Agent, "none">, HTMLElement | null][]).forEach(
+        ([name, el]) => {
+          el?.classList.toggle("is-active", activeSet.has(name));
+        },
+      );
+    };
+
+    const showScene = (scene: Scene) => {
+      scenes.forEach((el, id) => {
+        const on = id === scene;
+        el.hidden = !on;
+        el.classList.toggle("is-active", on);
       });
     };
 
-    const paint = (s: number, isDone: boolean, isRunning: boolean) => {
-      step = s;
+    const paint = (b: number, isDone: boolean, isRunning: boolean) => {
+      beat = b;
       done = isDone;
       running = isRunning;
 
-      const cap = activeCap(s);
+      const scene = b < SCENES.length ? sceneForBeat(b) : "lisa";
+      const activeAgents = b < SCENES.length ? agentsForBeat(b) : "lisa";
 
-      liveDot?.classList.toggle("is-running", isRunning);
-      liveDot?.classList.toggle("is-done", isDone && !isRunning);
+      showScene(scene);
+      setAgentActive(activeAgents);
 
-      woDot?.classList.toggle("is-running", isRunning);
-      woDot?.classList.toggle("is-done", isDone && !isRunning);
-
-      statusEl?.classList.toggle("is-visible", isRunning || isDone);
-      if (statusText) {
-        statusText.textContent = isDone ? "Dispatch complete" : "Active dispatch";
-      }
-
-      outcomeLabel?.classList.toggle("is-done", isDone);
-      doneMark?.classList.toggle("is-visible", isDone);
-
-      nodes.forEach((node, i) => {
-        const lit = nodeIsLit(s, i);
-        const isActive = cap === i;
-        node.classList.toggle("is-lit", lit);
-        node.classList.toggle("is-active", lit && isActive);
-      });
-
-      segs.forEach((seg, i) => {
-        const fill = seg.querySelector<HTMLElement>("[data-zd-fill]");
-        if (!fill) return;
-        const on = segIsLit(s, i) || segIsBurning(s, i);
-        fill.classList.toggle("is-on", on);
-      });
-
-      stats.forEach((stat) => {
-        stat.classList.toggle("is-done", isDone);
-      });
-
-      if (actionBtn) {
-        if (isDone && !isRunning) {
-          actionBtn.hidden = false;
-          actionBtn.disabled = false;
-          actionBtn.textContent = "↩  REPLAY";
-          actionBtn.classList.add("is-replay");
-          actionBtn.classList.remove("is-running");
-        } else if (isRunning) {
-          actionBtn.hidden = true;
-        } else {
-          actionBtn.hidden = true;
-        }
+      if (nudge) {
+        nudge.hidden = !tryMode || !isDone || isRunning;
       }
     };
 
     const reset = () => {
       clearTimers();
-      remountFills();
-      // Force reflow so fill width transitions restart cleanly
-      void root.offsetWidth;
+      tryMode = false;
       paint(0, false, false);
     };
 
     const paintFinal = () => {
       clearTimers();
-      remountFills();
-      void root.offsetWidth;
-      paint(STEP_MS.length, true, false);
-      // Snap fills without waiting for transition
-      segs.forEach((seg) => {
-        const fill = seg.querySelector<HTMLElement>("[data-zd-fill]");
-        if (!fill) return;
-        fill.style.transition = "none";
-        fill.classList.add("is-on");
-      });
+      tryMode = true;
+      paint(SCENES.length - 1, true, false);
     };
 
     const start = () => {
       if (running) return;
       clearTimers();
-      remountFills();
-      void root.offsetWidth;
+      tryMode = false;
       paint(0, false, true);
 
-      STEP_MS.forEach((ms, idx) => {
-        const s = idx + 1;
+      BEAT_MS.forEach((ms, idx) => {
+        const nextBeat = idx + 1;
+        const isLast = idx === BEAT_MS.length - 1;
         timers.push(
           setTimeout(() => {
-            const finished = s === STEP_MS.length;
-            paint(s, finished, !finished);
-            if (finished) {
+            paint(
+              isLast ? SCENES.length - 1 : nextBeat,
+              isLast,
+              !isLast,
+            );
+            if (isLast) {
+              tryMode = true;
               frame.dispatchEvent(
                 new CustomEvent("demo-request-complete", { bubbles: true }),
               );
@@ -306,9 +432,9 @@ import DemoFrame from "./DemoFrame.astro";
       start();
     });
 
-    actionBtn?.addEventListener("click", () => {
-      if (running) return;
-      frame.dispatchEvent(new CustomEvent("demo-request-replay", { bubbles: true }));
+    frame.addEventListener("demo-complete", () => {
+      tryMode = true;
+      if (done && nudge) nudge.hidden = false;
     });
   }
 
@@ -321,25 +447,34 @@ import DemoFrame from "./DemoFrame.astro";
 <style is:global>
   @import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap");
 
-  @keyframes zd-pulse-ring {
+  @keyframes zd-agent-pulse {
     0% {
       transform: scale(1);
-      opacity: 0.55;
+      opacity: 0.5;
     }
     100% {
-      transform: scale(2.4);
+      transform: scale(2.2);
       opacity: 0;
     }
   }
 
-  @keyframes zd-caption-in {
+  @keyframes zd-scene-in {
     from {
       opacity: 0;
-      transform: translateY(4px);
+      transform: translateY(6px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes zd-progress {
+    from {
+      width: 0%;
+    }
+    to {
+      width: 100%;
     }
   }
 </style>
@@ -351,11 +486,11 @@ import DemoFrame from "./DemoFrame.astro";
     --zd-border: #23242b;
     --zd-copper: #b87333;
     --zd-copper-glow: rgba(184, 115, 51, 0.38);
-    --zd-copper-dim: rgba(184, 115, 51, 0.1);
+    --zd-copper-dim: rgba(184, 115, 51, 0.12);
     --zd-spark: #d9963c;
     --zd-text: #ddd9d3;
-    --zd-muted: #555250;
-    --zd-dim: #2b2a28;
+    --zd-muted: #6e6c68;
+    --zd-dim: #3a3936;
     --zd-sans: "Barlow Condensed", sans-serif;
     --zd-mono: "Space Mono", monospace;
 
@@ -366,564 +501,725 @@ import DemoFrame from "./DemoFrame.astro";
     overflow: hidden;
     color: var(--zd-text);
     font-family: var(--zd-mono);
+    font-size: 0.72rem;
     background-color: var(--zd-bg);
     background-image: radial-gradient(var(--zd-border) 1px, transparent 1px);
     background-size: 24px 24px;
   }
 
-  .zd__header {
+  .zd__agents {
     flex-shrink: 0;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.85rem 1.25rem;
+    gap: 0.45rem;
+    padding: 0.65rem 0.85rem;
     border-bottom: 1px solid var(--zd-border);
-    background: rgba(18, 19, 26, 0.92);
+    background: rgba(18, 19, 26, 0.94);
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 
-  .zd__brand {
+  .zd__agents::-webkit-scrollbar {
+    display: none;
+  }
+
+  .zd__agent {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 0.7rem;
-    min-width: 0;
-  }
-
-  .zd__live-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    gap: 0.4rem;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid var(--zd-border);
+    border-radius: 999px;
+    background: var(--zd-panel);
     flex-shrink: 0;
-    background: var(--zd-copper);
-    box-shadow: 0 0 6px var(--zd-copper);
-    transition: box-shadow 0.5s ease;
+    transition:
+      border-color 0.35s ease,
+      box-shadow 0.35s ease,
+      background 0.35s ease;
   }
 
-  .zd__live-dot.is-running {
-    box-shadow: 0 0 14px var(--zd-copper);
+  .zd__agent-pulse {
+    position: absolute;
+    inset: -4px;
+    border-radius: 999px;
+    border: 1px solid rgba(184, 115, 51, 0.3);
+    pointer-events: none;
+    opacity: 0;
   }
 
-  .zd__live-dot.is-done {
-    box-shadow: 0 0 12px var(--zd-copper);
+  .zd__agent.is-active {
+    border-color: var(--zd-copper);
+    background: var(--zd-copper-dim);
+    box-shadow: 0 0 14px var(--zd-copper-glow);
   }
 
-  .zd__title {
+  .zd__agent.is-active .zd__agent-pulse {
+    opacity: 1;
+    animation: zd-agent-pulse 1.6s ease-out infinite;
+  }
+
+  .zd__agent-name {
     font-family: var(--zd-sans);
-    font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    white-space: nowrap;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
   }
 
-  .zd__sub {
-    font-size: 0.62rem;
-    letter-spacing: 0.12em;
-    color: var(--zd-muted);
-    border-left: 1px solid var(--zd-border);
-    padding-left: 0.85rem;
-    white-space: nowrap;
-  }
-
-  .zd__ver {
-    font-size: 0.56rem;
-    color: var(--zd-dim);
+  .zd__agent-sys {
+    font-size: 0.55rem;
     letter-spacing: 0.1em;
-    flex-shrink: 0;
+    color: var(--zd-muted);
+    text-transform: uppercase;
+    border-left: 1px solid var(--zd-border);
+    padding-left: 0.45rem;
   }
 
-  .zd__body {
+  .zd__agent.is-active .zd__agent-sys {
+    color: var(--zd-copper);
+  }
+
+  .zd__stage {
     flex: 1;
     min-height: 0;
-    display: grid;
-    grid-template-columns: minmax(11rem, 17.5rem) 1fr minmax(11rem, 17.5rem);
-  }
-
-  .zd__col {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
-    padding: 1.5rem 1.1rem;
-    min-width: 0;
-  }
-
-  .zd__col--intake {
-    border-right: 1px solid var(--zd-border);
-  }
-
-  .zd__col--outcome {
-    border-left: 1px solid var(--zd-border);
-  }
-
-  .zd__col--pipeline {
     align-items: center;
     justify-content: center;
-    padding: 1.5rem 1.75rem;
+    padding: 1rem 1.25rem;
+    overflow: hidden;
   }
 
-  .zd__col-label {
-    font-size: 0.56rem;
-    letter-spacing: 0.22em;
+  .zd__scene {
+    width: 100%;
+    max-width: 28rem;
+    animation: zd-scene-in 0.35s ease both;
+  }
+
+  .zd__scene-label {
+    font-size: 0.52rem;
+    letter-spacing: 0.2em;
     font-weight: 700;
-    color: var(--zd-dim);
-    transition: color 0.5s ease;
-  }
-
-  .zd__col-label--copper {
     color: var(--zd-copper);
-  }
-
-  .zd__col-label--muted {
-    color: var(--zd-muted);
-    margin-bottom: 2.5rem;
-    text-align: center;
-  }
-
-  .zd__col-label.is-done {
-    color: var(--zd-copper);
-  }
-
-  .zd__card {
-    background: var(--zd-panel);
-    border: 1px solid var(--zd-border);
-    border-left: 3px solid var(--zd-copper);
-    padding: 0.9rem 1rem;
-    border-radius: 3px;
-  }
-
-  .zd__card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 0.55rem;
   }
 
-  .zd__wo {
-    font-size: 0.56rem;
+  .zd__copper {
     color: var(--zd-copper);
-    letter-spacing: 0.18em;
-    font-weight: 700;
   }
 
-  .zd__wo-dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--zd-dim);
-    transition: all 0.4s ease;
+  /* Email */
+  .zd__email {
+    background: var(--zd-panel);
+    border: 1px solid var(--zd-border);
+    border-left: 3px solid var(--zd-copper);
+    border-radius: 3px;
+    padding: 0.85rem 1rem;
   }
 
-  .zd__wo-dot.is-running {
-    background: var(--zd-spark);
-    box-shadow: 0 0 6px var(--zd-copper);
+  .zd__email-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.65rem;
+    font-size: 0.62rem;
+    color: var(--zd-muted);
   }
 
-  .zd__wo-dot.is-done {
-    background: var(--zd-copper);
-    box-shadow: 0 0 6px var(--zd-copper);
+  .zd__email-from {
+    display: flex;
+    gap: 0.55rem;
+    align-items: flex-start;
   }
 
-  .zd__job {
+  .zd__email-from strong {
+    display: block;
+    color: var(--zd-text);
+    font-size: 0.72rem;
+  }
+
+  .zd__email-subj {
     font-family: var(--zd-sans);
     font-size: 1.05rem;
     font-weight: 600;
-    margin-bottom: 0.2rem;
-    color: var(--zd-text);
+    margin: 0 0 0.6rem;
+    line-height: 1.25;
   }
 
-  .zd__addr {
-    font-size: 0.7rem;
+  .zd__email-body {
+    font-size: 0.68rem;
+    line-height: 1.55;
     color: var(--zd-muted);
     margin-bottom: 0.75rem;
   }
 
-  .zd__tag {
-    display: inline-block;
+  .zd__email-body strong {
+    color: var(--zd-text);
+  }
+
+  .zd__email-badge {
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    color: var(--zd-muted);
+    padding: 0.3rem 0.5rem;
+    background: #161719;
+    border: 1px solid var(--zd-border);
+    border-radius: 2px;
+  }
+
+  /* Work packet */
+  .zd__packet {
+    background: var(--zd-panel);
+    border: 1px solid var(--zd-border);
+    border-radius: 3px;
+    padding: 0.9rem 1rem;
+  }
+
+  .zd__packet-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.45rem;
+  }
+
+  .zd__packet-id {
+    font-size: 0.55rem;
+    letter-spacing: 0.16em;
+    color: var(--zd-copper);
+    font-weight: 700;
+  }
+
+  .zd__packet-tag {
     font-size: 0.5rem;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.1em;
     color: var(--zd-muted);
     background: #161719;
-    padding: 0.2rem 0.5rem;
+    padding: 0.15rem 0.4rem;
     border-radius: 2px;
     border: 1px solid var(--zd-border);
   }
 
-  .zd__status {
+  .zd__packet-title {
+    font-family: var(--zd-sans);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.15rem;
+  }
+
+  .zd__packet-addr {
+    font-size: 0.68rem;
+    color: var(--zd-muted);
+    margin: 0 0 0.75rem;
+  }
+
+  .zd__packet-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45rem 0.75rem;
+    margin: 0 0 0.75rem;
+  }
+
+  .zd__packet-fields dt {
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+    color: var(--zd-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.1rem;
+  }
+
+  .zd__packet-fields dd {
+    margin: 0;
+    font-size: 0.68rem;
+  }
+
+  .zd__packet-status {
     display: flex;
     align-items: center;
     gap: 0.35rem;
     font-size: 0.62rem;
     color: var(--zd-copper);
-    letter-spacing: 0.06em;
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    letter-spacing: 0.04em;
   }
 
-  .zd__status.is-visible {
-    opacity: 0.7;
+  .zd__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--zd-copper);
+    box-shadow: 0 0 6px var(--zd-copper);
   }
 
-  .zd__status-dot {
-    font-size: 0.5rem;
-  }
-
-  .zd__spacer {
-    flex: 1;
-  }
-
-  .zd__action {
-    width: 100%;
-    padding: 0.75rem 1rem;
+  /* ServiceTitan */
+  .zd__st {
+    background: var(--zd-panel);
+    border: 1px solid var(--zd-border);
     border-radius: 3px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    font-family: var(--zd-mono);
-    cursor: pointer;
-    transition: all 0.35s ease;
-    background: transparent;
+    padding: 0.85rem 1rem;
+  }
+
+  .zd__st-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.62rem;
     color: var(--zd-muted);
+  }
+
+  .zd__st-sla {
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.45rem;
+    border-radius: 2px;
     border: 1px solid var(--zd-border);
   }
 
-  .zd__action:hover:not(:disabled) {
+  .zd__st-sla.is-match {
     color: var(--zd-copper);
-    border-color: var(--zd-copper);
+    border-color: rgba(184, 115, 51, 0.45);
+    background: var(--zd-copper-dim);
   }
 
-  .zd__pipeline {
-    display: flex;
-    align-items: flex-start;
-    width: 100%;
-  }
-
-  .zd__node {
+  .zd__st-slots {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    min-width: 4.5rem;
-    flex: 0 0 auto;
+    gap: 0.45rem;
+    margin-bottom: 0.75rem;
   }
 
-  .zd__node-circle {
-    position: relative;
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 50%;
-    border: 2px solid var(--zd-border);
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--zd-dim);
-    transition: all 0.5s ease;
+  .zd__st-slot {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.15rem 0.5rem;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid var(--zd-border);
+    border-radius: 2px;
+    background: #161719;
+    font-size: 0.65rem;
   }
 
-  .zd__node.is-lit .zd__node-circle {
-    border-color: var(--zd-copper);
+  .zd__st-slot.is-best {
+    border-color: rgba(184, 115, 51, 0.5);
     background: var(--zd-copper-dim);
-    color: var(--zd-copper);
-    box-shadow:
-      0 0 18px var(--zd-copper-glow),
-      0 0 40px rgba(184, 115, 51, 0.12);
   }
 
-  .zd__pulse {
-    display: none;
-    position: absolute;
-    inset: -8px;
-    border-radius: 50%;
-    border: 1px solid rgba(184, 115, 51, 0.28);
-    pointer-events: none;
-  }
-
-  .zd__node.is-active .zd__pulse {
-    display: block;
-    animation: zd-pulse-ring 1.8s ease-out infinite;
-  }
-
-  .zd__node-label {
-    margin-top: 0.7rem;
+  .zd__st-slot-time {
     font-family: var(--zd-sans);
     font-weight: 600;
-    font-size: 0.75rem;
-    letter-spacing: 0.04em;
-    color: var(--zd-muted);
-    text-align: center;
-    line-height: 1.3;
-    transition: color 0.5s ease;
-  }
-
-  .zd__node.is-lit .zd__node-label {
+    font-size: 0.82rem;
     color: var(--zd-text);
   }
 
-  .zd__node-cap {
-    margin-top: 0.35rem;
-    height: 0.9rem;
-    font-size: 0.56rem;
-    letter-spacing: 0.09em;
-    color: transparent;
-    text-align: center;
-    white-space: nowrap;
-    transition: color 0.2s ease;
-  }
-
-  .zd__node.is-active .zd__node-cap {
+  .zd__st-slot.is-best .zd__st-slot-time {
     color: var(--zd-copper);
-    animation: zd-caption-in 0.3s ease both;
   }
 
-  .zd__seg {
-    flex: 1;
-    margin-top: 1.55rem;
-    height: 2px;
-    position: relative;
-    min-width: 1.25rem;
+  .zd__st-slot-meta {
+    color: var(--zd-muted);
+    font-size: 0.58rem;
+    text-align: right;
   }
 
-  .zd__seg-track {
-    position: absolute;
-    inset: 0;
-    background: var(--zd-border);
+  .zd__st-slot-tech {
+    grid-column: 1 / -1;
+    font-size: 0.58rem;
+    color: var(--zd-muted);
   }
 
-  .zd__seg-fill {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 0%;
-    background: linear-gradient(90deg, var(--zd-copper) 0%, var(--zd-spark) 100%);
-    transition: width 800ms linear;
+  .zd__st-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.58rem;
+    color: var(--zd-muted);
   }
 
-  .zd__seg-fill.is-on {
-    width: 100%;
-    box-shadow:
-      0 0 8px var(--zd-copper),
-      0 0 18px rgba(184, 115, 51, 0.22);
-  }
-
-  .zd__stat {
+  /* SMS / Quo */
+  .zd__sms {
     background: var(--zd-panel);
     border: 1px solid var(--zd-border);
-    border-top-width: 2px;
-    border-top-color: var(--zd-border);
-    padding: 0.8rem 0.9rem;
     border-radius: 3px;
-    transition: border-top-color 0.5s ease;
+    padding: 0.85rem 1rem;
   }
 
-  .zd__stat[data-zd-stat="0"].is-done {
-    transition-delay: 0ms;
-    border-top-color: var(--zd-copper);
+  .zd__sms-head {
+    display: flex;
+    gap: 0.55rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid var(--zd-border);
   }
 
-  .zd__stat[data-zd-stat="1"].is-done {
-    transition-delay: 160ms;
-    border-top-color: var(--zd-copper);
+  .zd__sms-head strong {
+    display: block;
+    font-size: 0.72rem;
   }
 
-  .zd__stat[data-zd-stat="2"].is-done {
-    transition-delay: 320ms;
-    border-top-color: var(--zd-copper);
-  }
-
-  .zd__stat-label {
-    font-family: var(--zd-sans);
-    font-size: 0.56rem;
-    letter-spacing: 0.16em;
+  .zd__sms-head span:last-child {
+    font-size: 0.58rem;
     color: var(--zd-muted);
-    font-weight: 600;
-    margin-bottom: 0.55rem;
   }
 
-  .zd__stat-vals {
-    position: relative;
-    height: 2.5rem;
-  }
-
-  .zd__stat-before {
-    position: absolute;
-    top: 0.35rem;
-    left: 0;
-    font-size: 1.1rem;
-    font-weight: 700;
-    font-family: var(--zd-mono);
-    color: var(--zd-dim);
-    opacity: 1;
-    transform: translateY(0);
-    transition:
-      opacity 0.3s ease,
-      transform 0.3s ease;
-    user-select: none;
-  }
-
-  .zd__stat-after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    font-size: 1.7rem;
-    font-weight: 700;
+  .zd__avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
     font-family: var(--zd-sans);
+    font-weight: 700;
+    font-size: 0.65rem;
+    background: var(--zd-dim);
+    color: var(--zd-text);
+    flex-shrink: 0;
+  }
+
+  .zd__avatar--quo {
+    background: var(--zd-copper-dim);
     color: var(--zd-copper);
-    letter-spacing: -0.01em;
-    opacity: 0;
-    transform: translateY(8px);
-    transition:
-      opacity 0.45s ease,
-      transform 0.45s ease;
-    white-space: nowrap;
+    border: 1px solid rgba(184, 115, 51, 0.35);
   }
 
-  .zd__stat[data-zd-stat="0"] .zd__stat-before,
-  .zd__stat[data-zd-stat="0"] .zd__stat-after {
-    transition-delay: 0ms;
+  .zd__sms-thread {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    min-height: 4.5rem;
   }
 
-  .zd__stat[data-zd-stat="1"] .zd__stat-before,
-  .zd__stat[data-zd-stat="1"] .zd__stat-after {
-    transition-delay: 160ms;
+  .zd__bubble {
+    max-width: 92%;
+    padding: 0.55rem 0.7rem;
+    border-radius: 8px;
+    font-size: 0.68rem;
+    line-height: 1.45;
+    opacity: 0.55;
+    transition: opacity 0.3s ease;
   }
 
-  .zd__stat[data-zd-stat="2"] .zd__stat-before,
-  .zd__stat[data-zd-stat="2"] .zd__stat-after {
-    transition-delay: 320ms;
-  }
-
-  .zd__stat.is-done .zd__stat-before {
-    opacity: 0;
-    transform: translateY(-7px);
-  }
-
-  .zd__stat.is-done .zd__stat-after {
+  .zd__bubble.is-visible {
     opacity: 1;
-    transform: translateY(0);
   }
 
-  .zd__done-mark {
-    margin-top: 0.25rem;
-    font-size: 0.56rem;
-    letter-spacing: 0.12em;
-    color: transparent;
-    transition: color 0.5s ease 480ms;
-  }
-
-  .zd__done-mark.is-visible {
+  .zd__bubble time {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.52rem;
     color: var(--zd-muted);
+  }
+
+  .zd__bubble--out {
+    align-self: flex-end;
+    background: var(--zd-copper-dim);
+    border: 1px solid rgba(184, 115, 51, 0.3);
+    border-bottom-right-radius: 2px;
+  }
+
+  .zd__bubble--in {
+    align-self: flex-start;
+    background: #161719;
+    border: 1px solid var(--zd-border);
+    border-bottom-left-radius: 2px;
+  }
+
+  .zd__sms-foot {
+    margin-top: 0.65rem;
+    font-size: 0.58rem;
+    color: var(--zd-muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* Coordination */
+  .zd__coord {
+    background: var(--zd-panel);
+    border: 1px solid var(--zd-border);
+    border-radius: 3px;
+    padding: 1rem;
+  }
+
+  .zd__coord-line {
+    padding: 0.65rem 0.75rem;
+    border: 1px solid var(--zd-border);
+    border-radius: 3px;
+    background: #161719;
+  }
+
+  .zd__coord-line.is-steve {
+    border-color: rgba(184, 115, 51, 0.35);
+    background: var(--zd-copper-dim);
+  }
+
+  .zd__coord-who {
+    display: block;
+    font-size: 0.52rem;
+    letter-spacing: 0.14em;
+    color: var(--zd-copper);
+    margin-bottom: 0.35rem;
+    font-weight: 700;
+  }
+
+  .zd__coord-line p {
+    margin: 0;
+    font-size: 0.7rem;
+    line-height: 1.45;
+  }
+
+  .zd__coord-arrow {
+    text-align: center;
+    color: var(--zd-dim);
+    font-size: 0.75rem;
+    padding: 0.35rem 0;
+  }
+
+  .zd__coord-progress {
+    margin-top: 0.55rem;
+    height: 3px;
+    background: var(--zd-border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .zd__coord-bar {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--zd-copper), var(--zd-spark));
+    animation: zd-progress 1.2s ease forwards;
+  }
+
+  /* Board card */
+  .zd__board-card {
+    background: var(--zd-panel);
+    border: 1px solid var(--zd-border);
+    border-top: 2px solid var(--zd-copper);
+    border-radius: 3px;
+    padding: 0.9rem 1rem;
+  }
+
+  .zd__board-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .zd__board-id {
+    font-size: 0.55rem;
+    letter-spacing: 0.16em;
+    color: var(--zd-copper);
+    font-weight: 700;
+  }
+
+  .zd__board-status {
+    font-size: 0.55rem;
+    letter-spacing: 0.12em;
+    color: var(--zd-copper);
+    padding: 0.2rem 0.45rem;
+    border: 1px solid rgba(184, 115, 51, 0.45);
+    border-radius: 2px;
+    background: var(--zd-copper-dim);
+  }
+
+  .zd__board-title {
+    font-family: var(--zd-sans);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.15rem;
+  }
+
+  .zd__board-addr {
+    font-size: 0.68rem;
+    color: var(--zd-muted);
+    margin: 0 0 0.75rem;
+  }
+
+  .zd__board-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .zd__board-grid div {
+    font-size: 0.58rem;
+    color: var(--zd-muted);
+  }
+
+  .zd__board-grid span {
+    display: block;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.1rem;
+  }
+
+  .zd__board-grid strong {
+    font-size: 0.72rem;
+    color: var(--zd-text);
+  }
+
+  .zd__board-note {
+    font-size: 0.55rem;
+    letter-spacing: 0.06em;
+    color: var(--zd-muted);
+    border-top: 1px solid var(--zd-border);
+    padding-top: 0.55rem;
+  }
+
+  /* Lisa handoff */
+  .zd__lisa {
+    background: var(--zd-panel);
+    border: 1px solid var(--zd-border);
+    border-radius: 3px;
+    padding: 0.9rem 1rem;
+  }
+
+  .zd__lisa-board {
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+  }
+
+  .zd__lisa-check {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 0.85rem;
+    color: var(--zd-copper);
+    background: var(--zd-copper-dim);
+    border: 1px solid rgba(184, 115, 51, 0.4);
+    flex-shrink: 0;
+  }
+
+  .zd__lisa-board strong {
+    display: block;
+    font-family: var(--zd-sans);
+    font-size: 0.95rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .zd__lisa-board p {
+    margin: 0;
+    font-size: 0.65rem;
+    color: var(--zd-muted);
+  }
+
+  .zd__lisa-divider {
+    height: 1px;
+    background: var(--zd-border);
+    margin: 0.75rem 0;
+  }
+
+  .zd__lisa-label {
+    display: block;
+    font-size: 0.52rem;
+    letter-spacing: 0.14em;
+    color: var(--zd-copper);
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+
+  .zd__lisa-notify p {
+    margin: 0 0 0.6rem;
+    font-size: 0.68rem;
+    line-height: 1.5;
+    color: var(--zd-muted);
+  }
+
+  .zd__lisa-recipients {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .zd__lisa-pill {
+    font-size: 0.55rem;
+    letter-spacing: 0.06em;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--zd-border);
+    border-radius: 999px;
+    background: #161719;
+    color: var(--zd-muted);
+  }
+
+  .zd__nudge {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    text-align: center;
+    color: var(--zd-muted);
+    border-top: 1px solid var(--zd-border);
+    background: rgba(18, 19, 26, 0.92);
   }
 
   @media (max-width: 40rem) {
-    .zd__body {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto auto;
-      overflow: hidden;
-      gap: 0;
+    .zd__agents {
+      padding: 0.5rem 0.6rem;
+      gap: 0.35rem;
     }
 
-    .zd__col--intake {
-      grid-column: 1;
-      grid-row: 1;
-      border: 0;
-      border-right: 1px solid var(--zd-border);
-      border-bottom: 1px solid var(--zd-border);
-      padding: 0.55rem 0.65rem;
+    .zd__agent {
+      padding: 0.3rem 0.5rem;
     }
 
-    .zd__col--outcome {
-      grid-column: 2;
-      grid-row: 1;
-      border: 0;
-      border-bottom: 1px solid var(--zd-border);
-      padding: 0.55rem 0.65rem;
+    .zd__agent-name {
+      font-size: 0.68rem;
     }
 
-    .zd__col--pipeline {
-      grid-column: 1 / -1;
-      grid-row: 2;
-      border: 0;
-      padding: 0.55rem 0.65rem 0.7rem;
-    }
-
-    .zd__col-label--muted {
-      margin-bottom: 0.45rem;
-      font-size: 0.5rem;
-    }
-
-    .zd__sub {
-      display: none;
-    }
-
-    .zd__pipeline {
-      flex-wrap: nowrap;
-      justify-content: space-between;
-      gap: 0.25rem;
-    }
-
-    .zd__node {
-      min-width: 0;
-      flex: 1 1 0;
-    }
-
-    .zd__node-label {
-      font-size: 0.5rem;
-    }
-
-    .zd__node-cap {
-      font-size: 0.45rem;
-    }
-
-    .zd__seg {
-      display: none;
-    }
-
-    .zd__spacer {
-      display: none;
-    }
-
-    .zd__action {
-      margin-top: 0.35rem;
-      font-size: 0.55rem;
-      padding: 0.35rem 0.5rem;
-    }
-
-    .zd__stat-label {
-      font-size: 0.45rem;
-    }
-
-    .zd__stat-before,
-    .zd__stat-after {
-      font-size: 0.85rem;
-    }
-
-    .zd__done-mark {
+    .zd__agent-sys {
       font-size: 0.48rem;
+      padding-left: 0.35rem;
+    }
+
+    .zd__stage {
+      padding: 0.65rem 0.75rem;
+    }
+
+    .zd__scene {
+      max-width: 100%;
+    }
+
+    .zd__email-subj,
+    .zd__packet-title,
+    .zd__board-title {
+      font-size: 0.95rem;
+    }
+
+    .zd__packet-fields {
+      grid-template-columns: 1fr;
+    }
+
+    .zd__board-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 0.35rem;
+    }
+
+    .zd__nudge {
+      font-size: 0.5rem;
+      padding: 0.35rem 0.6rem;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .zd__live-dot,
-    .zd__wo-dot,
-    .zd__status,
-    .zd__node-circle,
-    .zd__node-label,
-    .zd__node-cap,
-    .zd__seg-fill,
-    .zd__stat,
-    .zd__stat-before,
-    .zd__stat-after,
-    .zd__done-mark,
-    .zd__col-label {
+    .zd__agent,
+    .zd__bubble,
+    .zd__scene {
       transition: none !important;
       animation: none !important;
     }
 
-    .zd__node.is-active .zd__pulse {
+    .zd__agent.is-active .zd__agent-pulse {
       animation: none;
-      display: none;
+      opacity: 0;
+    }
+
+    .zd__coord-bar {
+      animation: none;
+      width: 100%;
     }
   }
 </style>
