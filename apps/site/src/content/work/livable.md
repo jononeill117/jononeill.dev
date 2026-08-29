@@ -6,6 +6,7 @@ dates: Sep 2023 to Jul 2024
 outcome: 2,000 units in the first four months. CSAT and retention up 35%.
 kind: product
 order: 1
+visualCaption: units on the platform, launch through month four
 ---
 
 **Problem.** Livable had reach and no product of its own to sell into it. The brief was zero to one: build something new, get it live, and get real units onto it fast, with a channel behind it that would keep feeding it after launch.
@@ -17,5 +18,3 @@ order: 1
 **Who I worked with.** Engineering, design, sales, and support on the inside. Enterprise property management on the outside. The board monthly, which is a useful discipline: you cannot bring a story to a board four times, so you bring the number.
 
 **Result.** 2,000 units in the first four months. CSAT and retention up 35% once the feedback-driven roadmap started landing.
-
-Figure placeholder. Caption: units on the platform, launch through month four.

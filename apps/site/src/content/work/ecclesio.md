@@ -6,6 +6,7 @@ dates: Dec 2025 to Present
 outcome: Zero to beta in four months. Dashboard at about 50ms, down from two seconds.
 kind: project
 order: 6
+visualCaption: dashboard load time, first build against the current one
 ---
 
 **Problem.** I wanted to know whether I could still take a product from nothing to beta without a company behind me. Church software was the excuse. It is a side project and it stays one.
@@ -17,5 +18,3 @@ order: 6
 **Who I worked with.** A contract engineering team on the first build. After that, me, plus the church staff running the beta.
 
 **Result.** Zero to beta in four months. Dashboard load down from two seconds to about 50ms.
-
-Figure placeholder. Caption: dashboard load time, first build against the current one.

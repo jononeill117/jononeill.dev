@@ -3,6 +3,7 @@
  * Minimal privacy page. Required by the shared footer privacy link.
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
+import RevealEmail from "../components/RevealEmail.astro";
 import { SITE } from "../components/site";
 ---
 
@@ -21,9 +22,7 @@ import { SITE } from "../components/site";
         time.
       </p>
       <p>
-        Questions: <a href={`mailto:${SITE.email}`} data-email-reveal
-          >Show email</a
-        >.
+        Questions: <RevealEmail />
       </p>
     </div>
   </article>

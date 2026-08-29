@@ -1,11 +1,12 @@
 ---
 title: Zillow
 lede: First enterprise product seat. Underwriting and AI models in production, running every day on inventory the company was buying.
-role: Associate
+role: Business Analyst
 dates: Sep 2019 to Mar 2021
 outcome: About ten a day. About 3,000 in the period.
 kind: product
 order: 4
+visualCaption: daily model volume, September 2019 through March 2021
 ---
 
 **Problem.** Zillow was buying at volume and each of those decisions came out of a model. A model that runs every day is a product, and it needed somebody on the product side of it, sitting between the people running it and the people shipping it.
@@ -17,5 +18,3 @@ order: 4
 **Who I worked with.** Analysts and data scientists on the models. Engineering on the production path. The acquisitions team, who were the people living with the output.
 
 **Result.** About ten a day. About 3,000 in the period.
-
-Figure placeholder. Caption: daily model volume, September 2019 through March 2021.

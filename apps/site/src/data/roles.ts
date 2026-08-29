@@ -21,16 +21,6 @@ export interface Project {
 
 export const roles: readonly Role[] = [
   {
-    org: "Livable",
-    title: "Head of Product",
-    dates: "Sep 2023 to Jul 2024",
-    bullets: [
-      "Built and shipped a zero to one SaaS product. 2,000 units on it in the first four months.",
-      "Landed an enterprise integration that put the product in front of an 8M-unit base on an evergreen basis.",
-      "Hired the product managers, designers, and business analysts. Ran a user-feedback roadmap that lifted CSAT and retention 35%, and reported to the board monthly.",
-    ],
-  },
-  {
     org: "Zoom Drain Phoenix",
     title: "Director of Operations",
     dates: "2023 to Present",
@@ -38,6 +28,16 @@ export const roles: readonly Role[] = [
       "Rebuilt intake as an automated pipeline across the vendor work-order portal, the CSM, and VOIP. Average booking time down three hours, speed to lead up 300%, weekly revenue up 10 to 15%.",
       "Built the dispatch operating system, hired and trained the office, and wrote the SOPs and estimate tooling. Office labor down about 30%, close to $40k a year.",
       "Built go to market out of our own booking and revenue data, and took on commercial contract work including sewer laterals and multi-crew renovation jobs. The business runs at a $711k annual run rate, January through July 2026 annualized.",
+    ],
+  },
+  {
+    org: "Livable",
+    title: "Head of Product",
+    dates: "Sep 2023 to Jul 2024",
+    bullets: [
+      "Built and shipped a zero to one SaaS product. 2,000 units on it in the first four months.",
+      "Landed an enterprise integration that put the product in front of an 8M-unit base on an evergreen basis.",
+      "Hired the product managers, designers, and business analysts. Ran a user-feedback roadmap that lifted CSAT and retention 35%, and reported to the board monthly.",
     ],
   },
   {
@@ -62,7 +62,7 @@ export const roles: readonly Role[] = [
   },
   {
     org: "Zillow",
-    title: "Associate",
+    title: "Business Analyst",
     dates: "Sep 2019 to Mar 2021",
     bullets: [
       "First enterprise product seat. Underwriting and AI models running in production on live inventory.",
@@ -77,7 +77,7 @@ export const projects: readonly Project[] = [
     name: "Ecclesio",
     kind: "Side project",
     dates: "Dec 2025 to Present",
-    href: "/work/ecclesio/",
+    href: "#ecclesio",
     body: "Church software. I directed a contract engineering team through the first build, then took it over as the only person maintaining it. Zero to beta in four months, per-church isolated databases, tokenized payments, and a dashboard that loads in about 50ms. Churches join by invitation.",
   },
 ];

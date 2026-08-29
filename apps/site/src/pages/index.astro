@@ -1,21 +1,41 @@
 ---
 /**
- * Home. A recruiter has ninety seconds. Claim, proof, numbers, then the roles.
+ * Home. One scrolling page: hero, experience, about, contact.
  */
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Band from "@jononeill/ui/Band.astro";
 import Eyebrow from "@jononeill/ui/Eyebrow.astro";
+import RevealEmail from "../components/RevealEmail.astro";
+import VisualPlaceholder from "../components/VisualPlaceholder.astro";
 import { SITE } from "../components/site";
 
-const entries = (await getCollection("work")).sort(
-  (a, b) => a.data.order - b.data.order,
+const allEntries = await getCollection("work");
+
+const EXPERIENCE_ORDER = [
+  "zoom-drain",
+  "livable",
+  "stoa",
+  "homelight",
+  "zillow",
+] as const;
+
+const experienceEntries = EXPERIENCE_ORDER.map((id) => {
+  const entry = allEntries.find((e) => e.id === id);
+  if (!entry) throw new Error(`Missing work entry: ${id}`);
+  return entry;
+});
+
+const rendered = await Promise.all(
+  experienceEntries.map(async (entry) => ({
+    entry,
+    ...(await render(entry)),
+  })),
 );
 
-const roles = entries.filter((entry) => entry.data.kind !== "project");
-const side = entries.filter((entry) => entry.data.kind === "project");
+const ecclesio = allEntries.find((e) => e.id === "ecclesio");
+const ecclesioRendered = ecclesio ? await render(ecclesio) : null;
 
-/** Reverse chronological, and Zoom Drain does not open the page. */
 const PROOF = ["Zillow", "HomeLight", "Stoa", "Livable", "Zoom Drain"];
 
 const STATS = [
@@ -24,20 +44,28 @@ const STATS = [
   "2,000 units in four months",
   "Cycle time down 85%",
 ];
+
+const COMPANY_INDEX = experienceEntries.map((entry) => ({
+  id: entry.id,
+  name: entry.data.title,
+}));
 ---
 
-<BaseLayout title="Jon O'Neill. Product manager, zero to one SaaS and pricing platforms.">
+<BaseLayout
+  title="Jon O'Neill. Product and Operations Manager."
+  description={SITE.description}
+  canonicalPath="/"
+>
   <Band surface="canvas" as="header" class="hero">
     <div class="page-inner">
-      <Eyebrow>Product manager. Phoenix, AZ.</Eyebrow>
+      <Eyebrow>Product and Operations Manager</Eyebrow>
       <h1 class="hero__title">{SITE.name}</h1>
       <p class="hero__lede">
-        I build the product that makes the expensive decision. Underwriting
-        models at Zillow and HomeLight, the pricing platform forty analysts
-        worked in at Stoa, and a zero to one SaaS at Livable that reached 2,000
-        units in its first four months.
+        Data driven, customer focused product manager. I help sales, marketing,
+        and the company grow fast by building products customers will happily pay
+        for.
       </p>
-      <p class="page-meta">
+      <p class="page-meta page-meta--proof">
         {
           PROOF.map((name, i) => (
             <>
@@ -47,7 +75,7 @@ const STATS = [
           ))
         }
       </p>
-      <p class="page-meta">
+      <p class="page-meta page-meta--stats">
         {
           STATS.map((stat, i) => (
             <>
@@ -57,84 +85,165 @@ const STATS = [
           ))
         }
       </p>
-      <p class="page-meta">
-        <a href={SITE.resume}>Resume</a>
+      <p class="page-meta page-meta--actions">
+        <a href="#experience">Experience</a>
+        <span aria-hidden="true"> · </span>
+        <a href="#resume" data-resume-open>Resume</a>
+        <span aria-hidden="true"> · </span>
+        <a href="#contact">Contact</a>
         <span aria-hidden="true"> · </span>
         <a href={SITE.linkedin}>LinkedIn</a>
-        <span aria-hidden="true"> · </span>
-        <a href="/contact/">Contact</a>
       </p>
     </div>
   </Band>
 
-  <Band surface="canvas" as="section" id="work" class="page-section">
+  <Band surface="canvas" as="section" id="experience" class="page-section experience">
     <div class="page-inner">
-      <Eyebrow>Work</Eyebrow>
-      <h2 class="page-section-title">Five seats, same job.</h2>
+      <Eyebrow>Experience</Eyebrow>
+      <h2 class="page-section-title">Product and operations, reverse chronological.</h2>
       <p class="page-body">
-        Product on enterprise models, on a marketplace acquisitions book, on a
-        pricing platform, and on a zero to one SaaS. Then the operating side of a
-        live P&amp;L, to find out what my roadmaps had been costing the people
-        who ran them.
+        Four product seats and one operating seat. Click a company to jump to
+        that role.
       </p>
-      <ul class="work-list" role="list">
+
+      <nav class="company-index" aria-label="Companies">
+        <ul class="company-index__list" role="list">
+          {
+            COMPANY_INDEX.map((company, i) => (
+              <li>
+                <a class="company-index__link" href={`#${company.id}`}>
+                  {company.name}
+                </a>
+                {i < COMPANY_INDEX.length - 1 && (
+                  <span class="company-index__sep" aria-hidden="true">
+                    ·
+                  </span>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <ol class="role-list">
         {
-          roles.map((entry) => (
-            <li class="work-item">
+          rendered.map(({ entry, Content }) => (
+            <li class="role" id={entry.id}>
               <Eyebrow>
                 {entry.data.role} · {entry.data.dates}
               </Eyebrow>
-              <h3 class="work-item__title">
-                <a href={`/work/${entry.id}/`}>{entry.data.title}</a>
+              <h3 class="role__title">
+                <a class="role__company" href={`#${entry.id}`}>
+                  {entry.data.title}
+                </a>
               </h3>
-              <p class="work-item__lede">{entry.data.lede}</p>
-              <p class="page-meta">{entry.data.outcome}</p>
+              <p class="role__lede">{entry.data.lede}</p>
+              <p class="page-meta role__outcome">{entry.data.outcome}</p>
+              <div class="role__study prose">
+                <Content />
+                <VisualPlaceholder caption={entry.data.visualCaption} />
+              </div>
             </li>
           ))
         }
-      </ul>
-      <p class="page-meta">
-        <a href="/experience/">Full experience</a>
-      </p>
+      </ol>
+
+      {
+        ecclesio && ecclesioRendered && (
+          <article class="role role--side" id="ecclesio">
+            <Eyebrow>
+              {ecclesio.data.kind === "project" ? "Side project" : ecclesio.data.role} ·{" "}
+              {ecclesio.data.dates}
+            </Eyebrow>
+            <h3 class="role__title">
+              <a class="role__company" href="#ecclesio">
+                {ecclesio.data.title}
+              </a>
+            </h3>
+            <p class="role__lede">{ecclesio.data.lede}</p>
+            <p class="page-meta role__outcome">{ecclesio.data.outcome}</p>
+            <div class="role__study prose">
+              <ecclesioRendered.Content />
+              <VisualPlaceholder caption={ecclesio.data.visualCaption} />
+            </div>
+          </article>
+        )
+      }
     </div>
   </Band>
 
-  {
-    side.map((entry) => (
-      <Band surface="canvas" as="section" class="page-section">
-        <div class="page-inner">
-          <Eyebrow>On the side · {entry.data.dates}</Eyebrow>
-          <h2 class="work-item__title">
-            <a href={`/work/${entry.id}/`}>{entry.data.title}</a>
-          </h2>
-          <p class="work-item__lede">{entry.data.lede}</p>
-          <p class="page-meta">{entry.data.outcome}</p>
-        </div>
-      </Band>
-    ))
-  }
+  <Band surface="inverted" as="section" id="about" class="page-section about">
+    <div class="page-inner">
+      <Eyebrow>About</Eyebrow>
+      <h2 class="page-section-title">Models, then platforms, then a P&amp;L.</h2>
+      <p class="page-lede about__lede">
+        I am a product manager. I like the problems where the answer is a number.
+      </p>
+      <div class="page-body about__body">
+        <p>
+          I started at Zillow in 2019, my first enterprise product seat, on
+          underwriting and AI models that ran every day on inventory the company
+          was buying. That is where I learned a model is a product: it has users,
+          it has a latency budget, and when it is wrong somebody answers for it.
+        </p>
+        <p>
+          HomeLight was the same lesson at higher stakes: the underwriting model
+          behind Cash Close and the automation that sent 300 offers a month
+          against an $800M book. Stoa was the platform version. Portico, forty
+          analysts, cycle time down 85%, twenty-two vendor feeds down to six.
+        </p>
+        <p>
+          Livable was the one I had been building toward. Head of Product on a
+          zero to one SaaS: hire the team, ship the product, take it to the board
+          monthly, 2,000 units in four months.
+        </p>
+        <p>
+          Then I ran operations at Zoom Drain Phoenix. Dispatch, intake, an office
+          I hired, a live P&amp;L I had to live with. It taught me what my old
+          roadmaps cost the people downstream.
+        </p>
+        <p>
+          Open to startups and to established companies that move with a sense of
+          urgency. Phoenix, AZ, and glad to work remote.
+        </p>
+      </div>
+      <p class="page-meta">
+        <a href="#experience">Experience</a>
+        <span aria-hidden="true"> · </span>
+        <a href="#resume" data-resume-open>Resume</a>
+        <span aria-hidden="true"> · </span>
+        <a href="#contact">Contact</a>
+      </p>
+    </div>
+  </Band>
 
   <Band surface="accent" as="section" id="contact" class="page-section section--contact">
     <div class="page-inner">
       <Eyebrow>Contact</Eyebrow>
-      <h2 class="page-section-title">I want the next zero to one.</h2>
+      <h2 class="page-section-title">Open to product roles</h2>
       <p class="page-body">
-        A product role at a startup, where the roadmap, the number, and the go to
-        market sit inside one job. Phoenix, AZ, and glad to work remote.
+        Open to startups and to established companies that move with a sense of
+        urgency. Phoenix, AZ, and glad to work remote. Email is the fastest way
+        to reach me.
       </p>
-      <p class="page-meta">
-        <a href="/contact/">Phone, email, LinkedIn, resume</a>
-      </p>
+      <ul class="contact-lines" role="list">
+        <li>
+          <RevealEmail class="contact-email" />
+        </li>
+        <li>
+          <a href={SITE.linkedin}>linkedin.com/in/jon-oneill-020196</a>
+        </li>
+        <li>
+          <a href="#resume" data-resume-open>Resume, PDF</a>
+        </li>
+      </ul>
     </div>
   </Band>
 </BaseLayout>
 
 <style>
   .hero {
-    min-height: calc(100vh - var(--nav-height));
-    display: flex;
-    align-items: flex-end;
-    padding-block: var(--s-section);
+    padding-block: var(--s-section-tight);
   }
 
   .hero__title {
@@ -153,34 +262,94 @@ const STATS = [
     color: var(--fg-secondary);
   }
 
-  .work-list {
-    list-style: none;
-    margin: var(--s-12) 0 0;
-    padding: 0;
-    display: grid;
-    gap: var(--s-12);
+  .company-index {
+    margin-block-start: var(--s-8);
   }
 
-  .work-item__title {
+  .company-index__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-2) var(--s-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .company-index__link {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.2em;
+  }
+
+  .company-index__sep {
+    color: var(--fg-muted);
+    margin-inline: var(--s-1);
+  }
+
+  .role-list {
+    list-style: none;
+    margin: var(--s-16) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-24);
+  }
+
+  .role__title {
     margin-block-start: var(--s-3);
     font-size: var(--t-h3);
     line-height: var(--lh-heading);
     letter-spacing: var(--ls-heading);
   }
 
-  .work-item__title a {
-    text-decoration: none;
-  }
-
-  .work-item__title a:hover,
-  .work-item__title a:focus-visible {
+  .role__company {
     color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.2em;
   }
 
-  .work-item__lede {
+  .role__lede {
     margin-block-start: var(--s-4);
     max-width: var(--measure);
     color: var(--fg-secondary);
+  }
+
+  .role__outcome {
+    margin-block-start: var(--s-4);
+  }
+
+  .role__study {
+    margin-block-start: var(--s-8);
+  }
+
+  .role__study :global(p) {
+    max-width: var(--measure);
+    color: var(--fg-secondary);
+  }
+
+  .role__study :global(p + p) {
+    margin-block-start: var(--s-6);
+  }
+
+  .role--side {
+    margin-block-start: var(--s-24);
+    padding-block-start: var(--s-12);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+
+  .about__lede,
+  .about__body {
+    color: var(--fg-secondary-on-inverted);
+  }
+
+  .about .page-section-title {
+    color: var(--fg-on-inverted);
   }
 
   .section--contact .page-section-title,
@@ -188,7 +357,19 @@ const STATS = [
     color: var(--fg-on-accent);
   }
 
-  .section--contact a {
+  .section--contact a,
+  .section--contact :global(.reveal-email) {
     color: inherit;
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+  }
+
+  .contact-lines {
+    list-style: none;
+    margin: var(--s-12) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-4);
+    font-size: var(--t-body-lg);
   }
 </style>

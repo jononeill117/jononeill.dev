@@ -13,6 +13,7 @@ const work = defineCollection({
     outcome: z.string(),
     kind: z.enum(["product", "operations", "project"]),
     order: z.number(),
+    visualCaption: z.string(),
   }),
 });
 

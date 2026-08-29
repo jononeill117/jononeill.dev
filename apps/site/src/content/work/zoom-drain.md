@@ -6,6 +6,7 @@ dates: 2023 to Present
 outcome: Booking time down three hours. Speed to lead up 300%. Weekly revenue up 10 to 15%.
 kind: operations
 order: 5
+visualCaption: average booking time before and after the intake pipeline
 ---
 
 **Problem.** The business was losing jobs before anyone drove to them. Calls waited, vendor work orders arrived in a portal nobody was watching, and the office was doing by hand the thing a pipeline should have been doing.
@@ -17,7 +18,5 @@ order: 5
 **Who I worked with.** The office team, which I hired and trained. Field technicians, who are the people a dispatch system either helps or gets in the way of. National vendors on the intake side.
 
 **Result.** Average booking time down three hours. Speed to lead up 300%. Weekly revenue up 10 to 15%. Office labor down about 30%, close to $40k a year. The business runs at a $711k annual run rate, taken from January through July 2026 and annualized.
-
-Figure placeholder. Caption: average booking time before and after the intake pipeline.
 
 This is the seat that changed how I write a roadmap. When you own the number at the bottom, you stop shipping work that only looks good in a review.
