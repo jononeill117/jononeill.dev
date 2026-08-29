@@ -37,19 +37,19 @@ import DemoFrame from "./DemoFrame.astro";
     <div class="ec__stats" data-ec-stats>
       <div class="ec__stat" data-ec-stat="members">
         <span class="ec__stat-label">Members</span>
-        <strong data-ec-val="members">2,847</strong>
+        <strong data-ec-val="members">…</strong>
       </div>
       <div class="ec__stat" data-ec-stat="new">
         <span class="ec__stat-label">New</span>
-        <strong data-ec-val="new">143</strong>
+        <strong data-ec-val="new">…</strong>
       </div>
       <div class="ec__stat" data-ec-stat="followups">
         <span class="ec__stat-label">Follow-ups</span>
-        <strong data-ec-val="followups">12</strong>
+        <strong data-ec-val="followups">…</strong>
       </div>
       <div class="ec__stat ec__stat--demo" data-ec-stat="health">
         <span class="ec__stat-label">Health (demo data)</span>
-        <strong data-ec-val="health">76%</strong>
+        <strong data-ec-val="health">…</strong>
       </div>
     </div>
 
@@ -62,7 +62,7 @@ import DemoFrame from "./DemoFrame.astro";
       <section class="ec__panel ec__panel--list" data-ec-panel="list" aria-label="Members needing follow-up">
         <header class="ec__panel-head">
           <h4 class="ec__panel-title">Needs follow-up</h4>
-          <span class="ec__panel-meta" data-ec-list-meta>12 open</span>
+          <span class="ec__panel-meta" data-ec-list-meta>…</span>
         </header>
         <ul class="ec__members" data-ec-members>
           <li class="ec__member" data-ec-member="0">
@@ -149,6 +149,9 @@ import DemoFrame from "./DemoFrame.astro";
     },
   };
 
+  const FILTER_LOAD_MS = 520;
+  const FILTER_RESOLVE_MS = 280;
+
   function sleep(ms: number) {
     return new Promise((r) => setTimeout(r, ms));
   }
@@ -160,6 +163,7 @@ import DemoFrame from "./DemoFrame.astro";
 
     const status = root.querySelector<HTMLElement>("[data-ec-status]");
     const mode = root.querySelector<HTMLElement>("[data-ec-mode]");
+    const statsEl = root.querySelector<HTMLElement>("[data-ec-stats]");
     const alert = root.querySelector<HTMLElement>("[data-ec-alert]");
     const alertText = root.querySelector<HTMLElement>("[data-ec-alert-text]");
     const listMeta = root.querySelector<HTMLElement>("[data-ec-list-meta]");
@@ -184,12 +188,37 @@ import DemoFrame from "./DemoFrame.astro";
     let running = false;
     let token = 0;
     let interactive = false;
+    let filterBusy = false;
     let followupsOpen = 12;
     let range: EcRange = "7d";
     let campusKey: EcCampus = "all";
 
     const setStatus = (text: string) => {
       if (status) status.textContent = text;
+    };
+
+    const clearWorkingLive = (...els: (HTMLElement | null | undefined)[]) => {
+      els.forEach((el) => el?.classList.remove("is-working", "is-live"));
+    };
+
+    const setWorking = (el: HTMLElement | null | undefined) => {
+      if (!el) return;
+      el.classList.remove("is-live");
+      el.classList.add("is-working");
+    };
+
+    const setLive = (el: HTMLElement | null | undefined) => {
+      if (!el) return;
+      el.classList.remove("is-working");
+      el.classList.add("is-live");
+    };
+
+    const blankStats = () => {
+      if (vals.members) vals.members.textContent = "…";
+      if (vals.new) vals.new.textContent = "…";
+      if (vals.followups) vals.followups.textContent = "…";
+      if (vals.health) vals.health.textContent = "…";
+      if (listMeta) listMeta.textContent = "…";
     };
 
     const applyStats = (snapshot: EcSnapshot, followupsOverride?: number) => {
@@ -215,10 +244,11 @@ import DemoFrame from "./DemoFrame.astro";
     };
 
     const clearHighlights = () => {
-      members.forEach((m) => m.classList.remove("is-active", "is-done"));
-      alert?.classList.remove("is-live");
-      root.classList.remove("is-try");
+      members.forEach((m) => m.classList.remove("is-active", "is-done", "is-working", "is-live"));
+      clearWorkingLive(statsEl, alert, listPanel, detailPanel, compose, done, status);
+      root.classList.remove("is-try", "is-reveal");
       pulseWrap?.classList.remove("is-pulse");
+      createBtn?.classList.remove("is-press", "is-sent", "is-working", "is-live");
     };
 
     const setControlsEnabled = (on: boolean) => {
@@ -240,6 +270,7 @@ import DemoFrame from "./DemoFrame.astro";
       });
       clearHighlights();
       setControlsEnabled(false);
+      blankStats();
       if (alert) alert.hidden = true;
       if (detailPanel) detailPanel.hidden = true;
       if (listPanel) listPanel.hidden = false;
@@ -248,39 +279,78 @@ import DemoFrame from "./DemoFrame.astro";
       if (done) done.hidden = true;
       if (replayBtn) replayBtn.hidden = true;
       if (mode) mode.textContent = "Staff view";
-      applyStats(CAMPUS_STATS.all["7d"], 12);
       setStatus("Opening dashboard");
       root.dataset.ecPhase = "idle";
+    };
+
+    const paintFinal = () => {
+      followupsOpen = 11;
+      applyStats(CAMPUS_STATS.all["7d"], 11);
+      setLive(statsEl);
+      if (alert) {
+        alert.hidden = false;
+        setLive(alert);
+      }
+      if (listPanel) {
+        listPanel.hidden = false;
+        setLive(listPanel);
+      }
+      members.forEach((m, i) => {
+        m.classList.remove("is-working", "is-active");
+        if (i === 0) m.classList.add("is-done", "is-live");
+        else m.classList.add("is-live");
+      });
+      if (detailPanel) {
+        detailPanel.hidden = false;
+        setLive(detailPanel);
+      }
+      if (history) history.hidden = false;
+      if (compose) {
+        compose.hidden = false;
+        setLive(compose);
+      }
+      if (done) {
+        done.hidden = false;
+        setLive(done);
+      }
+      createBtn?.classList.add("is-live");
+      setStatus("Follow-up queued. Dashboard updated.");
     };
 
     const finishTry = () => {
       running = false;
       setControlsEnabled(true);
-      root.classList.add("is-try");
+      root.classList.add("is-try", "is-reveal");
       pulseWrap?.classList.add("is-pulse");
       if (replayBtn) replayBtn.hidden = false;
       if (alert) alert.hidden = false;
       if (detailPanel) detailPanel.hidden = false;
       if (compose) compose.hidden = false;
       if (done) done.hidden = false;
-      members[0]?.classList.add("is-done");
+      members[0]?.classList.add("is-done", "is-live");
       setStatus("Try it: change location or range");
       if (mode) mode.textContent = "Try mode";
       root.dataset.ecPhase = "try";
       frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
     };
 
-    const showFinalFrame = () => {
-      followupsOpen = 11;
-      applyStats(CAMPUS_STATS.all["7d"], 11);
-      if (alert) alert.hidden = false;
-      alert?.classList.add("is-live");
-      if (detailPanel) detailPanel.hidden = false;
-      if (compose) compose.hidden = false;
-      if (done) done.hidden = false;
-      members[0]?.classList.add("is-done");
-      setStatus("Follow-up queued. Dashboard updated.");
-      finishTry();
+    const runFilterUpdate = async (label: string) => {
+      if (filterBusy) return;
+      filterBusy = true;
+      const my = ++token;
+      setStatus(label);
+      setWorking(statsEl);
+      blankStats();
+      await sleep(FILTER_LOAD_MS);
+      if (my !== token) {
+        filterBusy = false;
+        return;
+      }
+      refreshFromControls();
+      setLive(statsEl);
+      setStatus(`${label} · updated`);
+      await sleep(FILTER_RESOLVE_MS);
+      filterBusy = false;
     };
 
     const run = async () => {
@@ -288,76 +358,141 @@ import DemoFrame from "./DemoFrame.astro";
       running = true;
       resetBoard();
       root.dataset.ecPhase = "walk";
-
-      // 1. Staff opens dashboard (~1.6s)
-      setStatus("Staff opens dashboard");
       root.classList.add("is-reveal");
-      await sleep(1600);
+
+      // 1. Loading status (~1.2s)
+      setStatus("Loading staff dashboard…");
+      setWorking(status);
+      await sleep(1200);
       if (my !== token) return;
 
-      // 2. Alert: 12 members need follow-up (~2s)
-      setStatus("12 members need follow-up");
+      // 2. Stats calculate then populate (~1.6s + 0.7s)
+      setStatus("Calculating campus stats…");
+      setLive(status);
+      setWorking(statsEl);
+      blankStats();
+      await sleep(1600);
+      if (my !== token) return;
+      applyStats(CAMPUS_STATS.all["7d"], 12);
+      setLive(statsEl);
+      setStatus("Stats loaded");
+      await sleep(700);
+      if (my !== token) return;
+
+      // 3. Follow-up panel draws (~1.3s + 0.6s)
+      setStatus("Drawing follow-up panel…");
+      setWorking(listPanel);
+      await sleep(1300);
+      if (my !== token) return;
+      setLive(listPanel);
+      if (listMeta) listMeta.textContent = "12 open";
+      setStatus("Queue panel ready");
+      await sleep(600);
+      if (my !== token) return;
+
+      // 4. Follow-up alert (~1.2s + 0.6s)
+      setStatus("Checking open follow-ups…");
       if (alert) alert.hidden = false;
-      alert?.classList.add("is-live");
+      setWorking(alert);
+      await sleep(1200);
+      if (my !== token) return;
+      setLive(alert);
       root.querySelector("[data-ec-stat='followups']")?.classList.add("is-hot");
-      await sleep(2000);
+      setStatus("12 members need follow-up");
+      await sleep(600);
       if (my !== token) return;
       root.querySelector("[data-ec-stat='followups']")?.classList.remove("is-hot");
 
-      // 3. Highlight a member (~2s)
-      setStatus("Highlighting Maya Chen");
-      members[0]?.classList.add("is-active");
-      await sleep(2000);
+      // 5. Member list lights (~1.4s)
+      setStatus("Lighting member list…");
+      for (let i = 0; i < members.length; i++) {
+        if (my !== token) return;
+        setWorking(members[i]);
+        await sleep(380);
+        if (my !== token) return;
+        setLive(members[i]);
+      }
+      setStatus("Members ready");
+      await sleep(400);
       if (my !== token) return;
 
-      // 4. Engagement history (~2.4s)
-      setStatus("Engagement history");
+      // 6. Open one member (~1.4s + 0.7s)
+      setStatus("Opening Maya Chen…");
+      members[0]?.classList.remove("is-live");
+      members[0]?.classList.add("is-active", "is-working");
       if (detailPanel) detailPanel.hidden = false;
-      if (history) history.hidden = false;
+      setWorking(detailPanel);
       if (compose) compose.hidden = true;
       if (done) done.hidden = true;
-      await sleep(2400);
+      await sleep(1400);
+      if (my !== token) return;
+      members[0]?.classList.remove("is-working");
+      members[0]?.classList.add("is-live", "is-active");
+      setLive(detailPanel);
+      setStatus("Engagement history");
+      await sleep(700);
       if (my !== token) return;
 
-      // 5. Create follow-up (~2s)
-      setStatus("Creating follow-up");
+      // 7. Compose follow-up (~1.5s)
+      setStatus("Composing follow-up…");
       if (compose) compose.hidden = false;
-      createBtn?.classList.add("is-press");
+      setWorking(compose);
+      createBtn?.classList.add("is-working");
       await sleep(900);
+      if (my !== token) return;
+      setLive(compose);
+      createBtn?.classList.remove("is-working");
+      createBtn?.classList.add("is-press", "is-live");
+      setStatus("Creating follow-up");
+      await sleep(700);
       if (my !== token) return;
       createBtn?.classList.remove("is-press");
       createBtn?.classList.add("is-sent");
-      await sleep(1100);
-      if (my !== token) return;
-      createBtn?.classList.remove("is-sent");
 
-      // 6. Dashboard updates (~2s)
-      setStatus("Dashboard updates");
+      // 8. Queued confirmation (~1.3s)
+      setStatus("Queuing follow-up…");
+      setWorking(done);
+      if (done) done.hidden = false;
+      await sleep(800);
+      if (my !== token) return;
       followupsOpen = 11;
       applyStats(CAMPUS_STATS.all["7d"], 11);
+      setLive(statsEl);
       members[0]?.classList.remove("is-active");
-      members[0]?.classList.add("is-done");
-      if (done) done.hidden = false;
+      members[0]?.classList.add("is-done", "is-live");
+      setLive(done);
+      createBtn?.classList.remove("is-sent");
       root.querySelector("[data-ec-stat='followups']")?.classList.add("is-hot");
-      await sleep(2000);
+      setStatus("Follow-up queued. Dashboard updated.");
+      await sleep(900);
       if (my !== token) return;
       root.querySelector("[data-ec-stat='followups']")?.classList.remove("is-hot");
 
-      showFinalFrame();
+      paintFinal();
+      finishTry();
     };
 
-    const onCreate = () => {
-      if (!interactive || running) return;
+    const onCreate = async () => {
+      if (!interactive || running || filterBusy) return;
       if (followupsOpen <= 0) return;
-      followupsOpen -= 1;
-      refreshFromControls();
-      members[0]?.classList.add("is-done");
+      setStatus("Queuing follow-up…");
+      setWorking(compose);
+      setWorking(done);
       if (done) {
         done.hidden = false;
-        done.textContent = "Follow-up queued. Dashboard updated.";
+        done.textContent = "Queuing…";
       }
+      createBtn?.classList.add("is-press", "is-working");
+      await sleep(400);
+      followupsOpen -= 1;
+      refreshFromControls();
+      members[0]?.classList.add("is-done", "is-live");
+      setLive(compose);
+      setLive(done);
+      if (done) done.textContent = "Follow-up queued. Dashboard updated.";
       setStatus("Follow-up created");
-      createBtn?.classList.add("is-sent");
+      createBtn?.classList.remove("is-press", "is-working");
+      createBtn?.classList.add("is-sent", "is-live");
       window.setTimeout(() => createBtn?.classList.remove("is-sent"), 500);
     };
 
@@ -365,7 +500,8 @@ import DemoFrame from "./DemoFrame.astro";
       const detail = (e as CustomEvent).detail as { reduced?: boolean } | undefined;
       if (detail?.reduced) {
         resetBoard();
-        showFinalFrame();
+        paintFinal();
+        finishTry();
         return;
       }
       void run();
@@ -373,26 +509,25 @@ import DemoFrame from "./DemoFrame.astro";
     frame.addEventListener("demo-replay", () => void run());
 
     campus?.addEventListener("change", () => {
-      if (!interactive) return;
+      if (!interactive || running) return;
       campusKey = (campus.value as EcCampus) || "all";
-      refreshFromControls();
       pulseWrap?.classList.remove("is-pulse");
-      setStatus(`Location: ${campus.selectedOptions[0]?.textContent ?? campusKey}`);
+      const label = campus.selectedOptions[0]?.textContent?.trim() || campusKey;
+      void runFilterUpdate(`Loading ${label}`);
     });
 
     rangeBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
-        if (!interactive) return;
+        if (!interactive || running) return;
         const next = (btn.dataset.ecRange as EcRange) || "7d";
         range = next;
         rangeBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
-        refreshFromControls();
         pulseWrap?.classList.remove("is-pulse");
-        setStatus(`Range: ${next.toUpperCase()}`);
+        void runFilterUpdate(`Loading ${next.toUpperCase()} range`);
       });
     });
 
-    createBtn?.addEventListener("click", onCreate);
+    createBtn?.addEventListener("click", () => void onCreate());
     replayBtn?.addEventListener("click", () => {
       frame.dispatchEvent(new CustomEvent("demo-request-replay", { bubbles: true }));
     });
@@ -536,6 +671,10 @@ import DemoFrame from "./DemoFrame.astro";
     min-height: 1.2em;
   }
 
+  .ec__status.is-working {
+    animation: ec-working 1.4s ease-in-out infinite;
+  }
+
   .ec__stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -548,6 +687,23 @@ import DemoFrame from "./DemoFrame.astro";
     display: grid;
     gap: var(--s-1);
     transition: border-color 0.25s ease;
+  }
+
+  .ec__stats.is-working .ec__stat {
+    border-color: color-mix(in srgb, var(--ec-copper) 55%, var(--ec-line));
+    animation: ec-working 1.4s ease-in-out infinite;
+  }
+
+  .ec__stats.is-working .ec__stat strong {
+    color: var(--ec-copper);
+  }
+
+  .ec__stats.is-live .ec__stat {
+    border-color: color-mix(in srgb, var(--ec-copper) 40%, var(--ec-line));
+  }
+
+  .ec__stats.is-live .ec__stat strong {
+    color: var(--ec-ink);
   }
 
   .ec__stat.is-hot {
@@ -572,6 +728,10 @@ import DemoFrame from "./DemoFrame.astro";
     color: var(--ec-secondary);
   }
 
+  .ec__stats.is-live .ec__stat--demo strong {
+    color: var(--ec-secondary);
+  }
+
   .ec__alert {
     display: flex;
     justify-content: space-between;
@@ -582,10 +742,16 @@ import DemoFrame from "./DemoFrame.astro";
     background: color-mix(in srgb, var(--ec-copper) 12%, transparent);
     font-size: var(--t-body-sm);
     color: var(--ec-ink);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .ec__alert.is-working {
+    animation: ec-working 1.4s ease-in-out infinite;
   }
 
   .ec__alert.is-live {
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ec-copper) 35%, transparent);
+    animation: none;
   }
 
   .ec__alert-tag {
@@ -611,6 +777,19 @@ import DemoFrame from "./DemoFrame.astro";
     grid-template-rows: auto 1fr;
     gap: var(--s-3);
     min-height: 0;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .ec__panel.is-working {
+    border-color: color-mix(in srgb, var(--ec-copper) 70%, var(--ec-line));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ec-copper) 30%, transparent);
+    animation: ec-working 1.4s ease-in-out infinite;
+  }
+
+  .ec__panel.is-live {
+    border-color: var(--ec-copper);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ec-copper) 40%, transparent);
+    animation: none;
   }
 
   .ec__panel-head {
@@ -648,7 +827,17 @@ import DemoFrame from "./DemoFrame.astro";
     gap: 0.15rem;
     padding: var(--s-2);
     border: var(--hairline) solid transparent;
-    transition: border-color 0.25s ease, background 0.25s ease;
+    transition: border-color 0.25s ease, background 0.25s ease, opacity 0.25s ease;
+  }
+
+  .ec__member.is-working {
+    border-color: color-mix(in srgb, var(--ec-copper) 55%, transparent);
+    background: color-mix(in srgb, var(--ec-copper) 8%, transparent);
+    animation: ec-working 1.4s ease-in-out infinite;
+  }
+
+  .ec__member.is-live {
+    border-color: color-mix(in srgb, var(--ec-copper) 35%, transparent);
   }
 
   .ec__member.is-active {
@@ -696,6 +885,17 @@ import DemoFrame from "./DemoFrame.astro";
     align-content: start;
     border-block-start: var(--hairline) solid var(--ec-line);
     padding-block-start: var(--s-3);
+    transition: border-color 0.25s ease;
+  }
+
+  .ec__compose.is-working {
+    border-color: color-mix(in srgb, var(--ec-copper) 50%, var(--ec-line));
+    animation: ec-working 1.4s ease-in-out infinite;
+  }
+
+  .ec__compose.is-live {
+    border-color: color-mix(in srgb, var(--ec-copper) 40%, var(--ec-line));
+    animation: none;
   }
 
   .ec__compose-body {
@@ -723,16 +923,26 @@ import DemoFrame from "./DemoFrame.astro";
     cursor: default;
   }
 
+  .ec__compose-btn.is-working,
   .ec__compose-btn.is-press,
-  .ec__compose-btn.is-sent {
+  .ec__compose-btn.is-sent,
+  .ec__compose-btn.is-live {
     border-color: var(--ec-copper);
     color: var(--ec-copper);
+  }
+
+  .ec__compose-btn.is-working {
+    animation: ec-working 1.4s ease-in-out infinite;
   }
 
   .ec__done {
     margin: 0;
     font-size: var(--t-body-sm);
     color: var(--ec-copper);
+  }
+
+  .ec__done.is-working {
+    animation: ec-working 1.4s ease-in-out infinite;
   }
 
   .ec__foot {
@@ -754,6 +964,18 @@ import DemoFrame from "./DemoFrame.astro";
   .ec__actions {
     display: flex;
     gap: var(--s-2);
+  }
+
+  @keyframes ec-working {
+    0%,
+    100% {
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ec-copper) 20%, transparent);
+      opacity: 1;
+    }
+    50% {
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ec-copper) 55%, transparent);
+      opacity: 0.88;
+    }
   }
 
   @keyframes ec-pulse {
@@ -780,6 +1002,13 @@ import DemoFrame from "./DemoFrame.astro";
     .ec,
     .ec__member,
     .ec__stat,
+    .ec__panel,
+    .ec__alert,
+    .ec__compose,
+    .ec__status,
+    .ec__done,
+    .ec__compose-btn,
+    .ec__stats.is-working .ec__stat,
     .ec__control--pulse.is-pulse .ec__select {
       transition: none;
       animation: none;
