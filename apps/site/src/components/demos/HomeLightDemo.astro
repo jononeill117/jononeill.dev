@@ -116,7 +116,7 @@ import DemoFrame from "./DemoFrame.astro";
     let completedCount = 0;
 
     const applyOffer = (index: number) => {
-      const offer = OFFERS[index] ?? OFFERS[0];
+      const offer = OFFERS[index] ?? OFFERS[0]!;
       if (addrEl) addrEl.textContent = offer.address;
       if (priceEl) priceEl.textContent = offer.price;
       const offerDetail = root.querySelector("[data-hl-detail='offer']");

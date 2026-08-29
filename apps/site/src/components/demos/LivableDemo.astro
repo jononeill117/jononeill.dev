@@ -151,7 +151,6 @@ import DemoFrame from "./DemoFrame.astro";
     const replayBtn = root.querySelector<HTMLButtonElement>("[data-lv-replay]");
     const tabs = root.querySelectorAll<HTMLButtonElement>("[data-lv-tab]");
     const landlordTab = root.querySelector<HTMLButtonElement>("[data-lv-tab='landlord']");
-    const residentTab = root.querySelector<HTMLButtonElement>("[data-lv-tab='resident']");
     const landlordPanel = root.querySelector<HTMLElement>("[data-lv-panel='landlord']");
     const residentPanel = root.querySelector<HTMLElement>("[data-lv-panel='resident']");
     const unit12Row = root.querySelector<HTMLElement>("[data-lv-row='12']");
@@ -159,7 +158,6 @@ import DemoFrame from "./DemoFrame.astro";
 
     let running = false;
     let token = 0;
-    let tryMode = false;
     let paid = false;
 
     const setStep = (text: string) => {
@@ -227,7 +225,6 @@ import DemoFrame from "./DemoFrame.astro";
       if (tryBar) tryBar.hidden = true;
       if (hint) hint.hidden = true;
       paid = false;
-      tryMode = false;
     };
 
     const paintExtracted = () => {
@@ -265,7 +262,6 @@ import DemoFrame from "./DemoFrame.astro";
     };
 
     const showTry = () => {
-      tryMode = true;
       setTabsEnabled(true);
       if (tryBar) tryBar.hidden = false;
       if (hint) hint.hidden = false;

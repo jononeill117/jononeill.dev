@@ -14,7 +14,7 @@ import DemoFrame from "./DemoFrame.astro";
         <span class="sp__product">Portico</span>
         <span class="sp__queue-label" data-sp-step>Queue idle</span>
       </div>
-      <span class="sp__eval" data-sp-eval>Eval —</span>
+      <span class="sp__eval" data-sp-eval>Eval -</span>
     </header>
 
     <div class="sp__queue" data-sp-queue>
@@ -154,7 +154,7 @@ import DemoFrame from "./DemoFrame.astro";
 
     const resetBoard = () => {
       setStep("Queue idle");
-      if (evalEl) evalEl.textContent = "Eval —";
+      if (evalEl) evalEl.textContent = "Eval -";
       fileEl?.classList.add("is-empty");
       fileEl?.classList.remove("is-live", "is-accepted");
       if (fileId) fileId.textContent = "Waiting for file";
@@ -324,10 +324,10 @@ import DemoFrame from "./DemoFrame.astro";
         const key = btn.getAttribute("data-sp-nudge");
         if (key === "roof") {
           roofIdx = (roofIdx + 1) % ROOF_VALUES.length;
-          btn.textContent = ROOF_VALUES[roofIdx];
+          btn.textContent = ROOF_VALUES[roofIdx] ?? ROOF_VALUES[0]!;
         } else if (key === "contingency") {
           contingencyIdx = (contingencyIdx + 1) % CONTINGENCY_VALUES.length;
-          btn.textContent = CONTINGENCY_VALUES[contingencyIdx];
+          btn.textContent = CONTINGENCY_VALUES[contingencyIdx] ?? CONTINGENCY_VALUES[0]!;
         }
         dirty = true;
         btn.classList.add("is-nudge");
@@ -339,7 +339,7 @@ import DemoFrame from "./DemoFrame.astro";
     recalcBtn?.addEventListener("click", () => {
       if (running || !dirty) return;
       valuationIdx = (valuationIdx + 1) % VALUATIONS.length;
-      if (valEl) valEl.textContent = VALUATIONS[valuationIdx];
+      if (valEl) valEl.textContent = VALUATIONS[valuationIdx] ?? VALUATIONS[0]!;
       valEl?.classList.add("is-nudge");
       setTimeout(() => valEl?.classList.remove("is-nudge"), 320);
       dirty = false;
