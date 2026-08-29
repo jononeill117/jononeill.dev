@@ -4,180 +4,400 @@ import DemoFrame from "./DemoFrame.astro";
 
 <DemoFrame
   class="stoa-demo"
+  aspect="16 / 10"
   system="Data → underwriting → decision"
   cta="Open a Portico file. This is the queue 40 analysts worked."
   caption="Interactive walkthrough"
 >
   <div class="sp" data-sp>
-    <header class="sp__head">
-      <div class="sp__brand">
-        <span class="sp__product">Portico</span>
-        <span class="sp__queue-label" data-sp-step>Queue idle</span>
-      </div>
-      <span class="sp__eval" data-sp-eval>Eval -</span>
-    </header>
+    <aside class="sp__rail" aria-hidden="true">
+      <span class="sp__rail-mark">P</span>
+      <span class="sp__rail-dot is-active"></span>
+      <span class="sp__rail-dot"></span>
+      <span class="sp__rail-dot"></span>
+      <span class="sp__rail-dot"></span>
+      <span class="sp__rail-dot"></span>
+      <span class="sp__rail-dot"></span>
+    </aside>
 
-    <div class="sp__queue" data-sp-queue>
-      <div class="sp__file is-empty" data-sp-file>
-        <span class="sp__file-id" data-sp-file-id>Waiting for file</span>
-        <span class="sp__file-addr" data-sp-file-addr></span>
-        <span class="sp__file-status" data-sp-file-status></span>
-      </div>
-    </div>
+    <div class="sp__app">
+      <header class="sp__top">
+        <div class="sp__brand">
+          <span class="sp__logo" aria-hidden="true"></span>
+          <div class="sp__brand-text">
+            <span class="sp__product">Portico</span>
+            <span class="sp__module">Evaluations</span>
+          </div>
+        </div>
+        <nav class="sp__tabs" aria-label="Workflow">
+          <span class="sp__tab">Pre-screening</span>
+          <span class="sp__tab is-active">Home Fact Verification</span>
+          <span class="sp__tab">Rental Comps</span>
+          <span class="sp__tab">ARV Comps</span>
+          <span class="sp__tab">Wrap Up</span>
+        </nav>
+        <div class="sp__user" aria-hidden="true">
+          <span class="sp__user-icon"></span>
+          <span class="sp__avatar">CM</span>
+        </div>
+      </header>
 
-    <div class="sp__feeds" data-sp-feeds aria-label="Vendor feeds">
-      <div class="sp__feed" data-sp-feed="mls" role="listitem">
-        <span class="sp__feed-name">MLS</span>
-        <span class="sp__feed-detail" data-sp-feed-detail="mls">Idle</span>
-      </div>
-      <div class="sp__feed" data-sp-feed="tax" role="listitem">
-        <span class="sp__feed-name">Tax</span>
-        <span class="sp__feed-detail" data-sp-feed-detail="tax">Idle</span>
-      </div>
-      <div class="sp__feed" data-sp-feed="title" role="listitem">
-        <span class="sp__feed-name">Title</span>
-        <span class="sp__feed-detail" data-sp-feed-detail="title">Idle</span>
-      </div>
-      <div class="sp__feed" data-sp-feed="avm" role="listitem">
-        <span class="sp__feed-name">AVM</span>
-        <span class="sp__feed-detail" data-sp-feed-detail="avm">Idle</span>
-      </div>
-      <div class="sp__feed" data-sp-feed="insp" role="listitem">
-        <span class="sp__feed-name">Inspection</span>
-        <span class="sp__feed-detail" data-sp-feed-detail="insp">Idle</span>
-      </div>
-      <div class="sp__feed" data-sp-feed="comp" role="listitem">
-        <span class="sp__feed-name">Comps</span>
-        <span class="sp__feed-detail" data-sp-feed-detail="comp">Idle</span>
-      </div>
-    </div>
+      <p class="sp__status" data-sp-step>Waiting for file</p>
 
-    <div class="sp__record" data-sp-record>
-      <p class="sp__record-title">Property record</p>
-      <p class="sp__record-body" data-sp-record-body>Feeds unresolved. No consolidated file yet.</p>
-    </div>
+      <div class="sp__workspace">
+        <section class="sp__details" aria-label="Home fact verification">
+          <div class="sp__meta">
+            <button type="button" class="sp__back" tabindex="-1" aria-hidden="true">&lt; Back</button>
+            <div class="sp__scores" data-sp-scores>
+              <span class="sp__score sp__score--deal" data-sp-score="deal">Deal Score: -</span>
+              <span class="sp__score sp__score--partner" data-sp-score="partner">Partner Score: -</span>
+              <span class="sp__score sp__score--entity" data-sp-score="entity">Entity Score: -</span>
+            </div>
+          </div>
 
-    <ul class="sp__flags" data-sp-flags hidden>
-      <li class="sp__flag" data-sp-flag="roof">Roof age 14 yr</li>
-      <li class="sp__flag" data-sp-flag="title">Title exception</li>
-      <li class="sp__flag" data-sp-flag="avm">Valuation variance 6%</li>
-    </ul>
+          <h3 class="sp__addr" data-sp-addr>Opening file…</h3>
+          <p class="sp__facts" data-sp-facts></p>
 
-    <div class="sp__valuation-lock" data-sp-valuation-lock hidden>
-      <span class="sp__valuation-lock-label">Valuation</span>
-      <strong class="sp__valuation-lock-num" data-sp-valuation-lock-num>Pending</strong>
-    </div>
+          <div class="sp__summary">
+            <div class="sp__desc" data-sp-desc>
+              <p class="sp__desc-title">Property Description</p>
+              <p class="sp__desc-body" data-sp-desc-body>
+                Quiet single-family lot with solid bones for a light reno. Kitchen and baths need
+                updates; roof and HVAC recent. Close to schools and retail.
+                <span class="sp__more">…more</span>
+              </p>
+            </div>
 
-    <div class="sp__review" data-sp-review hidden>
-      <span class="sp__review-label" data-sp-review-label>Analyst review</span>
-      <button type="button" class="sp__accept" data-sp-accept disabled>Accept</button>
-    </div>
+            <div class="sp__val" data-sp-val-card>
+              <p class="sp__val-label">Stoa Valuation</p>
+              <p class="sp__val-price">
+                <strong data-sp-val>$-</strong>
+                <span class="sp__val-psf" data-sp-psf></span>
+              </p>
+              <div class="sp__range" data-sp-range aria-hidden="true">
+                <div class="sp__range-track">
+                  <span class="sp__range-fill"></span>
+                  <span class="sp__range-marker" data-sp-marker></span>
+                </div>
+                <div class="sp__range-labels">
+                  <span data-sp-low>Low Estimate</span>
+                  <span data-sp-high>High Estimate</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-    <div class="sp__metrics" data-sp-metrics hidden>
-      <span class="sp__chip">$1B underwritten</span>
-      <span class="sp__chip">cycle time 85% faster</span>
-      <span class="sp__chip">22 to 6 integrations</span>
-    </div>
+          <div class="sp__table-wrap" data-sp-table>
+            <div class="sp__table-head">
+              <h4 class="sp__table-title">Property Details</h4>
+              <span class="sp__feed-pill" data-sp-feed-pill>Feeds idle</span>
+            </div>
+            <div class="sp__table-scroll">
+              <table class="sp__table">
+                <thead>
+                  <tr>
+                    <th>Details</th>
+                    <th>Post Reno</th>
+                    <th data-sp-col="public">Public Record</th>
+                    <th data-sp-col="mls">MLS</th>
+                    <th data-sp-col="third">3rd Party</th>
+                    <th data-sp-col="final">Final Data</th>
+                    <th>Contingency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr data-sp-row="beds" class="sp__row--flag">
+                    <td>Bedrooms</td>
+                    <td data-sp-cell="beds-reno">-</td>
+                    <td data-sp-cell="beds-public">-</td>
+                    <td data-sp-cell="beds-mls">-</td>
+                    <td data-sp-cell="beds-third">-</td>
+                    <td>
+                      <button type="button" class="sp__final" data-sp-nudge="beds" disabled>-</button>
+                    </td>
+                    <td>
+                      <input type="checkbox" class="sp__check" data-sp-check="beds" disabled tabindex="-1" />
+                    </td>
+                  </tr>
+                  <tr data-sp-row="baths">
+                    <td>Bathrooms</td>
+                    <td data-sp-cell="baths-reno">-</td>
+                    <td data-sp-cell="baths-public">-</td>
+                    <td data-sp-cell="baths-mls">-</td>
+                    <td data-sp-cell="baths-third">-</td>
+                    <td>
+                      <button type="button" class="sp__final" data-sp-nudge="baths" disabled>-</button>
+                    </td>
+                    <td>
+                      <input type="checkbox" class="sp__check" data-sp-check="baths" disabled tabindex="-1" />
+                    </td>
+                  </tr>
+                  <tr data-sp-row="stories">
+                    <td>Story Count</td>
+                    <td data-sp-cell="stories-reno">-</td>
+                    <td data-sp-cell="stories-public">-</td>
+                    <td data-sp-cell="stories-mls">-</td>
+                    <td data-sp-cell="stories-third">-</td>
+                    <td>
+                      <button type="button" class="sp__final" data-sp-nudge="stories" disabled>-</button>
+                    </td>
+                    <td>
+                      <input type="checkbox" class="sp__check" data-sp-check="stories" disabled tabindex="-1" />
+                    </td>
+                  </tr>
+                  <tr data-sp-row="gla">
+                    <td>GLA</td>
+                    <td data-sp-cell="gla-reno">-</td>
+                    <td data-sp-cell="gla-public">-</td>
+                    <td data-sp-cell="gla-mls">-</td>
+                    <td data-sp-cell="gla-third">-</td>
+                    <td>
+                      <button type="button" class="sp__final" data-sp-nudge="gla" disabled>-</button>
+                    </td>
+                    <td>
+                      <input type="checkbox" class="sp__check" data-sp-check="gla" disabled tabindex="-1" />
+                    </td>
+                  </tr>
+                  <tr data-sp-row="basement">
+                    <td>Basement</td>
+                    <td data-sp-cell="basement-reno">-</td>
+                    <td data-sp-cell="basement-public">-</td>
+                    <td data-sp-cell="basement-mls">-</td>
+                    <td data-sp-cell="basement-third">-</td>
+                    <td>
+                      <button type="button" class="sp__final" data-sp-nudge="basement" disabled>-</button>
+                    </td>
+                    <td>
+                      <input type="checkbox" class="sp__check" data-sp-check="basement" disabled tabindex="-1" />
+                    </td>
+                  </tr>
+                  <tr data-sp-row="lot" class="sp__row--flag">
+                    <td>Lot Size</td>
+                    <td data-sp-cell="lot-reno">-</td>
+                    <td data-sp-cell="lot-public">-</td>
+                    <td data-sp-cell="lot-mls">-</td>
+                    <td data-sp-cell="lot-third">-</td>
+                    <td>
+                      <button type="button" class="sp__final" data-sp-nudge="lot" disabled>-</button>
+                    </td>
+                    <td>
+                      <input type="checkbox" class="sp__check" data-sp-check="lot" disabled tabindex="-1" />
+                    </td>
+                  </tr>
+                  <tr data-sp-row="year">
+                    <td>Year Built</td>
+                    <td data-sp-cell="year-reno">-</td>
+                    <td data-sp-cell="year-public">-</td>
+                    <td data-sp-cell="year-mls">-</td>
+                    <td data-sp-cell="year-third">-</td>
+                    <td>
+                      <button type="button" class="sp__final" data-sp-nudge="year" disabled>-</button>
+                    </td>
+                    <td>
+                      <input type="checkbox" class="sp__check" data-sp-check="year" disabled tabindex="-1" />
+                    </td>
+                  </tr>
+                  <tr data-sp-row="pool">
+                    <td>Pool</td>
+                    <td data-sp-cell="pool-reno">-</td>
+                    <td data-sp-cell="pool-public">-</td>
+                    <td data-sp-cell="pool-mls">-</td>
+                    <td data-sp-cell="pool-third">-</td>
+                    <td>
+                      <button type="button" class="sp__final" data-sp-nudge="pool" disabled>-</button>
+                    </td>
+                    <td>
+                      <input type="checkbox" class="sp__check" data-sp-check="pool" disabled tabindex="-1" />
+                    </td>
+                  </tr>
+                  <tr data-sp-row="septic">
+                    <td>Septic System</td>
+                    <td data-sp-cell="septic-reno">-</td>
+                    <td data-sp-cell="septic-public">-</td>
+                    <td data-sp-cell="septic-mls">-</td>
+                    <td data-sp-cell="septic-third">-</td>
+                    <td>
+                      <button type="button" class="sp__final" data-sp-nudge="septic" disabled>-</button>
+                    </td>
+                    <td>
+                      <input type="checkbox" class="sp__check" data-sp-check="septic" disabled tabindex="-1" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-    <div class="sp__try" data-sp-try hidden>
-      <table class="sp__table">
-        <thead>
-          <tr><th>Field</th><th>Source</th><th>Final data</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Sq ft</td>
-            <td>1,840</td>
-            <td>1,840</td>
-          </tr>
-          <tr>
-            <td>Roof age</td>
-            <td>12 yr</td>
-            <td>
-              <button type="button" class="sp__cell sp__cell--pulse" data-sp-nudge="roof">14 yr</button>
-            </td>
-          </tr>
-          <tr>
-            <td>Contingency</td>
-            <td>$8,200</td>
-            <td>
-              <button type="button" class="sp__cell" data-sp-nudge="contingency">$9,400</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="sp__try-bar">
-        <p class="sp__valuation" data-sp-try-val>
-          Valuation <strong data-sp-val>$392,547</strong>
-        </p>
-        <button type="button" class="sp__recalc" data-sp-recalc>Recalc</button>
-        <button type="button" class="sp__replay" data-sp-replay>Replay</button>
+          <ul class="sp__flags" data-sp-flags hidden>
+            <li class="sp__flag" data-sp-flag="beds">Bedrooms mismatch across sources</li>
+            <li class="sp__flag" data-sp-flag="lot">Lot size variance flagged</li>
+            <li class="sp__flag" data-sp-flag="avm">Valuation band within 6%</li>
+          </ul>
+
+          <div class="sp__actions" data-sp-actions>
+            <button type="button" class="sp__accept" data-sp-accept disabled>Accept</button>
+            <button type="button" class="sp__recalc" data-sp-recalc hidden disabled>Recalc</button>
+            <button type="button" class="sp__replay" data-sp-replay hidden>Replay</button>
+            <p class="sp__hint" data-sp-hint hidden>Nudge a Final Data cell, then Recalc.</p>
+          </div>
+        </section>
+
+        <section class="sp__map" data-sp-map aria-label="Value heatmap">
+          <div class="sp__map-chrome">
+            <div class="sp__map-modes">
+              <span class="sp__map-mode is-active">Satellite</span>
+              <span class="sp__map-mode">Map</span>
+              <span class="sp__map-mode">Street</span>
+              <span class="sp__map-mode">Lot</span>
+            </div>
+            <div class="sp__map-zoom" aria-hidden="true">
+              <span>+</span>
+              <span>-</span>
+            </div>
+          </div>
+          <div class="sp__map-canvas">
+            <svg class="sp__map-svg" viewBox="0 0 320 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs>
+                <linearGradient id="sp-sea" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#1a4a6e"></stop>
+                  <stop offset="100%" stop-color="#2d6a8a"></stop>
+                </linearGradient>
+                <linearGradient id="sp-land" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#3d5a3a"></stop>
+                  <stop offset="55%" stop-color="#5a7248"></stop>
+                  <stop offset="100%" stop-color="#6b7a52"></stop>
+                </linearGradient>
+                <filter id="sp-soft">
+                  <feGaussianBlur stdDeviation="1.2"></feGaussianBlur>
+                </filter>
+              </defs>
+              <rect width="320" height="280" fill="url(#sp-land)"></rect>
+              <path
+                d="M0 40 C40 30 70 55 110 48 C150 40 170 20 210 28 C250 36 280 18 320 30 L320 0 L0 0 Z"
+                fill="url(#sp-sea)"
+                opacity="0.85"
+              ></path>
+              <path
+                d="M0 280 L0 210 C30 200 50 220 90 215 C140 208 160 180 210 190 C260 200 290 175 320 185 L320 280 Z"
+                fill="url(#sp-sea)"
+                opacity="0.55"
+              ></path>
+              <g class="sp__hexes" data-sp-hexes opacity="0">
+                <polygon points="40,90 55,82 70,90 70,106 55,114 40,106" fill="#86efac" opacity="0.55"></polygon>
+                <polygon points="70,106 85,98 100,106 100,122 85,130 70,122" fill="#4ade80" opacity="0.6"></polygon>
+                <polygon points="100,90 115,82 130,90 130,106 115,114 100,106" fill="#22d3ee" opacity="0.55"></polygon>
+                <polygon points="130,106 145,98 160,106 160,122 145,130 130,122" fill="#38bdf8" opacity="0.65"></polygon>
+                <polygon points="160,90 175,82 190,90 190,106 175,114 160,106" fill="#818cf8" opacity="0.7"></polygon>
+                <polygon points="190,106 205,98 220,106 220,122 205,130 190,122" fill="#a78bfa" opacity="0.75"></polygon>
+                <polygon points="100,122 115,114 130,122 130,138 115,146 100,138" fill="#34d399" opacity="0.55"></polygon>
+                <polygon points="130,138 145,130 160,138 160,154 145,162 130,154" fill="#60a5fa" opacity="0.7"></polygon>
+                <polygon points="160,122 175,114 190,122 190,138 175,146 160,138" fill="#8b5cf6" opacity="0.8"></polygon>
+                <polygon points="190,138 205,130 220,138 220,154 205,162 190,154" fill="#7c3aed" opacity="0.85"></polygon>
+                <polygon points="220,106 235,98 250,106 250,122 235,130 220,122" fill="#6366f1" opacity="0.75"></polygon>
+                <polygon points="220,138 235,130 250,138 250,154 235,162 220,154" fill="#4f46e5" opacity="0.8"></polygon>
+                <polygon points="145,162 160,154 175,162 175,178 160,186 145,178" fill="#c4b5fd" opacity="0.7"></polygon>
+                <polygon points="175,178 190,170 205,178 205,194 190,202 175,194" fill="#a855f7" opacity="0.75"></polygon>
+                <polygon points="70,138 85,130 100,138 100,154 85,162 70,154" fill="#6ee7b7" opacity="0.5"></polygon>
+                <polygon points="55,162 70,154 85,162 85,178 70,186 55,178" fill="#86efac" opacity="0.45"></polygon>
+                <circle cx="188" cy="128" r="5" fill="#fff" stroke="#7c3aed" stroke-width="2"></circle>
+              </g>
+              <text x="16" y="268" fill="rgba(255,255,255,0.7)" font-size="9" font-family="system-ui,sans-serif">
+                Value heatmap
+              </text>
+            </svg>
+          </div>
+          <div class="sp__map-foot">
+            <div class="sp__layers">
+              <span class="sp__layer is-active">Value</span>
+              <span class="sp__layer">Property</span>
+              <span class="sp__layer">Region</span>
+              <span class="sp__layer">Hazards</span>
+              <span class="sp__layer">Market</span>
+            </div>
+            <span class="sp__view-images">View Images</span>
+          </div>
+        </section>
       </div>
-      <p class="sp__hint" data-sp-hint>Nudge roof age or contingency, then Recalc.</p>
     </div>
   </div>
 </DemoFrame>
 
 <script>
-  type SpFeedBeat = {
-    id: string;
-    progressDetail: string;
-    resolvedDetail: string;
-    progressMs: number;
-    resolveMs: number;
+  type SpFeed = "public" | "mls" | "third" | "final";
+
+  type SpRowKey =
+    | "beds"
+    | "baths"
+    | "stories"
+    | "gla"
+    | "basement"
+    | "lot"
+    | "year"
+    | "pool"
+    | "septic";
+
+  type SpRowData = {
+    reno: string;
+    public: string;
+    mls: string;
+    third: string;
+    final: string;
+    contingency: boolean;
   };
 
-  const FEEDS: SpFeedBeat[] = [
-    {
-      id: "mls",
-      progressDetail: "Pulling MLS…",
-      resolvedDetail: "Done",
-      progressMs: 900,
-      resolveMs: 380,
-    },
-    {
-      id: "tax",
-      progressDetail: "Pulling tax…",
-      resolvedDetail: "Done",
-      progressMs: 900,
-      resolveMs: 380,
-    },
-    {
-      id: "title",
-      progressDetail: "Checking title…",
-      resolvedDetail: "Done",
-      progressMs: 900,
-      resolveMs: 380,
-    },
-    {
-      id: "avm",
-      progressDetail: "Running AVM…",
-      resolvedDetail: "Done",
-      progressMs: 1000,
-      resolveMs: 400,
-    },
-    {
-      id: "insp",
-      progressDetail: "Loading inspection…",
-      resolvedDetail: "Done",
-      progressMs: 900,
-      resolveMs: 380,
-    },
-    {
-      id: "comp",
-      progressDetail: "Matching comps…",
-      resolvedDetail: "Done",
-      progressMs: 900,
-      resolveMs: 380,
-    },
+  const ADDRESS = "14436 Williamsburg Manor Drive, Longcityname, ST, 84657";
+  const FACTS = "Single Family Detached · 2 Beds · 1 Bath · 1,500 SqFt. · Built 1965 · Stoa ID #4418";
+
+  const ROW_KEYS: SpRowKey[] = [
+    "beds",
+    "baths",
+    "stories",
+    "gla",
+    "basement",
+    "lot",
+    "year",
+    "pool",
+    "septic",
   ];
 
-  const ROOF_VALUES = ["14 yr", "16 yr", "11 yr"] as const;
-  const CONTINGENCY_VALUES = ["$9,400", "$11,200", "$7,800"] as const;
-  const VALUATIONS = ["$392,547", "$384,200", "$401,100"] as const;
+  const TABLE: Record<SpRowKey, SpRowData> = {
+    beds: { reno: "2", public: "2", mls: "1", third: "-", final: "2", contingency: true },
+    baths: { reno: "3", public: "3", mls: "0", third: "-", final: "2", contingency: false },
+    stories: { reno: "-", public: "-", mls: "2", third: "2", final: "2", contingency: false },
+    gla: { reno: "2000", public: "2000", mls: "1814", third: "-", final: "1500", contingency: false },
+    basement: { reno: "-", public: "-", mls: "No", third: "No", final: "No", contingency: false },
+    lot: {
+      reno: "5643 sqft.",
+      public: "5000 sqft.",
+      mls: "5643 sqft.",
+      third: "5000 sqft.",
+      final: "5000 sqft.",
+      contingency: true,
+    },
+    year: { reno: "-", public: "1952", mls: "1953", third: "-", final: "1965", contingency: false },
+    pool: { reno: "No", public: "Yes", mls: "No", third: "-", final: "No", contingency: false },
+    septic: { reno: "-", public: "-", mls: "No", third: "-", final: "No", contingency: false },
+  };
 
-  const RECORD_FACTS =
-    "1847 Longcityname Blvd, Unit 3B · 1,840 sq ft · SFR · Phoenix MSA";
+  const NUDGE_CYCLES: Partial<Record<SpRowKey, string[]>> = {
+    beds: ["2", "3", "2"],
+    gla: ["1500", "1620", "1480"],
+    lot: ["5000 sqft.", "5643 sqft.", "5200 sqft."],
+    year: ["1965", "1953", "1960"],
+  };
+
+  const VALUATIONS = [
+    { price: "$392,547", psf: "$230/sqft.", low: "Low Estimate $379,465 ($222/sqft.)", high: "High Estimate $405,630 ($227/sqft.)" },
+    { price: "$384,200", psf: "$225/sqft.", low: "Low Estimate $371,100 ($217/sqft.)", high: "High Estimate $397,400 ($233/sqft.)" },
+    { price: "$401,100", psf: "$235/sqft.", low: "Low Estimate $388,050 ($227/sqft.)", high: "High Estimate $414,200 ($243/sqft.)" },
+  ] as const;
+
+  const FEEDS: { id: SpFeed; label: string; progressMs: number; resolveMs: number }[] = [
+    { id: "public", label: "Public Record", progressMs: 720, resolveMs: 320 },
+    { id: "mls", label: "MLS", progressMs: 780, resolveMs: 340 },
+    { id: "third", label: "3rd Party", progressMs: 700, resolveMs: 300 },
+    { id: "final", label: "Final Data", progressMs: 820, resolveMs: 360 },
+  ];
 
   function sleep(ms: number) {
     return new Promise((r) => setTimeout(r, ms));
@@ -189,161 +409,237 @@ import DemoFrame from "./DemoFrame.astro";
     frame.setAttribute("data-sp-wired", "true");
 
     const stepEl = root.querySelector<HTMLElement>("[data-sp-step]");
-    const evalEl = root.querySelector<HTMLElement>("[data-sp-eval]");
-    const fileEl = root.querySelector<HTMLElement>("[data-sp-file]");
-    const fileId = root.querySelector<HTMLElement>("[data-sp-file-id]");
-    const fileAddr = root.querySelector<HTMLElement>("[data-sp-file-addr]");
-    const fileStatus = root.querySelector<HTMLElement>("[data-sp-file-status]");
-    const recordEl = root.querySelector<HTMLElement>("[data-sp-record]");
-    const recordBody = root.querySelector<HTMLElement>("[data-sp-record-body]");
+    const addrEl = root.querySelector<HTMLElement>("[data-sp-addr]");
+    const factsEl = root.querySelector<HTMLElement>("[data-sp-facts]");
+    const descBody = root.querySelector<HTMLElement>("[data-sp-desc-body]");
+    const desc = root.querySelector<HTMLElement>("[data-sp-desc]");
+    const valCard = root.querySelector<HTMLElement>("[data-sp-val-card]");
+    const valEl = root.querySelector<HTMLElement>("[data-sp-val]");
+    const psfEl = root.querySelector<HTMLElement>("[data-sp-psf]");
+    const lowEl = root.querySelector<HTMLElement>("[data-sp-low]");
+    const highEl = root.querySelector<HTMLElement>("[data-sp-high]");
+    const rangeEl = root.querySelector<HTMLElement>("[data-sp-range]");
+    const feedPill = root.querySelector<HTMLElement>("[data-sp-feed-pill]");
     const flags = root.querySelector<HTMLElement>("[data-sp-flags]");
-    const valuationLock = root.querySelector<HTMLElement>("[data-sp-valuation-lock]");
-    const valuationLockNum = root.querySelector<HTMLElement>("[data-sp-valuation-lock-num]");
-    const review = root.querySelector<HTMLElement>("[data-sp-review]");
-    const reviewLabel = root.querySelector<HTMLElement>("[data-sp-review-label]");
+    const hexes = root.querySelector<HTMLElement>("[data-sp-hexes]");
+    const mapEl = root.querySelector<HTMLElement>("[data-sp-map]");
     const acceptBtn = root.querySelector<HTMLButtonElement>("[data-sp-accept]");
-    const metrics = root.querySelector<HTMLElement>("[data-sp-metrics]");
-    const tryPanel = root.querySelector<HTMLElement>("[data-sp-try]");
-    const tryVal = root.querySelector<HTMLElement>("[data-sp-try-val]");
     const recalcBtn = root.querySelector<HTMLButtonElement>("[data-sp-recalc]");
     const replayBtn = root.querySelector<HTMLButtonElement>("[data-sp-replay]");
-    const valEl = root.querySelector<HTMLElement>("[data-sp-val]");
-    const roofBtn = root.querySelector<HTMLButtonElement>("[data-sp-nudge='roof']");
-    const contingencyBtn = root.querySelector<HTMLButtonElement>("[data-sp-nudge='contingency']");
+    const hint = root.querySelector<HTMLElement>("[data-sp-hint]");
+    const nudgeBtns = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-sp-nudge]"));
 
     let running = false;
     let token = 0;
-    let roofIdx = 0;
-    let contingencyIdx = 0;
-    let valuationIdx = 0;
+    let tryMode = false;
     let dirty = false;
     let recalcing = false;
+    let valuationIdx = 0;
+    const nudgeIdx: Partial<Record<SpRowKey, number>> = {};
 
     const setStep = (text: string) => {
       if (stepEl) stepEl.textContent = text;
     };
 
-    const clearFeedState = (id: string) => {
-      const el = root.querySelector(`[data-sp-feed='${id}']`);
-      el?.classList.remove("is-working", "is-done", "is-live");
+    const setValuation = (idx: number, working = false) => {
+      const v = VALUATIONS[idx] ?? VALUATIONS[0]!;
+      valuationIdx = idx;
+      if (valEl) valEl.textContent = working ? "…" : v.price;
+      if (psfEl) psfEl.textContent = working ? "" : v.psf;
+      if (lowEl) lowEl.textContent = working ? "Low Estimate" : v.low;
+      if (highEl) highEl.textContent = working ? "High Estimate" : v.high;
+      valCard?.classList.toggle("is-working", working);
+      valCard?.classList.toggle("is-live", !working && idx >= 0);
+      rangeEl?.classList.toggle("is-live", !working);
     };
 
-    const setFeedWorking = (id: string, detail: string) => {
-      clearFeedState(id);
-      root.querySelector(`[data-sp-feed='${id}']`)?.classList.add("is-working");
-      const d = root.querySelector(`[data-sp-feed-detail='${id}']`);
-      if (d) d.textContent = detail;
-    };
-
-    const setFeedDone = (id: string, detail: string) => {
-      clearFeedState(id);
-      root.querySelector(`[data-sp-feed='${id}']`)?.classList.add("is-done");
-      const d = root.querySelector(`[data-sp-feed-detail='${id}']`);
-      if (d) d.textContent = detail;
-    };
-
-    const clearFeeds = () => {
-      FEEDS.forEach((f) => {
-        clearFeedState(f.id);
-        const d = root.querySelector(`[data-sp-feed-detail='${f.id}']`);
-        if (d) d.textContent = "Idle";
+    const clearCells = () => {
+      ROW_KEYS.forEach((key) => {
+        (["reno", "public", "mls", "third"] as const).forEach((col) => {
+          const el = root.querySelector(`[data-sp-cell='${key}-${col}']`);
+          if (el) {
+            el.textContent = "-";
+            el.classList.remove("is-working", "is-live");
+          }
+        });
+        const btn = root.querySelector<HTMLButtonElement>(`[data-sp-nudge='${key}']`);
+        if (btn) {
+          btn.textContent = "-";
+          btn.disabled = true;
+          btn.classList.remove("is-working", "is-live", "is-pulse", "is-nudge");
+        }
+        const check = root.querySelector<HTMLInputElement>(`[data-sp-check='${key}']`);
+        if (check) {
+          check.checked = false;
+          check.disabled = true;
+          check.classList.remove("is-live");
+        }
+        root.querySelector(`[data-sp-row='${key}']`)?.classList.remove("is-working", "is-live");
+      });
+      (["public", "mls", "third", "final"] as SpFeed[]).forEach((id) => {
+        root.querySelector(`[data-sp-col='${id}']`)?.classList.remove("is-working", "is-live");
       });
     };
 
-    const clearFlags = () => {
-      flags?.querySelectorAll(".sp__flag").forEach((el) => {
-        el.classList.remove("is-working", "is-live");
+    const fillReno = () => {
+      ROW_KEYS.forEach((key) => {
+        const el = root.querySelector(`[data-sp-cell='${key}-reno']`);
+        if (el) {
+          el.textContent = TABLE[key].reno;
+          el.classList.add("is-live");
+        }
       });
-      if (flags) flags.hidden = true;
+    };
+
+    const setFeedWorking = (id: SpFeed) => {
+      root.querySelector(`[data-sp-col='${id}']`)?.classList.add("is-working");
+      root.querySelector(`[data-sp-col='${id}']`)?.classList.remove("is-live");
+      ROW_KEYS.forEach((key) => {
+        if (id === "final") {
+          const btn = root.querySelector(`[data-sp-nudge='${key}']`);
+          btn?.classList.add("is-working");
+          btn?.classList.remove("is-live");
+          if (btn) btn.textContent = "…";
+        } else {
+          const el = root.querySelector(`[data-sp-cell='${key}-${id}']`);
+          el?.classList.add("is-working");
+          el?.classList.remove("is-live");
+          if (el) el.textContent = "…";
+        }
+      });
+    };
+
+    const setFeedLive = (id: SpFeed) => {
+      root.querySelector(`[data-sp-col='${id}']`)?.classList.remove("is-working");
+      root.querySelector(`[data-sp-col='${id}']`)?.classList.add("is-live");
+      ROW_KEYS.forEach((key) => {
+        const row = TABLE[key];
+        if (id === "final") {
+          const btn = root.querySelector<HTMLButtonElement>(`[data-sp-nudge='${key}']`);
+          if (btn) {
+            btn.textContent = row.final;
+            btn.classList.remove("is-working");
+            btn.classList.add("is-live");
+          }
+        } else {
+          const el = root.querySelector(`[data-sp-cell='${key}-${id}']`);
+          if (el) {
+            el.textContent = row[id];
+            el.classList.remove("is-working");
+            el.classList.add("is-live");
+          }
+        }
+      });
     };
 
     const resetBoard = () => {
-      setStep("Queue idle");
-      if (evalEl) evalEl.textContent = "Eval -";
-      fileEl?.classList.remove("is-live", "is-accepted", "is-working");
-      fileEl?.classList.add("is-empty");
-      if (fileId) fileId.textContent = "Waiting for file";
-      if (fileAddr) fileAddr.textContent = "";
-      if (fileStatus) fileStatus.textContent = "";
-      clearFeeds();
-      recordEl?.classList.remove("is-working", "is-live");
-      if (recordBody) {
-        recordBody.textContent = "Feeds unresolved. No consolidated file yet.";
-      }
-      clearFlags();
-      if (valuationLock) valuationLock.hidden = true;
-      valuationLock?.classList.remove("is-working", "is-live");
-      if (valuationLockNum) valuationLockNum.textContent = "Pending";
-      if (review) review.hidden = true;
-      review?.classList.remove("is-live", "is-working");
-      if (reviewLabel) reviewLabel.textContent = "Analyst review";
+      setStep("Waiting for file");
+      if (addrEl) addrEl.textContent = "Opening file…";
+      if (factsEl) factsEl.textContent = "";
+      desc?.classList.remove("is-live");
+      if (descBody) descBody.style.opacity = "0.35";
+      clearCells();
+      setValuation(0, true);
+      if (valEl) valEl.textContent = "$-";
+      valCard?.classList.remove("is-working", "is-live");
+      rangeEl?.classList.remove("is-live");
+      if (feedPill) feedPill.textContent = "Feeds idle";
+      if (flags) flags.hidden = true;
+      flags?.querySelectorAll(".sp__flag").forEach((el) => {
+        el.classList.remove("is-working", "is-live");
+      });
+      hexes?.setAttribute("opacity", "0");
+      mapEl?.classList.remove("is-live");
+      root.querySelectorAll("[data-sp-score]").forEach((el) => {
+        el.classList.remove("is-live");
+        const kind = el.getAttribute("data-sp-score");
+        if (kind === "deal") el.textContent = "Deal Score: -";
+        if (kind === "partner") el.textContent = "Partner Score: -";
+        if (kind === "entity") el.textContent = "Entity Score: -";
+      });
       if (acceptBtn) {
         acceptBtn.disabled = true;
         acceptBtn.classList.remove("is-done");
         acceptBtn.textContent = "Accept";
+        acceptBtn.hidden = false;
       }
-      if (metrics) metrics.hidden = true;
-      if (tryPanel) tryPanel.hidden = true;
-      tryVal?.classList.remove("is-working", "is-live");
-      roofBtn?.classList.remove("is-pulse");
+      if (recalcBtn) {
+        recalcBtn.hidden = true;
+        recalcBtn.disabled = true;
+      }
+      if (replayBtn) replayBtn.hidden = true;
+      if (hint) hint.hidden = true;
+      tryMode = false;
       dirty = false;
       recalcing = false;
-    };
-
-    const showTry = () => {
-      if (tryPanel) tryPanel.hidden = false;
-      if (metrics) metrics.hidden = false;
-      roofBtn?.classList.add("is-pulse");
-      if (roofBtn) roofBtn.textContent = ROOF_VALUES[0];
-      if (contingencyBtn) contingencyBtn.textContent = CONTINGENCY_VALUES[0];
-      if (valEl) valEl.textContent = VALUATIONS[0];
-      tryVal?.classList.remove("is-working");
-      tryVal?.classList.add("is-live");
-      roofIdx = 0;
-      contingencyIdx = 0;
       valuationIdx = 0;
-      dirty = false;
-      recalcing = false;
+      Object.keys(nudgeIdx).forEach((k) => delete nudgeIdx[k as SpRowKey]);
     };
 
-    const finish = () => {
-      running = false;
-      setStep("Decision recorded");
-      if (metrics) metrics.hidden = false;
-      showTry();
-      frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
+    const paintScores = () => {
+      const deal = root.querySelector("[data-sp-score='deal']");
+      const partner = root.querySelector("[data-sp-score='partner']");
+      const entity = root.querySelector("[data-sp-score='entity']");
+      if (deal) deal.textContent = "Deal Score: 92";
+      if (partner) partner.textContent = "Partner Score: 77";
+      if (entity) entity.textContent = "Entity Score: 90";
+      root.querySelectorAll("[data-sp-score]").forEach((el) => el.classList.add("is-live"));
+    };
+
+    const paintContingencies = () => {
+      ROW_KEYS.forEach((key) => {
+        const check = root.querySelector<HTMLInputElement>(`[data-sp-check='${key}']`);
+        if (!check) return;
+        check.checked = TABLE[key].contingency;
+        check.classList.toggle("is-live", TABLE[key].contingency);
+      });
+    };
+
+    const enableTry = () => {
+      tryMode = true;
+      nudgeBtns.forEach((btn) => {
+        const key = btn.getAttribute("data-sp-nudge") as SpRowKey | null;
+        if (key && NUDGE_CYCLES[key]) {
+          btn.disabled = false;
+          btn.classList.add("is-pulse");
+        }
+      });
+      if (recalcBtn) {
+        recalcBtn.hidden = false;
+        recalcBtn.disabled = true;
+      }
+      if (replayBtn) replayBtn.hidden = false;
+      if (hint) hint.hidden = false;
     };
 
     const paintFinal = () => {
-      setStep("Decision recorded");
-      if (evalEl) evalEl.textContent = "#4418";
-      fileEl?.classList.remove("is-empty", "is-working");
-      fileEl?.classList.add("is-live", "is-accepted");
-      if (fileId) fileId.textContent = "#4418";
-      if (fileAddr) fileAddr.textContent = "1847 Longcityname Blvd, Unit 3B";
-      if (fileStatus) fileStatus.textContent = "Accepted";
-      FEEDS.forEach((f) => setFeedDone(f.id, f.resolvedDetail));
-      recordEl?.classList.remove("is-working");
-      recordEl?.classList.add("is-live");
-      if (recordBody) recordBody.textContent = RECORD_FACTS;
+      if (addrEl) addrEl.textContent = ADDRESS;
+      if (factsEl) factsEl.textContent = FACTS;
+      desc?.classList.add("is-live");
+      if (descBody) descBody.style.opacity = "1";
+      paintScores();
+      fillReno();
+      FEEDS.forEach((f) => setFeedLive(f.id));
+      paintContingencies();
+      setValuation(0, false);
+      if (feedPill) feedPill.textContent = "Feeds live";
       if (flags) flags.hidden = false;
-      flags?.querySelectorAll(".sp__flag").forEach((el) => {
-        el.classList.remove("is-working");
-        el.classList.add("is-live");
-      });
-      if (valuationLock) valuationLock.hidden = false;
-      valuationLock?.classList.remove("is-working");
-      valuationLock?.classList.add("is-live");
-      if (valuationLockNum) valuationLockNum.textContent = VALUATIONS[0]!;
-      if (review) review.hidden = false;
-      review?.classList.remove("is-working");
-      review?.classList.add("is-live");
-      if (reviewLabel) reviewLabel.textContent = "Analyst accepted";
+      flags?.querySelectorAll(".sp__flag").forEach((el) => el.classList.add("is-live"));
+      hexes?.setAttribute("opacity", "1");
+      mapEl?.classList.add("is-live");
       if (acceptBtn) {
         acceptBtn.disabled = false;
         acceptBtn.classList.add("is-done");
         acceptBtn.textContent = "Accepted";
       }
+      enableTry();
+    };
+
+    const finish = () => {
+      running = false;
+      setStep("Decision recorded · try the Final Data cells");
+      enableTry();
+      frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
     };
 
     const snapFinal = () => {
@@ -355,111 +651,94 @@ import DemoFrame from "./DemoFrame.astro";
     const run = async () => {
       const my = ++token;
       running = true;
+      tryMode = false;
       resetBoard();
 
-      // 1. File lands in queue
-      setStep("File entering queue…");
-      fileEl?.classList.remove("is-empty");
-      fileEl?.classList.add("is-working");
-      if (evalEl) evalEl.textContent = "#4418";
-      if (fileId) fileId.textContent = "#4418";
-      if (fileAddr) fileAddr.textContent = "1847 Longcityname Blvd, Unit 3B";
-      if (fileStatus) fileStatus.textContent = "Inbound";
-      await sleep(1600);
-      if (my !== token) return;
-
-      fileEl?.classList.remove("is-working");
-      fileEl?.classList.add("is-live");
-      if (fileStatus) fileStatus.textContent = "New";
-      setStep("File in queue");
+      // 1. File opens
+      setStep("File opening…");
+      if (addrEl) addrEl.textContent = "Loading #4418…";
       await sleep(900);
       if (my !== token) return;
 
-      // 2. Six vendor feeds: working → done, one by one
+      if (addrEl) addrEl.textContent = ADDRESS;
+      if (factsEl) factsEl.textContent = FACTS;
+      paintScores();
+      fillReno();
+      desc?.classList.add("is-live");
+      if (descBody) descBody.style.opacity = "1";
+      mapEl?.classList.add("is-live");
+      setStep("File open · Home Fact Verification");
+      await sleep(700);
+      if (my !== token) return;
+
+      // 2. Feeds resolve into table cells (working → live)
       setStep("Resolving vendor feeds");
-      if (fileStatus) fileStatus.textContent = "Pulling data";
-      for (const beat of FEEDS) {
+      for (const feed of FEEDS) {
         if (my !== token) return;
-        setStep(beat.progressDetail);
-        setFeedWorking(beat.id, beat.progressDetail);
-        await sleep(beat.progressMs);
+        if (feedPill) feedPill.textContent = `Pulling ${feed.label}…`;
+        setStep(`Pulling ${feed.label}…`);
+        setFeedWorking(feed.id);
+        await sleep(feed.progressMs);
         if (my !== token) return;
-        setFeedDone(beat.id, beat.resolvedDetail);
-        await sleep(beat.resolveMs);
+        setFeedLive(feed.id);
+        if (feedPill) feedPill.textContent = `${feed.label} live`;
+        await sleep(feed.resolveMs);
         if (my !== token) return;
       }
+      if (feedPill) feedPill.textContent = "Feeds live";
       setStep("Vendor feeds resolved");
-      await sleep(500);
+      await sleep(450);
       if (my !== token) return;
 
-      // 3. Consolidate property record with visible facts
-      setStep("Consolidating record…");
-      if (fileStatus) fileStatus.textContent = "Consolidating";
-      recordEl?.classList.add("is-working");
-      if (recordBody) recordBody.textContent = "Merging feed facts…";
+      // 3. Valuation calculates
+      setStep("Calculating Stoa valuation…");
+      setValuation(0, true);
       await sleep(1400);
       if (my !== token) return;
-
-      recordEl?.classList.remove("is-working");
-      recordEl?.classList.add("is-live");
-      if (recordBody) recordBody.textContent = RECORD_FACTS;
-      setStep("Property record locked");
-      await sleep(1100);
+      setValuation(0, false);
+      hexes?.setAttribute("opacity", "1");
+      setStep("Stoa valuation locked at $392,547");
+      await sleep(800);
       if (my !== token) return;
 
-      // 4. Automation flags appear one by one
-      setStep("Raising automation flags…");
-      if (fileStatus) fileStatus.textContent = "Flagged";
+      // 4. Flags / contingencies
+      setStep("Raising contingencies…");
       if (flags) flags.hidden = false;
-      const flagIds = ["roof", "title", "avm"] as const;
+      const flagIds = ["beds", "lot", "avm"] as const;
       for (const id of flagIds) {
         if (my !== token) return;
         const el = root.querySelector(`[data-sp-flag='${id}']`);
         el?.classList.add("is-working");
-        await sleep(420);
+        await sleep(380);
         if (my !== token) return;
         el?.classList.remove("is-working");
         el?.classList.add("is-live");
-        await sleep(380);
+        if (id === "beds" || id === "lot") {
+          const check = root.querySelector<HTMLInputElement>(`[data-sp-check='${id}']`);
+          if (check) {
+            check.checked = true;
+            check.classList.add("is-live");
+          }
+        }
+        await sleep(320);
         if (my !== token) return;
       }
-      setStep("Automation flags ready");
-      await sleep(600);
+      setStep("Contingencies ready for review");
+      await sleep(500);
       if (my !== token) return;
 
-      // 5. Valuation calculates, then locks
-      setStep("Calculating valuation…");
-      if (fileStatus) fileStatus.textContent = "Pricing";
-      if (valuationLock) valuationLock.hidden = false;
-      valuationLock?.classList.add("is-working");
-      if (valuationLockNum) valuationLockNum.textContent = "…";
-      await sleep(1600);
-      if (my !== token) return;
-
-      valuationLock?.classList.remove("is-working");
-      valuationLock?.classList.add("is-live");
-      if (valuationLockNum) valuationLockNum.textContent = VALUATIONS[0]!;
-      setStep("Valuation locked");
-      await sleep(900);
-      if (my !== token) return;
-
-      // 6. Accept / try panel
+      // 5. Accept
       setStep("Analyst review");
-      if (review) review.hidden = false;
-      review?.classList.add("is-live");
       if (acceptBtn) acceptBtn.disabled = false;
-      await sleep(1200);
+      await sleep(1100);
       if (my !== token) return;
 
       if (acceptBtn) {
         acceptBtn.classList.add("is-done");
         acceptBtn.textContent = "Accepted";
       }
-      if (reviewLabel) reviewLabel.textContent = "Analyst accepted";
-      fileEl?.classList.add("is-accepted");
-      if (fileStatus) fileStatus.textContent = "Accepted";
       setStep("Decision recorded");
-      await sleep(1000);
+      await sleep(700);
       if (my !== token) return;
 
       finish();
@@ -476,53 +755,52 @@ import DemoFrame from "./DemoFrame.astro";
 
     frame.addEventListener("demo-replay", () => void run());
 
-    root.querySelectorAll<HTMLButtonElement>("[data-sp-nudge]").forEach((btn) => {
+    nudgeBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
-        if (running || recalcing) return;
-        const key = btn.getAttribute("data-sp-nudge");
-        if (key === "roof") {
-          roofIdx = (roofIdx + 1) % ROOF_VALUES.length;
-          btn.textContent = ROOF_VALUES[roofIdx] ?? ROOF_VALUES[0]!;
-        } else if (key === "contingency") {
-          contingencyIdx = (contingencyIdx + 1) % CONTINGENCY_VALUES.length;
-          btn.textContent = CONTINGENCY_VALUES[contingencyIdx] ?? CONTINGENCY_VALUES[0]!;
-        }
+        if (!tryMode || running || recalcing) return;
+        const key = btn.getAttribute("data-sp-nudge") as SpRowKey | null;
+        if (!key) return;
+        const cycle = NUDGE_CYCLES[key];
+        if (!cycle) return;
+        const next = ((nudgeIdx[key] ?? 0) + 1) % cycle.length;
+        nudgeIdx[key] = next;
+        btn.textContent = cycle[next] ?? cycle[0]!;
         dirty = true;
         btn.classList.add("is-nudge");
+        btn.classList.remove("is-pulse");
         setTimeout(() => btn.classList.remove("is-nudge"), 280);
-        roofBtn?.classList.remove("is-pulse");
+        nudgeBtns.forEach((b) => b.classList.remove("is-pulse"));
+        if (recalcBtn) recalcBtn.disabled = false;
+        setStep("Final Data nudged · Recalc when ready");
       });
     });
 
     recalcBtn?.addEventListener("click", async () => {
-      if (running || !dirty || recalcing) return;
+      if (!tryMode || running || !dirty || recalcing) return;
       recalcing = true;
       dirty = false;
+      if (recalcBtn) recalcBtn.disabled = true;
       setStep("Recalculating valuation…");
-      tryVal?.classList.remove("is-live");
-      tryVal?.classList.add("is-working");
-      if (valEl) valEl.textContent = "…";
-      valuationLock?.classList.remove("is-live");
-      valuationLock?.classList.add("is-working");
-      if (valuationLockNum) valuationLockNum.textContent = "…";
-      recalcBtn.classList.add("is-nudge");
+      setValuation(valuationIdx, true);
+      recalcBtn?.classList.add("is-nudge");
       await sleep(1100);
-      valuationIdx = (valuationIdx + 1) % VALUATIONS.length;
-      const next = VALUATIONS[valuationIdx] ?? VALUATIONS[0]!;
-      if (valEl) valEl.textContent = next;
-      if (valuationLockNum) valuationLockNum.textContent = next;
-      tryVal?.classList.remove("is-working");
-      tryVal?.classList.add("is-live");
-      valuationLock?.classList.remove("is-working");
-      valuationLock?.classList.add("is-live");
-      setStep("Valuation updated");
-      setTimeout(() => recalcBtn.classList.remove("is-nudge"), 280);
+      const nextIdx = (valuationIdx + 1) % VALUATIONS.length;
+      setValuation(nextIdx, false);
+      setStep(`Valuation updated to ${VALUATIONS[nextIdx]!.price}`);
+      setTimeout(() => recalcBtn?.classList.remove("is-nudge"), 280);
       recalcing = false;
     });
 
     replayBtn?.addEventListener("click", () => {
       if (running || recalcing) return;
       frame.dispatchEvent(new CustomEvent("demo-request-replay", { bubbles: true }));
+    });
+
+    acceptBtn?.addEventListener("click", () => {
+      if (!tryMode || running || acceptBtn.classList.contains("is-done")) return;
+      acceptBtn.classList.add("is-done");
+      acceptBtn.textContent = "Accepted";
+      setStep("Decision recorded");
     });
   }
 
@@ -534,216 +812,498 @@ import DemoFrame from "./DemoFrame.astro";
 
 <style>
   .sp {
-    --sp-copper: var(--accent, #b87333);
-    --sp-ink: var(--fg, #f2ebe1);
-    --sp-muted: var(--fg-muted, #8a837a);
-    --sp-secondary: var(--fg-secondary, #b8afa3);
-    --sp-line: var(--hairline-color, #1f1d1b);
-    --sp-panel: var(--ghost-color, #2e2b28);
+    --sp-purple: #6d28d9;
+    --sp-purple-soft: #8b5cf6;
+    --sp-purple-wash: #f3e8ff;
+    --sp-ink: #1e1b2e;
+    --sp-muted: #6b7280;
+    --sp-line: #e5e7eb;
+    --sp-panel: #ffffff;
+    --sp-bg: #f7f5fb;
+    --sp-rail: #1e293b;
+    --sp-deal: #16a34a;
+    --sp-partner: #ea580c;
+    --sp-blue: #2563eb;
+    --sp-flag: #ffedd5;
 
     height: 100%;
-    padding: var(--s-4);
     display: grid;
-    grid-template-rows: auto auto auto auto auto auto auto auto 1fr;
-    gap: var(--s-3);
+    grid-template-columns: 2.25rem 1fr;
+    background: var(--sp-bg);
     color: var(--sp-ink);
-    background:
-      radial-gradient(ellipse at 12% 0%, color-mix(in srgb, var(--sp-copper) 16%, transparent), transparent 48%),
-      linear-gradient(180deg, color-mix(in srgb, var(--sp-panel) 55%, transparent), transparent 42%),
-      var(--bg, #0b0a09);
+    font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+    font-size: 0.68rem;
+    line-height: 1.35;
+    overflow: hidden;
   }
 
-  .sp__head {
+  .sp__rail {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--s-3);
-    font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.55rem 0;
+    background: var(--sp-rail);
+  }
+
+  .sp__rail-mark {
+    width: 1.35rem;
+    height: 1.35rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.35rem;
+    background: var(--sp-purple);
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+
+  .sp__rail-dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 0.2rem;
+    background: color-mix(in srgb, #94a3b8 55%, transparent);
+  }
+
+  .sp__rail-dot.is-active {
+    background: var(--sp-purple-soft);
+  }
+
+  .sp__app {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    min-width: 0;
+    min-height: 0;
+    background: var(--sp-panel);
+  }
+
+  .sp__top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.4rem 0.65rem;
+    border-bottom: 1px solid var(--sp-line);
+    background: linear-gradient(180deg, #faf8ff, #fff);
   }
 
   .sp__brand {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-2) var(--s-3);
-    align-items: baseline;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .sp__logo {
+    width: 0.85rem;
+    height: 0.85rem;
+    background: var(--sp-purple);
+    transform: rotate(45deg);
+    border-radius: 0.12rem;
+  }
+
+  .sp__brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
   }
 
   .sp__product {
-    color: var(--sp-copper);
+    font-weight: 700;
+    font-size: 0.72rem;
+    color: var(--sp-purple);
   }
 
-  .sp__queue-label {
+  .sp__module {
+    font-size: 0.55rem;
     color: var(--sp-muted);
-  }
-
-  .sp__eval {
-    color: var(--sp-secondary);
-  }
-
-  .sp__queue {
-    min-height: 3.25rem;
-  }
-
-  .sp__file {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: var(--s-3);
-    align-items: baseline;
-    padding: var(--s-3);
-    border: var(--hairline) solid var(--sp-line);
-    background: color-mix(in srgb, var(--sp-panel) 70%, transparent);
-    transition:
-      border-color var(--dur-base, 240ms) var(--ease-out, ease-out),
-      opacity var(--dur-base, 240ms) var(--ease-out, ease-out),
-      box-shadow var(--dur-base, 240ms) var(--ease-out, ease-out);
-  }
-
-  .sp__file.is-empty {
-    opacity: 0.45;
-  }
-
-  .sp__file.is-working {
-    opacity: 1;
-    border-color: color-mix(in srgb, var(--sp-copper) 55%, var(--sp-line));
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 28%, transparent);
-    animation: sp-working 1.4s ease-in-out infinite;
-  }
-
-  .sp__file.is-live {
-    opacity: 1;
-    border-color: color-mix(in srgb, var(--sp-copper) 55%, var(--sp-line));
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 28%, transparent);
-    animation: none;
-  }
-
-  .sp__file.is-accepted {
-    border-color: var(--sp-copper);
-  }
-
-  .sp__file-id {
-    font-family: var(--font-label);
-    font-size: var(--t-mono-sm);
-    letter-spacing: var(--ls-mono);
     text-transform: uppercase;
-    color: var(--sp-copper);
+    letter-spacing: 0.04em;
   }
 
-  .sp__file-addr {
-    font-size: var(--t-body-sm);
+  .sp__tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.65rem;
+    min-width: 0;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .sp__tab {
+    white-space: nowrap;
+    color: var(--sp-muted);
+    padding-bottom: 0.15rem;
+    border-bottom: 2px solid transparent;
+    font-size: 0.62rem;
+  }
+
+  .sp__tab.is-active {
+    color: var(--sp-purple);
+    font-weight: 600;
+    border-bottom-color: var(--sp-purple);
+  }
+
+  .sp__user {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-inline-start: auto;
+  }
+
+  .sp__user-icon {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    border: 1.5px solid #c4b5fd;
+  }
+
+  .sp__avatar {
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--sp-purple-wash);
+    color: var(--sp-purple);
+    font-size: 0.55rem;
+    font-weight: 700;
+  }
+
+  .sp__status {
+    margin: 0;
+    padding: 0.28rem 0.65rem;
+    border-bottom: 1px solid var(--sp-line);
+    background: var(--sp-purple-wash);
+    color: var(--sp-purple);
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .sp__workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .sp__details {
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+    padding: 0.55rem 0.65rem 0.7rem;
+    display: grid;
+    gap: 0.45rem;
+    align-content: start;
+    border-right: 1px solid var(--sp-line);
+  }
+
+  .sp__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.55rem;
+  }
+
+  .sp__back {
+    border: 0;
+    background: none;
+    padding: 0;
+    color: var(--sp-muted);
+    font: inherit;
+    cursor: default;
+  }
+
+  .sp__scores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .sp__score {
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.55rem;
+    font-weight: 600;
+    color: #fff;
+    background: #9ca3af;
+    opacity: 0.45;
+    transition: opacity 200ms ease;
+  }
+
+  .sp__score.is-live {
+    opacity: 1;
+  }
+
+  .sp__score--deal.is-live {
+    background: var(--sp-deal);
+  }
+
+  .sp__score--partner.is-live {
+    background: var(--sp-partner);
+  }
+
+  .sp__score--entity.is-live {
+    background: var(--sp-deal);
+  }
+
+  .sp__addr {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
     color: var(--sp-ink);
   }
 
-  .sp__file-status {
-    font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
+  .sp__facts {
+    margin: 0;
     color: var(--sp-muted);
+    font-size: 0.58rem;
   }
 
-  .sp__feeds {
+  .sp__summary {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: var(--s-2);
+    grid-template-columns: 1.1fr 1fr;
+    gap: 0.55rem;
+    align-items: start;
   }
 
-  .sp__feed {
-    display: grid;
-    gap: var(--s-1);
-    padding: var(--s-2);
-    border: var(--hairline) solid var(--sp-line);
-    text-align: center;
-    font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
+  .sp__desc-title,
+  .sp__val-label,
+  .sp__table-title {
+    margin: 0 0 0.25rem;
+    font-size: 0.58rem;
+    font-weight: 700;
+    color: var(--sp-ink);
+  }
+
+  .sp__desc {
+    opacity: 0.5;
+    transition: opacity 240ms ease;
+  }
+
+  .sp__desc.is-live {
+    opacity: 1;
+  }
+
+  .sp__desc-body {
+    margin: 0;
     color: var(--sp-muted);
-    opacity: 0.4;
+    font-size: 0.58rem;
+  }
+
+  .sp__more {
+    color: var(--sp-purple);
+    font-weight: 600;
+  }
+
+  .sp__val {
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--sp-line);
+    border-radius: 0.45rem;
+    background: linear-gradient(180deg, #faf8ff, #fff);
     transition:
-      opacity var(--dur-quick, 160ms) ease,
-      border-color var(--dur-quick, 160ms) ease,
-      color var(--dur-quick, 160ms) ease,
-      box-shadow var(--dur-quick, 160ms) ease;
+      border-color 220ms ease,
+      box-shadow 220ms ease;
   }
 
-  .sp__feed-name {
-    color: inherit;
+  .sp__val.is-working {
+    border-color: color-mix(in srgb, var(--sp-purple) 45%, var(--sp-line));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-purple) 18%, transparent);
+    animation: sp-working 1.35s ease-in-out infinite;
   }
 
-  .sp__feed-detail {
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
-    text-transform: none;
-    color: inherit;
-    line-height: 1.3;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .sp__val.is-live {
+    border-color: color-mix(in srgb, var(--sp-purple) 40%, var(--sp-line));
+  }
+
+  .sp__val-price {
+    margin: 0 0 0.35rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem;
+  }
+
+  .sp__val-price strong {
+    font-size: 1.05rem;
+    color: var(--sp-blue);
+    font-weight: 700;
+  }
+
+  .sp__val.is-working .sp__val-price strong {
+    color: var(--sp-purple-soft);
+  }
+
+  .sp__val-psf {
+    color: var(--sp-muted);
+    font-size: 0.55rem;
+  }
+
+  .sp__range {
+    opacity: 0.35;
+    transition: opacity 240ms ease;
+  }
+
+  .sp__range.is-live {
+    opacity: 1;
+  }
+
+  .sp__range-track {
+    position: relative;
+    height: 0.35rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #93c5fd, var(--sp-purple-soft), #c4b5fd);
+  }
+
+  .sp__range-fill {
+    display: none;
+  }
+
+  .sp__range-marker {
+    position: absolute;
+    top: -0.2rem;
+    left: 48%;
+    width: 0.2rem;
+    height: 0.75rem;
+    border-radius: 2px;
+    background: var(--sp-blue);
+  }
+
+  .sp__range-labels {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.35rem;
+    margin-top: 0.25rem;
+    font-size: 0.48rem;
+    color: var(--sp-muted);
+  }
+
+  .sp__table-wrap {
+    min-width: 0;
+  }
+
+  .sp__table-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .sp__feed-pill {
+    font-size: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--sp-purple);
+    background: var(--sp-purple-wash);
+    padding: 0.12rem 0.4rem;
+    border-radius: 999px;
+  }
+
+  .sp__table-scroll {
+    overflow: auto;
+    max-height: 11.5rem;
+    border: 1px solid var(--sp-line);
+    border-radius: 0.4rem;
+  }
+
+  .sp__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.55rem;
     white-space: nowrap;
   }
 
-  .sp__feed.is-working {
-    opacity: 1;
-    color: var(--sp-copper);
-    border-color: var(--sp-copper);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 30%, transparent);
-    animation: sp-working 1.4s ease-in-out infinite;
-  }
-
-  .sp__feed.is-done {
-    opacity: 1;
+  .sp__table th,
+  .sp__table td {
+    padding: 0.28rem 0.35rem;
+    border-bottom: 1px solid var(--sp-line);
+    text-align: left;
     color: var(--sp-ink);
-    border-color: color-mix(in srgb, var(--sp-copper) 40%, var(--sp-line));
-    animation: none;
   }
 
-  .sp__feed.is-done .sp__feed-detail {
-    color: var(--sp-copper);
-  }
-
-  .sp__record {
-    padding: var(--s-3);
-    border-block-start: var(--hairline) solid var(--sp-line);
-    opacity: 0.5;
-    transition:
-      opacity var(--dur-base, 240ms) var(--ease-out, ease-out),
-      box-shadow var(--dur-base, 240ms) var(--ease-out, ease-out);
-  }
-
-  .sp__record.is-working {
-    opacity: 1;
-    animation: sp-working 1.4s ease-in-out infinite;
-  }
-
-  .sp__record.is-live {
-    opacity: 1;
-    animation: none;
-  }
-
-  .sp__record-title {
-    margin: 0 0 var(--s-2);
-    font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
+  .sp__table th {
+    position: sticky;
+    top: 0;
+    background: #f9fafb;
     color: var(--sp-muted);
+    font-weight: 600;
+    z-index: 1;
   }
 
-  .sp__record-body {
-    margin: 0;
-    font-size: var(--t-body-sm);
-    color: var(--sp-secondary);
-    line-height: 1.4;
+  .sp__table th.is-working {
+    color: var(--sp-purple);
+    animation: sp-working 1.35s ease-in-out infinite;
   }
 
-  .sp__record.is-working .sp__record-body {
-    color: var(--sp-copper);
+  .sp__table th.is-live {
+    color: var(--sp-purple);
   }
 
-  .sp__record.is-live .sp__record-body {
+  .sp__table td.is-working {
+    color: var(--sp-purple-soft);
+    animation: sp-working 1.35s ease-in-out infinite;
+  }
+
+  .sp__table td.is-live {
     color: var(--sp-ink);
+  }
+
+  .sp__row--flag td:first-child {
+    background: var(--sp-flag);
+    font-weight: 600;
+  }
+
+  .sp__final {
+    min-width: 3.6rem;
+    padding: 0.15rem 0.35rem;
+    border: 1px solid var(--sp-line);
+    border-radius: 0.3rem;
+    background: #fff;
+    color: var(--sp-ink);
+    font: inherit;
+    text-align: left;
+    cursor: default;
+  }
+
+  .sp__final:not(:disabled) {
+    cursor: pointer;
+    border-color: color-mix(in srgb, var(--sp-purple) 45%, var(--sp-line));
+    color: var(--sp-purple);
+  }
+
+  .sp__final.is-working {
+    color: var(--sp-purple-soft);
+    border-color: var(--sp-purple-soft);
+    animation: sp-working 1.35s ease-in-out infinite;
+  }
+
+  .sp__final.is-live {
+    color: var(--sp-ink);
+  }
+
+  .sp__final.is-pulse {
+    animation: sp-pulse 1.55s ease-out infinite;
+  }
+
+  .sp__final.is-nudge {
+    background: var(--sp-purple-wash);
+    color: var(--sp-purple);
+  }
+
+  .sp__check {
+    width: 0.85rem;
+    height: 0.85rem;
+    accent-color: var(--sp-purple);
+    pointer-events: none;
+  }
+
+  .sp__check.is-live {
+    outline: 1px solid color-mix(in srgb, var(--sp-purple) 35%, transparent);
   }
 
   .sp__flags {
@@ -752,291 +1312,260 @@ import DemoFrame from "./DemoFrame.astro";
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--s-2);
+    gap: 0.3rem;
   }
 
   .sp__flag {
-    padding: var(--s-2) var(--s-3);
-    border: var(--hairline) solid var(--sp-line);
-    font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
+    padding: 0.18rem 0.45rem;
+    border-radius: 0.3rem;
+    border: 1px solid var(--sp-line);
+    background: #fff;
     color: var(--sp-muted);
+    font-size: 0.52rem;
     opacity: 0.35;
     transition:
-      opacity var(--dur-quick, 160ms) ease,
-      border-color var(--dur-quick, 160ms) ease,
-      color var(--dur-quick, 160ms) ease;
+      opacity 180ms ease,
+      border-color 180ms ease,
+      color 180ms ease;
   }
 
   .sp__flag.is-working {
     opacity: 1;
-    color: var(--sp-copper);
-    border-color: color-mix(in srgb, var(--sp-copper) 50%, var(--sp-line));
-    animation: sp-working 1.4s ease-in-out infinite;
+    color: var(--sp-purple);
+    border-color: color-mix(in srgb, var(--sp-purple) 45%, var(--sp-line));
+    animation: sp-working 1.35s ease-in-out infinite;
   }
 
   .sp__flag.is-live {
     opacity: 1;
-    color: var(--sp-copper);
-    border-color: color-mix(in srgb, var(--sp-copper) 50%, var(--sp-line));
-    animation: none;
+    color: var(--sp-partner);
+    border-color: color-mix(in srgb, var(--sp-partner) 40%, var(--sp-line));
+    background: #fff7ed;
   }
 
-  .sp__valuation-lock {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--s-3);
-    padding: var(--s-3);
-    border: var(--hairline) solid var(--sp-line);
-    transition:
-      border-color var(--dur-base, 240ms) ease,
-      box-shadow var(--dur-base, 240ms) ease;
-  }
-
-  .sp__valuation-lock.is-working {
-    border-color: color-mix(in srgb, var(--sp-copper) 55%, var(--sp-line));
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 28%, transparent);
-    animation: sp-working 1.4s ease-in-out infinite;
-  }
-
-  .sp__valuation-lock.is-live {
-    border-color: var(--sp-copper);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 40%, transparent);
-    animation: none;
-  }
-
-  .sp__valuation-lock-label {
-    font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
-    color: var(--sp-muted);
-  }
-
-  .sp__valuation-lock-num {
-    font-size: var(--t-proof, var(--t-body));
-    color: var(--sp-ink);
-  }
-
-  .sp__valuation-lock.is-working .sp__valuation-lock-num {
-    color: var(--sp-copper);
-  }
-
-  .sp__review {
+  .sp__actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--s-3);
-    padding-block-start: var(--s-2);
-    border-block-start: var(--hairline) solid var(--sp-line);
-    opacity: 0.4;
-    transition: opacity var(--dur-base, 240ms) ease;
+    gap: 0.4rem;
   }
 
-  .sp__review.is-live {
-    opacity: 1;
-  }
-
-  .sp__review-label {
-    font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
-    color: var(--sp-secondary);
-  }
-
-  .sp__accept {
-    padding: var(--s-2) var(--s-4);
-    border: var(--hairline) solid var(--sp-line);
-    background: transparent;
+  .sp__accept,
+  .sp__recalc,
+  .sp__replay {
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.35rem;
+    border: 1px solid var(--sp-line);
+    background: #fff;
     color: var(--sp-ink);
-    font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.58rem;
+    cursor: pointer;
+  }
+
+  .sp__accept:disabled {
+    opacity: 0.45;
     cursor: default;
   }
 
   .sp__accept.is-done {
-    border-color: var(--sp-copper);
-    color: var(--sp-copper);
-  }
-
-  .sp__metrics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-2);
-  }
-
-  .sp__chip {
-    padding: var(--s-2) var(--s-3);
-    border: var(--hairline) solid color-mix(in srgb, var(--sp-copper) 45%, var(--sp-line));
-    font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
-    color: var(--sp-copper);
-  }
-
-  .sp__try {
-    display: grid;
-    gap: var(--s-3);
-    align-content: start;
-    border-block-start: var(--hairline) solid var(--sp-line);
-    padding-block-start: var(--s-3);
-  }
-
-  .sp__table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: var(--t-mono-sm);
-  }
-
-  .sp__table th,
-  .sp__table td {
-    padding: var(--s-2);
-    text-align: left;
-    border-block-end: var(--hairline) solid var(--sp-line);
-  }
-
-  .sp__table th {
-    font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
-    color: var(--sp-muted);
-  }
-
-  .sp__cell {
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--sp-copper);
-    font: inherit;
-    cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-  }
-
-  .sp__cell--pulse.is-pulse {
-    animation: sp-control-pulse 1.6s var(--ease-out, ease-out) infinite;
-  }
-
-  .sp__cell.is-nudge,
-  .sp__recalc.is-nudge {
-    color: var(--sp-ink);
-  }
-
-  .sp__try-bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--s-3);
-  }
-
-  .sp__valuation {
-    margin: 0;
-    margin-inline-end: auto;
-    font-size: var(--t-body-sm);
-    color: var(--sp-secondary);
-  }
-
-  .sp__valuation strong {
-    color: var(--sp-ink);
-    font-size: var(--t-proof, var(--t-body));
-  }
-
-  .sp__valuation.is-working strong {
-    color: var(--sp-copper);
-    animation: sp-working 1.4s ease-in-out infinite;
-  }
-
-  .sp__valuation.is-live strong {
-    color: var(--sp-copper);
-  }
-
-  .sp__recalc,
-  .sp__replay {
-    padding: var(--s-2) var(--s-4);
-    border: var(--hairline) solid var(--sp-line);
-    background: transparent;
-    color: var(--sp-ink);
-    font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
-    cursor: pointer;
+    background: var(--sp-purple);
+    border-color: var(--sp-purple);
+    color: #fff;
   }
 
   .sp__recalc {
-    border-color: color-mix(in srgb, var(--sp-copper) 50%, var(--sp-line));
-    color: var(--sp-copper);
+    border-color: color-mix(in srgb, var(--sp-purple) 45%, var(--sp-line));
+    color: var(--sp-purple);
+  }
+
+  .sp__recalc:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .sp__recalc.is-nudge {
+    background: var(--sp-purple-wash);
   }
 
   .sp__hint {
     margin: 0;
-    font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-mono);
     color: var(--sp-muted);
+    font-size: 0.52rem;
+  }
+
+  .sp__map {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    background: #0f172a;
+    opacity: 0.55;
+    transition: opacity 280ms ease;
+  }
+
+  .sp__map.is-live {
+    opacity: 1;
+  }
+
+  .sp__map-chrome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem;
+  }
+
+  .sp__map-modes {
+    display: flex;
+    gap: 0.15rem;
+    background: rgba(15, 23, 42, 0.55);
+    border-radius: 0.35rem;
+    padding: 0.12rem;
+  }
+
+  .sp__map-mode {
+    padding: 0.18rem 0.4rem;
+    border-radius: 0.25rem;
+    color: #e2e8f0;
+    font-size: 0.5rem;
+    font-weight: 600;
+  }
+
+  .sp__map-mode.is-active {
+    background: var(--sp-purple);
+    color: #fff;
+  }
+
+  .sp__map-zoom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .sp__map-zoom span {
+    width: 1.1rem;
+    height: 1.1rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.25rem;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--sp-ink);
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .sp__map-canvas {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .sp__map-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .sp__hexes {
+    transition: opacity 500ms ease;
+  }
+
+  .sp__map-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    padding: 0.35rem 0.45rem;
+    background: rgba(255, 255, 255, 0.96);
+  }
+
+  .sp__layers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .sp__layer {
+    font-size: 0.5rem;
+    color: var(--sp-muted);
+    font-weight: 600;
+  }
+
+  .sp__layer.is-active {
+    color: var(--sp-purple);
+  }
+
+  .sp__view-images {
+    font-size: 0.52rem;
+    font-weight: 700;
+    color: var(--sp-purple);
   }
 
   @keyframes sp-working {
     0%,
     100% {
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 20%, transparent);
       opacity: 1;
     }
     50% {
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 55%, transparent);
-      opacity: 0.88;
+      opacity: 0.72;
     }
   }
 
-  @keyframes sp-control-pulse {
+  @keyframes sp-pulse {
     0%,
     100% {
-      box-shadow: 0 0 0 0 color-mix(in srgb, var(--sp-copper) 0%, transparent);
-      color: var(--sp-copper);
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--sp-purple) 0%, transparent);
     }
     50% {
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--sp-copper) 28%, transparent);
-      color: var(--sp-ink);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--sp-purple) 28%, transparent);
     }
   }
 
   @media (max-width: 40rem) {
-    .sp__feeds {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .sp {
+      grid-template-columns: 1fr;
     }
 
-    .sp__file {
+    .sp__rail {
+      display: none;
+    }
+
+    .sp__workspace {
       grid-template-columns: 1fr;
-      gap: var(--s-1);
+      grid-template-rows: auto minmax(9rem, 38%);
+    }
+
+    .sp__details {
+      border-right: 0;
+      border-bottom: 1px solid var(--sp-line);
+      order: 1;
+    }
+
+    .sp__map {
+      order: 2;
+    }
+
+    .sp__summary {
+      grid-template-columns: 1fr;
+    }
+
+    .sp__tabs .sp__tab:nth-child(n + 4) {
+      display: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .sp__file,
-    .sp__feed,
-    .sp__record,
-    .sp__flag,
-    .sp__valuation-lock,
-    .sp__review,
-    .sp__file.is-working,
-    .sp__feed.is-working,
-    .sp__record.is-working,
+    .sp__val.is-working,
+    .sp__table th.is-working,
+    .sp__table td.is-working,
+    .sp__final.is-working,
+    .sp__final.is-pulse,
     .sp__flag.is-working,
-    .sp__valuation-lock.is-working,
-    .sp__valuation.is-working strong,
-    .sp__cell--pulse.is-pulse {
-      transition: none;
+    .sp__hexes {
       animation: none;
+      transition: none;
     }
   }
 </style>
