@@ -85,11 +85,7 @@ const STATS = [
                 {entry.data.role} · {entry.data.dates}
               </Eyebrow>
               <h3 class="work-item__title">
-                {entry.id === "zoom-drain" ? (
-                  <span>{entry.data.title}</span>
-                ) : (
-                  <a href={`/work/${entry.id}/`}>{entry.data.title}</a>
-                )}
+                <a href={`/work/${entry.id}/`}>{entry.data.title}</a>
               </h3>
               <p class="work-item__lede">{entry.data.lede}</p>
               <p class="page-meta">{entry.data.outcome}</p>
