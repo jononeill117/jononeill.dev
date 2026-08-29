@@ -11,72 +11,170 @@ import DemoFrame from "./DemoFrame.astro";
   <div class="zl" data-zl>
     <header class="zl__head">
       <div class="zl__title-row">
-        <h4 class="zl__title">Pricing queue</h4>
+        <h4 class="zl__title" data-zl-title>Pricing queue</h4>
         <span class="zl__chip" data-zl-chip hidden>~10 / day</span>
       </div>
       <span class="zl__kicker" data-zl-step>Ready</span>
     </header>
 
-    <div class="zl__table" role="table" aria-label="Pricing queue">
-      <div class="zl__cols" role="row">
-        <span role="columnheader">Address</span>
-        <span role="columnheader">Model</span>
-        <span role="columnheader">Human</span>
-        <span role="columnheader">Delta</span>
-        <span role="columnheader">Status</span>
+    <div class="zl__stage is-active" data-zl-view="queue">
+      <div class="zl__table" role="table" aria-label="Pricing queue">
+        <div class="zl__cols" role="row">
+          <span role="columnheader">Address</span>
+          <span role="columnheader">Model</span>
+          <span role="columnheader">Human</span>
+          <span role="columnheader">Delta</span>
+          <span role="columnheader">Status</span>
+        </div>
+        <ul class="zl__rows" role="rowgroup" data-zl-rows>
+          <li role="row">
+            <button type="button" class="zl__row" data-zl-row="0">
+              <span class="zl__addr">142 Harbor Ln</span>
+              <span class="zl__model" data-zl-model>-</span>
+              <span class="zl__human" data-zl-human>-</span>
+              <span class="zl__delta" data-zl-delta>-</span>
+              <span class="zl__status" data-zl-status>Pending</span>
+            </button>
+          </li>
+          <li role="row">
+            <button type="button" class="zl__row" data-zl-row="1">
+              <span class="zl__addr">55 Ridge Ct</span>
+              <span class="zl__model" data-zl-model>-</span>
+              <span class="zl__human" data-zl-human>-</span>
+              <span class="zl__delta" data-zl-delta>-</span>
+              <span class="zl__status" data-zl-status>Pending</span>
+            </button>
+          </li>
+          <li role="row">
+            <button type="button" class="zl__row" data-zl-row="2">
+              <span class="zl__addr">901 Willow St</span>
+              <span class="zl__model" data-zl-model>-</span>
+              <span class="zl__human" data-zl-human>-</span>
+              <span class="zl__delta" data-zl-delta>-</span>
+              <span class="zl__status" data-zl-status>Pending</span>
+            </button>
+          </li>
+          <li role="row">
+            <button type="button" class="zl__row" data-zl-row="3">
+              <span class="zl__addr">18 Oak Grove</span>
+              <span class="zl__model" data-zl-model>-</span>
+              <span class="zl__human" data-zl-human>-</span>
+              <span class="zl__delta" data-zl-delta>-</span>
+              <span class="zl__status" data-zl-status>Pending</span>
+            </button>
+          </li>
+          <li role="row">
+            <button type="button" class="zl__row" data-zl-row="4">
+              <span class="zl__addr">770 Pine Ave</span>
+              <span class="zl__model" data-zl-model>-</span>
+              <span class="zl__human" data-zl-human>-</span>
+              <span class="zl__delta" data-zl-delta>-</span>
+              <span class="zl__status" data-zl-status>Pending</span>
+            </button>
+          </li>
+        </ul>
       </div>
-      <ul class="zl__rows" role="rowgroup" data-zl-rows>
-        <li role="row">
-          <button type="button" class="zl__row" data-zl-row="0">
-            <span class="zl__addr">142 Harbor Ln</span>
-            <span class="zl__model" data-zl-model>-</span>
-            <span class="zl__human" data-zl-human>-</span>
-            <span class="zl__delta" data-zl-delta>-</span>
-            <span class="zl__status" data-zl-status>Pending</span>
-          </button>
-        </li>
-        <li role="row">
-          <button type="button" class="zl__row" data-zl-row="1">
-            <span class="zl__addr">55 Ridge Ct</span>
-            <span class="zl__model" data-zl-model>-</span>
-            <span class="zl__human" data-zl-human>-</span>
-            <span class="zl__delta" data-zl-delta>-</span>
-            <span class="zl__status" data-zl-status>Pending</span>
-          </button>
-        </li>
-        <li role="row">
-          <button type="button" class="zl__row" data-zl-row="2">
-            <span class="zl__addr">901 Willow St</span>
-            <span class="zl__model" data-zl-model>-</span>
-            <span class="zl__human" data-zl-human>-</span>
-            <span class="zl__delta" data-zl-delta>-</span>
-            <span class="zl__status" data-zl-status>Pending</span>
-          </button>
-        </li>
-        <li role="row">
-          <button type="button" class="zl__row" data-zl-row="3">
-            <span class="zl__addr">18 Oak Grove</span>
-            <span class="zl__model" data-zl-model>-</span>
-            <span class="zl__human" data-zl-human>-</span>
-            <span class="zl__delta" data-zl-delta>-</span>
-            <span class="zl__status" data-zl-status>Pending</span>
-          </button>
-        </li>
-        <li role="row">
-          <button type="button" class="zl__row" data-zl-row="4">
-            <span class="zl__addr">770 Pine Ave</span>
-            <span class="zl__model" data-zl-model>-</span>
-            <span class="zl__human" data-zl-human>-</span>
-            <span class="zl__delta" data-zl-delta>-</span>
-            <span class="zl__status" data-zl-status>Pending</span>
-          </button>
-        </li>
-      </ul>
+    </div>
+
+    <div class="zl__stage" data-zl-view="chart" hidden>
+      <article class="zl__chart-card" aria-label="Home valuation chart">
+        <div class="zl__chart-head">
+          <div>
+            <p class="zl__chart-kicker">Home valuation</p>
+            <h5 class="zl__chart-addr" data-zl-chart-addr>142 Harbor Ln</h5>
+          </div>
+          <div class="zl__chart-now">
+            <span class="zl__chart-now-label">Current</span>
+            <strong data-zl-chart-now>$318,400</strong>
+          </div>
+        </div>
+        <svg
+          class="zl__chart-svg"
+          viewBox="0 0 360 150"
+          preserveAspectRatio="none"
+          role="img"
+          aria-label="Valuation trend over twelve months"
+        >
+          <defs>
+            <linearGradient id="zl-chart-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1d4ed8" stop-opacity="0.28"></stop>
+              <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0"></stop>
+            </linearGradient>
+          </defs>
+          <g class="zl__chart-grid" aria-hidden="true">
+            <line x1="28" y1="18" x2="350" y2="18"></line>
+            <line x1="28" y1="52" x2="350" y2="52"></line>
+            <line x1="28" y1="86" x2="350" y2="86"></line>
+            <line x1="28" y1="120" x2="350" y2="120"></line>
+          </g>
+          <text x="2" y="22" class="zl__chart-axis">$340k</text>
+          <text x="2" y="90" class="zl__chart-axis">$300k</text>
+          <text x="2" y="124" class="zl__chart-axis">$280k</text>
+          <path
+            class="zl__chart-area"
+            data-zl-chart-area
+            d="M28,108 L57,102 L86,96 L115,88 L144,84 L173,78 L202,70 L231,62 L260,54 L289,48 L318,40 L350,32 L350,120 L28,120 Z"
+            fill="url(#zl-chart-fill)"
+          ></path>
+          <path
+            class="zl__chart-line"
+            data-zl-chart-line
+            d="M28,108 L57,102 L86,96 L115,88 L144,84 L173,78 L202,70 L231,62 L260,54 L289,48 L318,40 L350,32"
+            fill="none"
+            stroke="#1d4ed8"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></path>
+          <circle class="zl__chart-dot" data-zl-chart-dot cx="350" cy="32" r="4.5" fill="#1d4ed8"></circle>
+          <g class="zl__chart-months" aria-hidden="true">
+            <text x="28" y="140">Mar</text>
+            <text x="115" y="140">Jun</text>
+            <text x="202" y="140">Sep</text>
+            <text x="289" y="140">Dec</text>
+            <text x="338" y="140">Now</text>
+          </g>
+        </svg>
+        <div class="zl__chart-legend">
+          <span><i class="zl__swatch zl__swatch--model"></i> Model AVM</span>
+          <span data-zl-chart-delta>+6.8% / 12 mo</span>
+        </div>
+      </article>
+    </div>
+
+    <div class="zl__stage" data-zl-view="offer" hidden>
+      <article class="zl__offer" aria-label="Seller offer">
+        <div class="zl__offer-banner">
+          <span class="zl__offer-tag">Offer to seller</span>
+          <span class="zl__offer-expire" data-zl-offer-expire>Expires in 7 days</span>
+        </div>
+        <div class="zl__offer-body">
+          <div>
+            <p class="zl__offer-label">Property</p>
+            <h5 class="zl__offer-addr" data-zl-offer-addr>142 Harbor Ln</h5>
+            <p class="zl__offer-sub">Cash close · no repairs · as-is</p>
+          </div>
+          <div class="zl__offer-amt-wrap">
+            <p class="zl__offer-label">Our offer</p>
+            <p class="zl__offer-amt" data-zl-offer-amt>$312,500</p>
+            <p class="zl__offer-vs" data-zl-offer-vs>≈ 98.1% of model</p>
+          </div>
+        </div>
+        <ul class="zl__offer-rows">
+          <li><span>Model estimate</span><strong data-zl-offer-model>$318,400</strong></li>
+          <li><span>Human estimate</span><strong data-zl-offer-human>$322,100</strong></li>
+          <li><span>Net to seller (est.)</span><strong data-zl-offer-net>$304,800</strong></li>
+        </ul>
+        <div class="zl__offer-foot">
+          <button type="button" class="zl__offer-send" data-zl-offer-send disabled>Send offer</button>
+          <span class="zl__offer-status" data-zl-offer-status>Draft</span>
+        </div>
+      </article>
     </div>
 
     <p class="zl__detail" data-zl-detail>Select a row after the walkthrough.</p>
 
-    <details class="zl__sql">
+    <details class="zl__sql" data-zl-sql>
       <summary class="zl__sql-summary">Queue query</summary>
       <pre class="zl__sql-code">SELECT address, model_est, human_est, delta_pct
 FROM pricing_queue
@@ -101,7 +199,14 @@ LIMIT 5;</pre>
     human: string;
     delta: string;
     deltaNote: string;
+    offer: string;
+    offerVs: string;
+    net: string;
+    chartNow: string;
+    chartDelta: string;
   };
+
+  type ZlView = "queue" | "chart" | "offer";
 
   const ROWS: ZlRow[] = [
     {
@@ -110,6 +215,11 @@ LIMIT 5;</pre>
       human: "$322,100",
       delta: "+1.2%",
       deltaNote: "Model vs human: $3,700 (1.2%)",
+      offer: "$312,500",
+      offerVs: "≈ 98.1% of model",
+      net: "$304,800",
+      chartNow: "$318,400",
+      chartDelta: "+6.8% / 12 mo",
     },
     {
       address: "55 Ridge Ct",
@@ -117,6 +227,11 @@ LIMIT 5;</pre>
       human: "$441,800",
       delta: "-0.8%",
       deltaNote: "Model vs human: $3,400 (0.8%)",
+      offer: "$436,000",
+      offerVs: "≈ 97.9% of model",
+      net: "$425,200",
+      chartNow: "$445,200",
+      chartDelta: "+4.2% / 12 mo",
     },
     {
       address: "901 Willow St",
@@ -124,6 +239,11 @@ LIMIT 5;</pre>
       human: "$271,500",
       delta: "+1.3%",
       deltaNote: "Model vs human: $3,600 (1.3%)",
+      offer: "$262,500",
+      offerVs: "≈ 98.0% of model",
+      net: "$255,900",
+      chartNow: "$267,900",
+      chartDelta: "+5.1% / 12 mo",
     },
     {
       address: "18 Oak Grove",
@@ -131,6 +251,11 @@ LIMIT 5;</pre>
       human: "$518,400",
       delta: "+1.2%",
       deltaNote: "Model vs human: $6,400 (1.2%)",
+      offer: "$501,000",
+      offerVs: "≈ 97.9% of model",
+      net: "$488,600",
+      chartNow: "$512,000",
+      chartDelta: "+7.4% / 12 mo",
     },
     {
       address: "770 Pine Ave",
@@ -138,6 +263,11 @@ LIMIT 5;</pre>
       human: "$385,200",
       delta: "-1.0%",
       deltaNote: "Model vs human: $3,900 (1.0%)",
+      offer: "$381,000",
+      offerVs: "≈ 97.9% of model",
+      net: "$371,400",
+      chartNow: "$389,100",
+      chartDelta: "+3.9% / 12 mo",
     },
   ];
 
@@ -153,8 +283,11 @@ LIMIT 5;</pre>
   const HUMAN_RESOLVE_MS = 1300;
   const DELTA_PROGRESS_MS = 2000;
   const DELTA_RESOLVE_MS = 1300;
-  const ACCEPT_MS = 1500;
-  const CHIP_MS = 1500;
+  const ACCEPT_MS = 1200;
+  const CHART_MS = 2800;
+  const OFFER_DRAFT_MS = 1400;
+  const OFFER_SEND_MS = 1600;
+  const CHIP_MS = 900;
 
   /** Faster beats for try-mode row resolve */
   const TRY_PENDING_MS = 400;
@@ -176,11 +309,32 @@ LIMIT 5;</pre>
     frame.setAttribute("data-zl-wired", "true");
 
     const stepEl = root.querySelector<HTMLElement>("[data-zl-step]");
+    const titleEl = root.querySelector<HTMLElement>("[data-zl-title]");
     const chipEl = root.querySelector<HTMLElement>("[data-zl-chip]");
     const detail = root.querySelector<HTMLElement>("[data-zl-detail]");
     const tryBtn = root.querySelector<HTMLButtonElement>("[data-zl-try]");
     const hint = root.querySelector<HTMLElement>("[data-zl-hint]");
+    const sqlEl = root.querySelector<HTMLElement>("[data-zl-sql]");
     const rowBtns = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-zl-row]"));
+    const views = {
+      queue: root.querySelector<HTMLElement>("[data-zl-view='queue']"),
+      chart: root.querySelector<HTMLElement>("[data-zl-view='chart']"),
+      offer: root.querySelector<HTMLElement>("[data-zl-view='offer']"),
+    };
+    const chartAddr = root.querySelector<HTMLElement>("[data-zl-chart-addr]");
+    const chartNow = root.querySelector<HTMLElement>("[data-zl-chart-now]");
+    const chartDelta = root.querySelector<HTMLElement>("[data-zl-chart-delta]");
+    const chartLine = root.querySelector<SVGPathElement>("[data-zl-chart-line]");
+    const chartArea = root.querySelector<SVGPathElement>("[data-zl-chart-area]");
+    const chartDot = root.querySelector<SVGCircleElement>("[data-zl-chart-dot]");
+    const offerAddr = root.querySelector<HTMLElement>("[data-zl-offer-addr]");
+    const offerAmt = root.querySelector<HTMLElement>("[data-zl-offer-amt]");
+    const offerVs = root.querySelector<HTMLElement>("[data-zl-offer-vs]");
+    const offerModel = root.querySelector<HTMLElement>("[data-zl-offer-model]");
+    const offerHuman = root.querySelector<HTMLElement>("[data-zl-offer-human]");
+    const offerNet = root.querySelector<HTMLElement>("[data-zl-offer-net]");
+    const offerSend = root.querySelector<HTMLButtonElement>("[data-zl-offer-send]");
+    const offerStatus = root.querySelector<HTMLElement>("[data-zl-offer-status]");
 
     let running = false;
     let token = 0;
@@ -206,6 +360,21 @@ LIMIT 5;</pre>
       };
     };
 
+    const setView = (view: ZlView) => {
+      (Object.keys(views) as ZlView[]).forEach((id) => {
+        const el = views[id];
+        if (!el) return;
+        const on = id === view;
+        el.hidden = !on;
+        el.classList.toggle("is-active", on);
+      });
+      if (sqlEl) sqlEl.hidden = view !== "queue";
+      if (titleEl) {
+        titleEl.textContent =
+          view === "queue" ? "Pricing queue" : view === "chart" ? "Valuation" : "Seller offer";
+      }
+    };
+
     const clearRowState = (els: RowEls) => {
       els.btn.classList.remove("is-working", "is-live", "is-accepted", "is-active");
       els.model?.classList.remove("is-working", "is-live", "is-shimmer");
@@ -225,6 +394,45 @@ LIMIT 5;</pre>
       clearRowState(els);
     };
 
+    const resetChartAnim = () => {
+      chartLine?.classList.remove("is-drawn");
+      chartArea?.classList.remove("is-drawn");
+      chartDot?.classList.remove("is-drawn");
+    };
+
+    const paintChart = (index: number) => {
+      const data = ROWS[index];
+      if (!data) return;
+      if (chartAddr) chartAddr.textContent = data.address;
+      if (chartNow) chartNow.textContent = data.chartNow;
+      if (chartDelta) chartDelta.textContent = data.chartDelta;
+      resetChartAnim();
+      requestAnimationFrame(() => {
+        chartLine?.classList.add("is-drawn");
+        chartArea?.classList.add("is-drawn");
+        chartDot?.classList.add("is-drawn");
+      });
+    };
+
+    const paintOffer = (index: number, status: "Draft" | "Sending…" | "Sent") => {
+      const data = ROWS[index];
+      if (!data) return;
+      if (offerAddr) offerAddr.textContent = data.address;
+      if (offerAmt) offerAmt.textContent = data.offer;
+      if (offerVs) offerVs.textContent = data.offerVs;
+      if (offerModel) offerModel.textContent = data.model;
+      if (offerHuman) offerHuman.textContent = data.human;
+      if (offerNet) offerNet.textContent = data.net;
+      if (offerStatus) offerStatus.textContent = status;
+      offerStatus?.classList.toggle("is-sent", status === "Sent");
+      if (offerSend) {
+        offerSend.disabled = status !== "Draft";
+        offerSend.textContent = status === "Sent" ? "Offer sent" : status === "Sending…" ? "Sending…" : "Send offer";
+        offerSend.classList.toggle("is-sent", status === "Sent");
+        offerSend.classList.toggle("is-pulse", status === "Draft");
+      }
+    };
+
     const resetBoard = () => {
       ROWS.forEach((_, i) => {
         const els = rowEls(i);
@@ -232,12 +440,18 @@ LIMIT 5;</pre>
         resetRowValues(els);
       });
       if (chipEl) chipEl.hidden = true;
-      if (stepEl) stepEl.textContent = "Ready";
+      if (stepEl) {
+        stepEl.textContent = "Ready";
+        stepEl.classList.remove("is-pulse");
+      }
       if (detail) detail.textContent = "Select a row after the walkthrough.";
       if (tryBtn) tryBtn.hidden = true;
       if (hint) hint.hidden = true;
       tryBtn?.classList.remove("is-pulse");
       tryMode = false;
+      resetChartAnim();
+      paintOffer(WALK_INDEX, "Draft");
+      setView("queue");
     };
 
     const paintRowFinal = (index: number) => {
@@ -265,13 +479,19 @@ LIMIT 5;</pre>
       running = false;
       tryMode = true;
       if (chipEl) chipEl.hidden = false;
-      if (stepEl) stepEl.textContent = "Accepted";
+      if (stepEl) {
+        stepEl.textContent = "Offer sent";
+        stepEl.classList.remove("is-pulse");
+      }
       if (detail) {
-        detail.textContent = "Delta within tolerance · Accepted";
+        detail.textContent = "Offer on the wire · explore another queue row.";
       }
       clearSelection();
       rowEls(WALK_INDEX)?.btn.classList.add("is-active");
-      if (tryBtn) tryBtn.hidden = false;
+      if (tryBtn) {
+        tryBtn.hidden = false;
+        tryBtn.textContent = "Try another row";
+      }
       if (hint) hint.hidden = false;
       tryBtn?.classList.add("is-pulse");
       frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
@@ -298,6 +518,7 @@ LIMIT 5;</pre>
       const els = rowEls(index);
       if (!data || !els) return false;
 
+      setView("queue");
       resetRowValues(els);
       if (opts.activate) {
         clearSelection();
@@ -321,7 +542,6 @@ LIMIT 5;</pre>
       await sleep(timing.pendingMs);
       if (my !== token) return false;
 
-      // Model estimating
       els.model?.classList.add("is-working");
       els.model?.classList.remove("is-shimmer");
       if (els.model) els.model.textContent = CALC;
@@ -343,7 +563,6 @@ LIMIT 5;</pre>
       await sleep(timing.modelResolveMs);
       if (my !== token) return false;
 
-      // Human / analyst reviewing
       els.human?.classList.add("is-working");
       els.human?.classList.remove("is-shimmer");
       if (els.human) els.human.textContent = CALC;
@@ -363,7 +582,6 @@ LIMIT 5;</pre>
       await sleep(timing.humanResolveMs);
       if (my !== token) return false;
 
-      // Delta
       els.delta?.classList.add("is-working");
       els.delta?.classList.remove("is-shimmer");
       if (els.delta) els.delta.textContent = CALC;
@@ -386,7 +604,6 @@ LIMIT 5;</pre>
       await sleep(timing.deltaResolveMs);
       if (my !== token) return false;
 
-      // Accepted
       els.btn.classList.remove("is-working");
       els.btn.classList.add("is-live", "is-accepted");
       els.human?.classList.remove("is-shimmer");
@@ -399,6 +616,40 @@ LIMIT 5;</pre>
       }
       if (detail) detail.textContent = "Delta within tolerance · Accepted";
       await sleep(timing.acceptMs);
+      return my === token;
+    };
+
+    const showValuationAndOffer = async (index: number, my: number): Promise<boolean> => {
+      setView("chart");
+      paintChart(index);
+      if (stepEl) {
+        stepEl.textContent = "Home valuation trend";
+        stepEl.classList.add("is-pulse");
+      }
+      if (detail) detail.textContent = "Twelve-month AVM path for this address";
+      await sleep(CHART_MS);
+      if (my !== token) return false;
+
+      setView("offer");
+      paintOffer(index, "Draft");
+      if (stepEl) stepEl.textContent = "Drafting seller offer…";
+      if (detail) detail.textContent = "Building cash offer from model + human lock";
+      await sleep(OFFER_DRAFT_MS);
+      if (my !== token) return false;
+
+      paintOffer(index, "Sending…");
+      if (stepEl) stepEl.textContent = "Sending offer to seller…";
+      if (detail) detail.textContent = "Pushing offer packet to seller portal";
+      await sleep(OFFER_SEND_MS);
+      if (my !== token) return false;
+
+      paintOffer(index, "Sent");
+      if (stepEl) {
+        stepEl.textContent = "Offer sent";
+        stepEl.classList.remove("is-pulse");
+      }
+      if (detail) detail.textContent = "Seller notified · waiting on response";
+      await sleep(CHIP_MS);
       return my === token;
     };
 
@@ -436,12 +687,10 @@ LIMIT 5;</pre>
       });
       if (!ok || my !== token) return;
 
-      if (chipEl) chipEl.hidden = false;
-      if (stepEl) stepEl.textContent = "Throughput";
-      if (detail) detail.textContent = "Throughput ~10 / day";
-      await sleep(CHIP_MS);
-      if (my !== token) return;
+      const ok2 = await showValuationAndOffer(WALK_INDEX, my);
+      if (!ok2 || my !== token) return;
 
+      if (chipEl) chipEl.hidden = false;
       finish();
     };
 
@@ -458,6 +707,9 @@ LIMIT 5;</pre>
       });
       if (!ok || my !== token) return;
 
+      const ok2 = await showValuationAndOffer(index, my);
+      if (!ok2 || my !== token) return;
+
       running = false;
       tryMode = true;
       if (chipEl) chipEl.hidden = false;
@@ -471,6 +723,9 @@ LIMIT 5;</pre>
       if (eventDetail?.reduced) {
         resetBoard();
         paintRowFinal(WALK_INDEX);
+        paintChart(WALK_INDEX);
+        paintOffer(WALK_INDEX, "Sent");
+        setView("offer");
         if (chipEl) chipEl.hidden = false;
         finish();
         return;
@@ -490,6 +745,12 @@ LIMIT 5;</pre>
 
     tryBtn?.addEventListener("click", () => {
       if (!tryMode || running) return;
+      if (views.offer && !views.offer.hidden) {
+        setView("queue");
+        if (stepEl) stepEl.textContent = "Pick a row";
+        if (detail) detail.textContent = "Select another address to price + offer";
+        return;
+      }
       const active = root.querySelector(".zl__row.is-active");
       const next = active
         ? (Number(active.getAttribute("data-zl-row") ?? "0") + 1) % ROWS.length
@@ -518,12 +779,299 @@ LIMIT 5;</pre>
     height: 100%;
     padding: 0.85rem 1rem;
     display: grid;
-    grid-template-rows: auto 1fr auto auto auto;
+    grid-template-rows: auto minmax(0, 1fr) auto auto auto;
     gap: 0.65rem;
     color: var(--zl-ink);
     background: var(--zl-bg);
     font-family: "Segoe UI", "Helvetica Neue", sans-serif;
     overflow: hidden;
+  }
+
+  .zl__stage {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .zl__stage[hidden] {
+    display: none !important;
+  }
+
+  .zl__chart-card,
+  .zl__offer {
+    height: 100%;
+    min-height: 0;
+    background: var(--zl-card);
+    border: 1px solid var(--zl-line);
+    border-radius: 0.65rem;
+    box-shadow: 0 1px 2px color-mix(in srgb, #000 4%, transparent);
+    overflow: hidden;
+  }
+
+  .zl__chart-card {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 0.7rem 0.8rem 0.55rem;
+    gap: 0.35rem;
+  }
+
+  .zl__chart-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .zl__chart-kicker {
+    margin: 0;
+    font-size: 0.52rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--zl-accent);
+  }
+
+  .zl__chart-addr {
+    margin: 0.15rem 0 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .zl__chart-now {
+    text-align: right;
+  }
+
+  .zl__chart-now-label {
+    display: block;
+    font-size: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--zl-muted);
+  }
+
+  .zl__chart-now strong {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--zl-ink);
+  }
+
+  .zl__chart-svg {
+    width: 100%;
+    height: 100%;
+    min-height: 7.5rem;
+  }
+
+  .zl__chart-grid line {
+    stroke: var(--zl-line);
+    stroke-width: 1;
+  }
+
+  .zl__chart-axis,
+  .zl__chart-months text {
+    fill: var(--zl-muted);
+    font-size: 8px;
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  .zl__chart-line {
+    stroke-dasharray: 420;
+    stroke-dashoffset: 420;
+    transition: stroke-dashoffset 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .zl__chart-line.is-drawn {
+    stroke-dashoffset: 0;
+  }
+
+  .zl__chart-area {
+    opacity: 0;
+    transition: opacity 0.9s ease 0.35s;
+  }
+
+  .zl__chart-area.is-drawn {
+    opacity: 1;
+  }
+
+  .zl__chart-dot {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0.4);
+    transition:
+      opacity 0.35s ease 1.1s,
+      transform 0.35s ease 1.1s;
+  }
+
+  .zl__chart-dot.is-drawn {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .zl__chart-legend {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.58rem;
+    color: var(--zl-muted);
+    font-weight: 600;
+  }
+
+  .zl__chart-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .zl__swatch {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    display: inline-block;
+  }
+
+  .zl__swatch--model {
+    background: var(--zl-accent);
+  }
+
+  .zl__offer {
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+  }
+
+  .zl__offer-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.8rem;
+    background: linear-gradient(90deg, #1d4ed8, #2563eb 55%, #3b82f6);
+    color: #fff;
+  }
+
+  .zl__offer-tag {
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .zl__offer-expire {
+    font-size: 0.55rem;
+    font-weight: 600;
+    opacity: 0.9;
+  }
+
+  .zl__offer-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0.75rem;
+    padding: 0.85rem 0.8rem 0.55rem;
+  }
+
+  .zl__offer-label {
+    margin: 0;
+    font-size: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--zl-muted);
+  }
+
+  .zl__offer-addr {
+    margin: 0.2rem 0 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .zl__offer-sub {
+    margin: 0.25rem 0 0;
+    font-size: 0.62rem;
+    color: var(--zl-muted);
+  }
+
+  .zl__offer-amt-wrap {
+    text-align: right;
+  }
+
+  .zl__offer-amt {
+    margin: 0.15rem 0 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--zl-accent);
+  }
+
+  .zl__offer-vs {
+    margin: 0.15rem 0 0;
+    font-size: 0.58rem;
+    color: var(--zl-muted);
+    font-weight: 600;
+  }
+
+  .zl__offer-rows {
+    margin: 0;
+    padding: 0 0.8rem;
+    list-style: none;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .zl__offer-rows li {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.4rem 0.55rem;
+    border-radius: 0.4rem;
+    background: var(--zl-bg);
+    font-size: 0.68rem;
+    color: var(--zl-muted);
+  }
+
+  .zl__offer-rows strong {
+    color: var(--zl-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .zl__offer-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    padding: 0.7rem 0.8rem 0.8rem;
+  }
+
+  .zl__offer-send {
+    border: 0;
+    border-radius: 0.45rem;
+    padding: 0.5rem 0.95rem;
+    background: var(--zl-accent);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: default;
+  }
+
+  .zl__offer-send.is-pulse {
+    animation: zl-pulse 1.2s ease-out infinite;
+  }
+
+  .zl__offer-send.is-sent {
+    background: var(--zl-green);
+    animation: none;
+  }
+
+  .zl__offer-status {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--zl-muted);
+  }
+
+  .zl__offer-status.is-sent {
+    color: var(--zl-green);
   }
 
   .zl__head {
@@ -828,6 +1376,36 @@ LIMIT 5;</pre>
 
     .zl__kicker {
       font-size: 0.52rem;
+    }
+
+    .zl__chart-card {
+      padding: 0.55rem 0.6rem 0.45rem;
+    }
+
+    .zl__chart-addr {
+      font-size: 0.82rem;
+    }
+
+    .zl__offer-body {
+      grid-template-columns: 1fr;
+      gap: 0.45rem;
+      padding: 0.65rem 0.65rem 0.4rem;
+    }
+
+    .zl__offer-amt-wrap {
+      text-align: left;
+    }
+
+    .zl__offer-amt {
+      font-size: 1.2rem;
+    }
+
+    .zl__offer-rows {
+      padding: 0 0.65rem;
+    }
+
+    .zl__offer-foot {
+      padding: 0.55rem 0.65rem 0.65rem;
     }
 
     .zl__cols {
