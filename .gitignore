@@ -12,3 +12,7 @@ dist/
 # Font binaries are synced from packages/ui/fonts by scripts/sync-fonts.mjs.
 # One source of truth. Do not commit the copies.
 apps/*/public/fonts/
+
+# Playwright MCP artifacts
+.playwright-mcp/
+qa-*.png
