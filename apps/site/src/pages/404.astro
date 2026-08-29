@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Not found" noindex={true} chrome={true}>
+  <section class="missing">
+    <div class="missing__inner">
+      <h1>Not found</h1>
+      <p><a href="/">Back home</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .missing {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    padding-block: var(--s-section);
+  }
+
+  .missing__inner {
+    width: min(100%, var(--max-w));
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  h1 {
+    font-size: var(--t-h1);
+    line-height: var(--lh-tight);
+  }
+
+  p {
+    margin-block-start: var(--s-4);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+  }
+</style>

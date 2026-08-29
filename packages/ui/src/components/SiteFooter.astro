@@ -1,0 +1,562 @@
+---
+/**
+ * SITE FOOTER. SHARED BY BOTH APPS.
+ *
+ * Built to CLAUDE.md section 2, "The footer, and the generated-footer tell".
+ * That section names five shapes so they can be avoided rather than gestured
+ * at. None of them are here, and the absences are as deliberate as anything
+ * that is present:
+ *
+ *   NOT a four column link grid (Company / Product / Resources / Legal).
+ *   NOT a newsletter box.
+ *   NOT a row of circular social icons.
+ *   NOT a centred copyright line. Nothing in this file is centred.
+ *   NOT a centred headline over a centred paragraph over a centred pill
+ *       button with a right arrow.
+ *
+ * WHAT IT IS. Two NAMED contact routes, oversized, hard left, each a mailto
+ * carrying its own prefilled subject so the enquiry arrives pre sorted. A
+ * plain right column: where we are, direct email, the practice. No cards, no
+ * icons, no borders. Category labels that are labels and not links. One mono
+ * baseline row with the copyright hard left and privacy hard right. A wordmark
+ * bleeding off the left edge.
+ *
+ * ---------------------------------------------------------------------------
+ * WHY THE TWO ROUTES ARE HARDCODED AND NOT PROPS.
+ *
+ * "Contact Manual" and "Contact Built" are a ruling, not a configuration.
+ * Section 2 names them, names what each one means, and says they mirror the
+ * two front doors so a visitor who read the doors meets the same two
+ * categories at the bottom. Exposing them as props invites a future agent to
+ * pass "Get in touch" and lose the ruling without noticing. The address and
+ * everything site specific IS a prop; the doctrine is not.
+ *
+ * There is no contact form here and there must never be one. CLAUDE.md
+ * section 6: both sites are static, a form on an engineering portfolio is a
+ * liability, hiring managers email and bots fill forms.
+ *
+ * SINGLEROUTE, ADDED 2026-08-14, AND IT IS THE ONE DELIBERATE EXCEPTION. The
+ * two-route doctrine mirrors Bucket A's two front doors, content/sections/
+ * 66-door-manual.md and its "Built" counterpart. Bucket B's hero was never
+ * built on two doors: it carries one card, one mailto, subject "Contact
+ * Built" (see apps/apollo pages/index.astro .card--ink). The footer offering
+ * a Manual route the hero never offered was never mirroring anything; it was
+ * Bucket A's doctrine applied to a site it does not describe. This prop lets
+ * a caller override the two hardcoded routes with exactly one, still typed,
+ * still not a place to pass arbitrary copy: apps/apollo is the only caller
+ * that uses it and it is documented at the call site too. Bucket A's call
+ * passes nothing here and gets the original two routes, unchanged.
+ *
+ * INTRO AND CAPACITY, ADDED 2026-08-14, SAME DOCTRINE AS SINGLEROUTE: an
+ * optional, typed, apps/apollo only addition, invisible to Bucket A because
+ * Bucket A's call passes neither prop. Apollo: the home page carried a
+ * Contact section directly above this footer, and the footer immediately
+ * below it made it read as two contact surfaces stacked rather than one.
+ * intro is that section's heading and lede, rendered above the routes
+ * instead of above the footer; capacity is its logistics note, rendered as
+ * a fourth meta group beside "Where we are" and "The practice" instead of
+ * its own block. Nothing new was invented, the same two pieces of copy
+ * moved one element down and stopped being a separate section.
+ * ---------------------------------------------------------------------------
+ */
+interface Props {
+  /** Address both routes and the direct line point at. */
+  email: string;
+  /** Bleeding wordmark text. */
+  wordmark: string;
+  /** Name in the copyright line. */
+  entity: string;
+  /** "Where we are". One line per array entry. */
+  locality: string[];
+  /** "The practice". One sentence or two, no actor voice. */
+  practice: string;
+  /** Non-link category labels. */
+  categories: string[];
+  /**
+   * Privacy route. Must exist. It is a deploy gate.
+   * Trailing slash on purpose: Cloudflare 307s /privacy to /privacy/, so the
+   * unslashed form would cost every visitor a redirect.
+   */
+  privacyHref?: string;
+  /**
+   * Overrides the two hardcoded routes with exactly one. See the file header,
+   * SINGLEROUTE. Omit this prop to get the original two routes; only
+   * apps/apollo passes it.
+   */
+  singleRoute?: {
+    lead: string;
+    name: string;
+    subject: string;
+    sub?: string;
+  };
+  /**
+   * id on the <footer> itself. Bucket A passes nothing and gets none, exactly
+   * as before. Bucket B passes "contact" so its nav's #contact anchor, which
+   * used to resolve to a section this footer sat below, resolves to the
+   * footer directly now that the section is gone.
+   */
+  id?: string;
+  /**
+   * Heading and lede rendered above the routes. See INTRO in the file header.
+   * Omit for the original footer with no heading above the routes.
+   */
+  intro?: {
+    title: string;
+    lede: string;
+  };
+  /**
+   * A fourth meta group after "The practice". See INTRO in the file header.
+   * Omit for the original three groups.
+   */
+  capacity?: {
+    label: string;
+    text: string;
+  };
+}
+
+const {
+  email,
+  wordmark,
+  entity,
+  locality,
+  practice,
+  categories,
+  privacyHref = "/privacy/",
+  singleRoute,
+  id,
+  intro,
+  capacity,
+} = Astro.props;
+
+/*
+  PREFILLED SUBJECTS. The subject IS the sorting key, so it matches the route
+  name exactly rather than paraphrasing it. An arriving message says which of
+  the two doors it came through in the one field an inbox rule can read
+  without opening anything.
+*/
+const DEFAULT_ROUTES = [
+  {
+    lead: "Contact",
+    name: "Manual",
+    subject: "Contact Manual",
+    sub: "A process your people run by hand",
+  },
+  {
+    lead: "Contact",
+    name: "Built",
+    subject: "Contact Built",
+    sub: "Something shipped fast that has to hold",
+  },
+] as const;
+
+// See SINGLEROUTE in the file header. Bucket A gets DEFAULT_ROUTES exactly
+// as before; Bucket B passes singleRoute and gets a one item array instead.
+const ROUTES = singleRoute ? [singleRoute] : DEFAULT_ROUTES;
+
+// Machine derived from the build clock. Never typed by hand, never rounded.
+const year = new Date().getFullYear();
+---
+
+<footer
+  class="site-footer"
+  id={id}
+  data-surface="inverted"
+  aria-labelledby={intro ? "footer-intro-title" : "site-footer-heading"}
+>
+  {
+    intro ? (
+      <div class="footer-intro">
+        <h2 class="footer-intro-title" id="footer-intro-title">
+          {intro.title}
+        </h2>
+        <p class="footer-intro-lede">{intro.lede}</p>
+      </div>
+    ) : (
+      <h2 id="site-footer-heading" class="vh">
+        Contact
+      </h2>
+    )
+  }
+
+  <div class="footer-lay">
+    <div class="footer-routes">
+      {
+        ROUTES.map((route) => (
+          <div class="route-block">
+            <a
+              class="route"
+              href={`mailto:${email}?subject=${encodeURIComponent(route.subject)}`}
+            >
+              <span class="route-lead">{route.lead}</span>
+              <span class="route-name">{route.name}</span>
+              <svg
+                class="route-arrow"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.4"
+                aria-hidden="true"
+              >
+                <path d="M5 19L19 5M9 5h10v10" />
+              </svg>
+            </a>
+            {route.sub && <p class="route-sub">{route.sub}</p>}
+          </div>
+        ))
+      }
+    </div>
+
+    {/*
+      Right column. Plain. Three groups of a label and a value. The labels are
+      headings, not links: none of them is a page and pretending otherwise is
+      half of what makes a generated footer read as generated.
+    */}
+    <div class="footer-meta">
+      <div class="meta-group">
+        <h3 class="meta-label">Where we are</h3>
+        <p class="meta-value">
+          {locality.map((line, i) => (i === 0 ? line : [<br />, line]))}
+        </p>
+      </div>
+
+      <div class="meta-group">
+        <h3 class="meta-label">Direct</h3>
+        <p class="meta-value">
+          <a class="meta-link" href={`mailto:${email}`}>{email}</a>
+        </p>
+      </div>
+
+      <div class="meta-group">
+        <h3 class="meta-label">The practice</h3>
+        <p class="meta-value">{practice}</p>
+      </div>
+
+      {
+        capacity && (
+          <div class="meta-group">
+            <h3 class="meta-label">{capacity.label}</h3>
+            <p class="meta-value">{capacity.text}</p>
+          </div>
+        )
+      }
+    </div>
+  </div>
+
+  {/*
+    Category labels. Not links, and not read out as a navigation list either.
+    They say what the practice does without claiming each word is a page.
+  */}
+  <p class="footer-categories">
+    {categories.map((label) => <span class="category">{label}</span>)}
+  </p>
+
+  <div class="footer-base">
+    <span class="base-copy">&copy; {entity} {year}</span>
+    <a class="base-link" href={privacyHref}>Privacy policy</a>
+  </div>
+
+  <div class="footer-wordmark-wrap" aria-hidden="true">
+    <span class="footer-wordmark">{wordmark}</span>
+  </div>
+</footer>
+
+<style>
+  /*
+    CONTRAST NOTE, and it is a real finding rather than a style preference.
+
+    On the dark band the ramp offers --fg-on-inverted (#F5F5F5, ~17:1) and
+    --fg-muted-on-inverted (#6E6C66, 3.6:1). There is nothing between them.
+    3.6:1 passes AA for LARGE text and fails it for small text, so muted is
+    used in exactly one place in this footer, on the route name, which renders
+    at --t-h1 and is unambiguously large. Every small mark here is full ink and
+    takes its hierarchy from size, weight and tracking instead.
+
+    tokens.css does not own an accessible on-band secondary. That is reported
+    rather than invented, because this file does not own the token file.
+  */
+
+  /*
+    THE FOOTER IS ITS OWN INVERTED SURFACE, and it declares that twice on
+    purpose. data-surface tells the nav script what colour to be when it is
+    over this element. The token remapping below tells everything INSIDE the
+    footer, including anything Phase 2 drops into it, that it is on the dark
+    band. Same pair Band.astro sets, and it has to be set here too because
+    the footer is its own root rather than a Band.
+
+    Found by rendering: the first version set data-surface and the on-inverted
+    text colours but no background, so the footer painted cream type on the
+    canvas ground and the word "Contact" was invisible at h1 scale. The
+    attribute looked correct in the markup and the page was wrong.
+  */
+  .site-footer {
+    --bg: var(--surface-inverted);
+    --fg: var(--fg-on-inverted);
+    --fg-secondary: var(--fg-on-inverted);
+    --fg-muted: var(--fg-muted-on-inverted);
+    --hairline-color: var(--hairline-on-inverted);
+
+    /* The Tailwind half. @theme resolves --color-fg once against :root, so
+       moving --fg here does not move text-fg on Bucket B. Full explanation in
+       Band.astro, which hit the same wall. Inert on Bucket A. */
+    --color-fg: var(--fg);
+    --color-fg-secondary: var(--fg-secondary);
+    --color-fg-muted: var(--fg-muted);
+    --color-hairline: var(--hairline-color);
+
+    position: relative;
+    overflow: hidden; /* the wordmark runs past both edges on purpose */
+    background-color: var(--bg);
+    color: var(--fg);
+    padding-block-start: var(--s-section);
+    padding-block-end: 0;
+    padding-inline: var(--gutter);
+  }
+
+  /*
+    INTRO, ADDED 2026-08-14. Same title scale the standalone Contact section
+    used on the canvas, --t-h3, carried over rather than re-decided: the
+    words moved, the register did not need to. The lede uses
+    --fg-secondary-on-inverted rather than the muted token, because the
+    contrast note above is explicit that anything under 24px on this band
+    has to be the AA-at-any-size option, and --t-body-lg does not clear that
+    floor.
+  */
+  .footer-intro {
+    margin-block-end: var(--s-24);
+    max-inline-size: var(--measure);
+  }
+
+  .footer-intro-title {
+    font-size: var(--t-h3);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-display);
+    color: var(--fg-on-inverted);
+  }
+
+  .footer-intro-lede {
+    margin-block-start: var(--s-8);
+    font-size: var(--t-body-lg);
+    line-height: var(--lh-body);
+    color: var(--fg-secondary-on-inverted);
+  }
+
+  .footer-lay {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: var(--gutter-wide);
+    align-items: start;
+  }
+
+  /* --- Routes ----------------------------------------------------------- */
+
+  .route-block + .route-block {
+    margin-block-start: var(--s-12);
+  }
+
+  .route {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.14em;
+    text-decoration: none;
+    color: var(--fg-on-inverted);
+    font-family: var(--font-heading);
+    font-size: var(--t-h1);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-display);
+  }
+
+  /* The only muted mark in the footer, and it is at h1 scale. */
+  .route-name {
+    color: var(--fg-muted-on-inverted);
+    transition: color var(--dur-base) var(--ease-snap);
+  }
+
+  .route:hover .route-name,
+  .route:focus-visible .route-name {
+    color: var(--fg-on-inverted);
+  }
+
+  /* 0.5em is a proportion of the glyph it sits beside, the same class of
+     value as line-height 1, not an independent size. */
+  .route-arrow {
+    flex: 0 0 auto;
+    width: 0.5em;
+    height: 0.5em;
+    margin-inline-start: 0.16em;
+    transition: transform var(--dur-base) var(--ease-snap);
+  }
+
+  .route:hover .route-arrow,
+  .route:focus-visible .route-arrow {
+    transform: translate(0.12em, -0.12em);
+  }
+
+  .route-sub {
+    margin-block-start: var(--s-3);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    font-weight: var(--fw-medium);
+    color: var(--fg-on-inverted);
+  }
+
+  /* --- Right column ------------------------------------------------------ */
+
+  .footer-meta {
+    display: grid;
+    gap: var(--s-12);
+    /* Sits down from the top of the routes rather than aligning to them.
+       Unequal groups across, per the reference. */
+    padding-block-start: var(--s-2);
+  }
+
+  .meta-label {
+    margin: 0;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    font-weight: var(--fw-bold);
+    color: var(--fg-on-inverted);
+  }
+
+  .meta-value {
+    margin-block-start: var(--s-3);
+    max-width: var(--measure-tight);
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-regular);
+    color: var(--fg-on-inverted);
+  }
+
+  /* A hairline under the address, not a border around it. */
+  .meta-link {
+    color: inherit;
+    text-decoration: none;
+    border-block-end: var(--hairline) solid var(--hairline-on-inverted);
+    padding-block-end: var(--s-1);
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+
+  .meta-link:hover,
+  .meta-link:focus-visible {
+    border-block-end-color: var(--fg-on-inverted);
+  }
+
+  /* --- Category labels --------------------------------------------------- */
+
+  .footer-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-12);
+    margin-block-start: var(--s-32);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    font-weight: var(--fw-bold);
+    color: var(--fg-on-inverted);
+  }
+
+  /* --- Baseline row ------------------------------------------------------ */
+
+  .footer-base {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-6);
+    margin-block-start: var(--s-24);
+    padding-block-end: var(--s-8);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    font-weight: var(--fw-medium);
+    color: var(--fg-on-inverted);
+  }
+
+  .base-link {
+    color: inherit;
+    text-decoration: none;
+    border-block-end: var(--hairline) solid transparent;
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+
+  .base-link:hover,
+  .base-link:focus-visible {
+    border-block-end-color: var(--fg-on-inverted);
+  }
+
+  /* --- Bleeding wordmark -------------------------------------------------- */
+
+  .footer-wordmark-wrap {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  /*
+    THE BLEED IS TOKEN DERIVED, not a magic number. The footer is padded by
+    --gutter; the wordmark is pulled by --gutter-wide. The difference between
+    the two gutter tokens IS the crop, so it scales with the viewport exactly
+    the way the gutters do and there is no literal anywhere in it. Cropping is
+    the point, per A-D2.
+  */
+  .footer-wordmark {
+    display: block;
+    margin-inline-start: calc(var(--gutter-wide) * -1);
+    margin-block-end: calc(var(--s-4) * -1);
+    font-family: var(--font-heading);
+    font-size: var(--t-display-2);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-display);
+    white-space: nowrap;
+    user-select: none;
+    /* Reads as an emboss in the band rather than as faded text. A colour, not
+       an opacity, so nothing here can be confused with a stalled fade. */
+    color: var(--hairline-on-inverted);
+  }
+
+  /* --- Visually hidden ---------------------------------------------------- */
+
+  .vh {
+    position: absolute;
+    width: var(--hairline);
+    height: var(--hairline);
+    margin: calc(var(--hairline) * -1);
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* --- Narrow ------------------------------------------------------------- */
+
+  @media (max-width: 52rem) {
+    .footer-lay {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s-24);
+    }
+
+    .route {
+      font-size: var(--t-h2);
+    }
+
+    .footer-categories {
+      margin-block-start: var(--s-24);
+      gap: var(--s-2) var(--s-8);
+    }
+
+    .footer-base {
+      margin-block-start: var(--s-16);
+    }
+  }
+</style>

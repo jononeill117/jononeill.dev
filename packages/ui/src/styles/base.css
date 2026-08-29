@@ -1,0 +1,105 @@
+/* ============================================================================
+   SHARED BASELINE. BOTH APPS.
+
+   Element level only. Every value here is a var() reaching into tokens.css.
+   No literal colour, size, duration or easing is permitted in this file; if a
+   value is needed, it belongs in the token file.
+
+   ---------------------------------------------------------------------------
+   EVERYTHING IS INSIDE @layer base, AND IT HAS TO BE. DO NOT UNWRAP IT.
+
+   Found by rendering Bucket B in Phase 0, not by reading the code. Unlayered
+   CSS beats EVERY cascade layer, so while these rules sat outside a layer,
+   `p { margin: 0 }` here silently beat every Tailwind margin utility on
+   Bucket B. mt-[var(--s-12)] on a paragraph did nothing, the note ran into
+   the row above it, and the h1 lost its top margin. Nothing errored. The
+   utility simply had no effect, which is the worst version of this bug.
+
+   Inside @layer base the rules land alongside Tailwind preflight and after
+   it, so they still win over preflight, while @layer utilities still wins
+   over them. That is the order everyone expects.
+
+   Bucket A declares no layers, so unlayered component styles beat this file
+   there. Also correct: a component should override the baseline.
+
+   Bonus, and the reason the [hidden] gate at the bottom got stronger rather
+   than weaker: for !important declarations layer order is REVERSED, earlier
+   layers win. A later @layer utilities rule cannot out-important it.
+   ---------------------------------------------------------------------------
+
+   Bucket A imports this after tokens.css.
+   Bucket B imports this after the Tailwind bridge.
+   ========================================================================= */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    /* Lenis owns scroll position. A CSS smooth scroll fights it. */
+    scroll-behavior: auto;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
+    letter-spacing: var(--ls-body);
+    font-weight: var(--fw-regular);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--ls-heading);
+    text-wrap: balance;
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: var(--s-1);
+  }
+
+  /* Focus ring is a hard accessibility gate, section 7. Token exists; use it. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* THE [hidden] TRAP, recorded in CLAUDE.md section 5.
+     [hidden] only sets display:none in the UA stylesheet, and ANY author
+     display value beats it. That is how gated holding text reached the live
+     page once. Gates in this codebase are enforced by this rule, so it is not
+     optional and it is not a specificity smell. */
+  [hidden] {
+    display: none !important;
+  }
+}

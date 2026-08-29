@@ -1,0 +1,71 @@
+/* ============================================================================
+   INSTRUMENT SANS. SELF HOSTED. ROMAN AND ITALIC.
+
+   TWO files, not eight. Both are VARIABLE fonts with a wght axis running
+   400 to 700, so one roman file covers 400/500/600/700 and one italic file
+   covers the same four. That is the full
+   `ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700` the old site
+   loaded, in two requests instead of eight, at 61KB total.
+
+   ITALIC IS STRUCTURAL, NOT DECORATION. A-D1 names roman against italic as
+   the contrast device. A Phase 0 build shipped roman only; section 2 records
+   that as a defect. Do not drop the italic to save a request.
+
+   PROVENANCE. Both faces are Google Fonts v4, `Version 1.000;gftools[0.9.28]`,
+   same 208 glyph Latin subset, unitsPerEm 1000, identical vertical metrics
+   and cap height. The roman already in the repo was verified byte for byte
+   identical to the upstream file (sha256 6219bc4b...), so the pair cannot be
+   version mismatched. If either is ever replaced, replace BOTH from the same
+   source and re-check the metrics.
+
+   font-display: swap. Text paints immediately in the fallback and reflows on
+   arrival. The alternative, block, holds the LCP element invisible for up to
+   3s, which is the LCP budget spent on nothing.
+
+   PRELOAD lives in the app layouts, not here, because a stylesheet cannot
+   preload its own font early enough to matter: the browser only discovers the
+   @font-face after the CSS has parsed. Only the ROMAN is preloaded, because
+   it carries the largest heading. If Phase 2 puts italic above the fold, add
+   the second preload then and not before; preloading a face that is not in
+   the first viewport just competes with the one that is.
+
+   Binaries are synced into each app's public/fonts by scripts/sync-fonts.mjs.
+   Canonical copies live at packages/ui/fonts/.
+
+   unicode-range matches the glyphs actually present in these files, copied
+   from the upstream latin subset definition. Do not trim it by eye; a range
+   that claims a codepoint the file lacks gives an invisible glyph, and one
+   that omits a codepoint the file has causes a needless second download.
+   ========================================================================= */
+
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("/fonts/instrument-sans-latin-var.woff2") format("woff2-variations");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+    U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+    U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("/fonts/instrument-sans-italic-latin-var.woff2") format("woff2-variations");
+  font-weight: 400 700;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+    U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+    U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* NO SYNTHETIC OBLIQUE. If a real italic face fails to load, the browser
+   slants the roman, and a fake italic on a type led page is the same class
+   of tell as a generated hand mark: worse than absent. This asserts the real
+   face is in use. Remove it only if a real italic is genuinely unavailable. */
+@supports (font-synthesis-style: none) {
+  :root {
+    font-synthesis-style: none;
+  }
+}

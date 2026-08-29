@@ -1,0 +1,125 @@
+---
+/**
+ * Home. Design locked. Page content still landing.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Band from "@jononeill/ui/Band.astro";
+import Eyebrow from "@jononeill/ui/Eyebrow.astro";
+import { SITE } from "../components/site";
+---
+
+<BaseLayout title="Jon ONeill. Product, operations, and analytics.">
+  <Band surface="canvas" as="header" class="hero">
+    <div class="hero__inner">
+      <Eyebrow>Phoenix, AZ</Eyebrow>
+      <h1 class="hero__title">{SITE.name}</h1>
+      <p class="hero__lede">
+        Product, operations, and analytics. Director of Operations at Zoom Drain
+        Phoenix. Previously Head of Product at Livable. Product and analytics at
+        HomeLight, Stoa, and Zillow.
+      </p>
+      <p class="hero__meta">
+        <a href={SITE.linkedin}>LinkedIn</a>
+        <span aria-hidden="true"> · </span>
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      </p>
+    </div>
+  </Band>
+
+  <Band surface="canvas" as="section" id="work" class="section">
+    <div class="section__inner">
+      <Eyebrow>Status</Eyebrow>
+      <h2 class="section__title">Site in progress</h2>
+      <p class="section__body">
+        Design system is locked. Tokens, motion, and shared UI are in the repo.
+        Pages and long form content come next. The domain is not live yet.
+      </p>
+      <p class="section__body">
+        Recruiter preview of the locked palette:
+        <a href="/preview/tokens/">/preview/tokens/</a>
+        (throwaway route, marked for deletion).
+      </p>
+    </div>
+  </Band>
+
+  <Band surface="accent" as="section" id="contact" class="section section--contact">
+    <div class="section__inner">
+      <Eyebrow>Contact</Eyebrow>
+      <h2 class="section__title">Say hello</h2>
+      <p class="section__body">
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      </p>
+    </div>
+  </Band>
+</BaseLayout>
+
+<style>
+  .hero {
+    min-height: calc(100vh - var(--nav-height));
+    display: flex;
+    align-items: flex-end;
+    padding-block: var(--s-section);
+  }
+
+  .hero__inner,
+  .section__inner {
+    width: min(100%, var(--max-w));
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .hero__title {
+    margin-block-start: var(--s-4);
+    font-size: var(--t-display);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-display);
+    font-weight: var(--fw-semibold);
+    max-width: 12ch;
+  }
+
+  .hero__lede {
+    margin-block-start: var(--s-6);
+    max-width: var(--measure-tight);
+    font-size: var(--t-body-lg);
+    color: var(--fg-secondary);
+  }
+
+  .hero__meta {
+    margin-block-start: var(--s-8);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+  }
+
+  .hero__meta a {
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+  }
+
+  .section {
+    padding-block: var(--s-section-tight);
+  }
+
+  .section__title {
+    margin-block-start: var(--s-3);
+    font-size: var(--t-h2);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--ls-heading);
+  }
+
+  .section__body {
+    margin-block-start: var(--s-4);
+    max-width: var(--measure);
+    color: var(--fg-secondary);
+  }
+
+  .section--contact .section__body,
+  .section--contact .section__title {
+    color: var(--fg-on-accent);
+  }
+
+  .section--contact a {
+    color: inherit;
+  }
+</style>

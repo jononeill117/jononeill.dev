@@ -1,0 +1,22 @@
+{
+  "name": "site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../scripts/sync-fonts.mjs && astro dev",
+    "build": "node ../../scripts/sync-fonts.mjs && astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@jononeill/motion": "workspace:*",
+    "@jononeill/tokens": "workspace:*",
+    "@jononeill/ui": "workspace:*",
+    "astro": "^5.15.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.9.3"
+  }
+}

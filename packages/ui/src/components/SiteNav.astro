@@ -1,0 +1,591 @@
+---
+/**
+ * SITE NAV. SHARED BY BOTH APPS.
+ *
+ * Authored once here rather than twice in the apps, because the stated
+ * requirement is that the two sites look like one studio made them. Two
+ * copies of a nav is two places for drift to start.
+ *
+ * ---------------------------------------------------------------------------
+ * THE --nav-fg MECHANISM. THIS IS A RECORDED DEFECT BEING FIXED.
+ *
+ * The old build painted the nav in dark ink and left it there. Over the indigo
+ * contact band that produced #1a1916 on #5E28C4, which is unreadable, and it
+ * shipped. tokens.css carries the note at --nav-fg saying any section on an
+ * accent or inverted surface must set the nav foreground locally.
+ *
+ * How it works here, in three parts:
+ *
+ *   1. The nav declares --nav-fg on ITSELF, not on :root, and every piece of
+ *      ink inside it reads that one property. There is no second colour in
+ *      this component. See the note under "ONE COLOUR ONLY" below.
+ *   2. Three surface values are declared as attribute variants:
+ *      canvas, inverted, accent. Each remaps --nav-fg and --nav-hairline to
+ *      the matching semantic pair already in tokens.css. No new colour is
+ *      defined here; this file defines no literal value of any kind.
+ *   3. A small inline script decides which of the three is currently under
+ *      the nav, by testing which [data-surface] element the nav's own midline
+ *      falls inside, and writes that onto data-surface.
+ *
+ * WITH JAVASCRIPT OFF the nav renders at whatever `initialSurface` says, which
+ * is the surface at the top of the page. That is the correct static answer:
+ * a page is only ever loaded at scroll position 0.
+ *
+ * The script is is:inline on purpose. It is small enough that a network round
+ * trip costs more than the bytes, and inlining keeps /privacy and /404 free of
+ * a module request. It never touches GSAP or the motion package.
+ * ---------------------------------------------------------------------------
+ */
+export type NavSurface = "canvas" | "inverted" | "accent";
+
+interface Props {
+  /** Wordmark link target. */
+  home?: string;
+  /** Wordmark text. Set at weight --fw-bold. */
+  wordmark: string;
+  /**
+   * Optional trailing part of the wordmark, e.g. ".clairvos.com".
+   * Differentiated by WEIGHT, never by colour. See ONE COLOUR ONLY.
+   */
+  wordmarkSuffix?: string;
+  /** Contact address, shown as the trailing route. */
+  email: string;
+  /**
+   * Section links. RESTORED 2026-08-10.
+   *
+   * The migration dropped these and the audit caught it. They matter more than
+   * they look: `#contact` was restored to the page specifically because
+   * router.ts documents it as a nav anchor, so without the nav carrying that
+   * anchor the restoration was only half done.
+   *
+   * A PROP, NOT A CONSTANT, because this component is shared by both sites and
+   * the two navigations are not the same. Bucket B had six links, Bucket A did
+   * not have this set. A site that passes nothing gets the wordmark and the
+   * email, which is exactly what both had before this prop existed.
+   *
+   * ORDER IS THE PREDECESSOR'S OWN AND IS NOT THE SECTION ORDER. Its nav ran
+   * Work, Practice, Approach, Engagement, Writing, Contact, while the page runs
+   * writing before engagement. That looks like a mistake and it is not mine to
+   * correct: this is a migration, and quietly reordering it would be exactly
+   * the unrequested improvement the scope ruling forbids.
+   */
+  links?: readonly { label: string; href: string; count?: string }[];
+  /** Surface at the top of the page, used before any scroll and with JS off. */
+  initialSurface?: NavSurface;
+  /**
+   * Surface used when the nav's midline is inside NO band at all.
+   *
+   * SEPARATE FROM initialSurface, AND THE TWO WERE ONE PROP UNTIL 2026-08-11,
+   * WHICH SHIPPED THE ORIGINAL NAV DEFECT BACK IN A NEW SHAPE.
+   *
+   * A page whose first band is an accent hero has to pass initialSurface
+   * "accent", or with JavaScript off the bar renders dark ink on #5E28C4 at
+   * first paint, which is the unreadable pairing this component exists to
+   * prevent. When that same value was also the fallback, everything BETWEEN
+   * bands inherited it: scrolled past the hero onto the plain canvas page, the
+   * nav kept painting white, so #FFFFFF sat on #F5F5F5 and the bar vanished.
+   * Same defect, opposite direction, and measured on the rebuilt hero.
+   *
+   * Canvas is the correct default because it is the page's own ground on both
+   * sites, and "canvas" resolves through --fg, so it follows the theme rather
+   * than naming a colour.
+   */
+  fallbackSurface?: NavSurface;
+  /**
+   * OPTIONAL CHROME. Defaults preserve Bucket A exactly, which is frozen.
+   *
+   * Bucket B drops both. The wordmark repeats a domain the reader typed, and
+   * the address duplicates the contact card in the hero and the Contact entry
+   * in this bar, so the top right was the third route to the same inbox.
+   */
+  showWordmark?: boolean;
+  showEmail?: boolean;
+  /** A menu button in the corner the address used to hold. */
+  showMenu?: boolean;
+}
+
+const {
+  home = "/",
+  wordmark,
+  wordmarkSuffix,
+  email,
+  initialSurface = "canvas",
+  fallbackSurface = "canvas",
+  showWordmark = true,
+  showEmail = true,
+  showMenu = false,
+  links = [],
+} = Astro.props;
+---
+
+<nav
+  class="site-nav"
+  id="site-nav"
+  data-surface={initialSurface}
+  data-surface-default={fallbackSurface}
+  aria-label="Primary"
+>
+  {
+    showWordmark && (
+      <a class="nav-wordmark" href={home}>
+        <span class="nav-wordmark-name">{wordmark}</span>
+        {wordmarkSuffix && (
+          <span class="nav-wordmark-suffix">{wordmarkSuffix}</span>
+        )}
+      </a>
+    )
+  }
+
+  {
+    links.length > 0 && (
+      <ul class="nav-links">
+        {links.map((link) => (
+          <li>
+            <a class="nav-link" href={link.href}>
+              {link.label}
+              {link.count && <span class="nav-count">({link.count})</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {showEmail && <a class="nav-route" href={`mailto:${email}`}>{email}</a>}
+
+  {/*
+    THE CORNER. A slot rather than a prop, because what belongs here differs
+    per site and a component that imports a theme toggle has taken a position
+    on whether the site has one. Bucket B puts its theme control here; Bucket A
+    passes nothing and the group collapses to the menu alone.
+  */}
+  <div class="nav-tools">
+    <slot name="tools" />
+    {
+      showMenu && (
+        <button
+          class="nav-menu"
+          type="button"
+          aria-label="Menu"
+          aria-expanded="false"
+        >
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+        </button>
+      )
+    }
+  </div>
+</nav>
+
+<script is:inline>
+  /*
+    Surface detection.
+
+    Decides which [data-surface] element the nav's own midline currently falls
+    inside and copies that surface onto the nav. Everything else is CSS.
+
+    ---------------------------------------------------------------------------
+    NO requestAnimationFrame IN THE SCROLL PATH, AND THIS WAS LEARNED THE SAME
+    WAY EVERYTHING ELSE IN CLAUDE.md WAS.
+
+    The first version of this script did the layout reads inside one rAF per
+    scroll burst, which is the textbook shape. It was then measured in a tab
+    that was not the frontmost tab: the nav sat on the dark band still painted
+    in ink, exactly the defect this component exists to fix, because rAF does
+    not run at all when the tab is not being painted. That is the same failure
+    recorded in section 5 about tweens stalling at opacity 0. A correctness
+    mechanism must not be scheduled on a callback the browser is free to skip.
+
+    So the split is: MEASURE rarely, APPLY cheaply.
+
+      measure()  reads layout once and caches every band's top and bottom in
+                 DOCUMENT coordinates. Runs on init, on resize, once the fonts
+                 have settled, on load, and whenever a ResizeObserver says the
+                 page changed height.
+      apply()    runs on every scroll event and touches no layout at all. It
+                 compares two numbers per band against window.scrollY. There is
+                 nothing in it to throttle, so nothing has to be deferred, so
+                 there is no frame to miss.
+
+    That also makes it cheap in the way INP cares about, which is a pass or
+    fail item in section 7: the scroll listener is passive and does arithmetic
+    on a handful of numbers, never a forced synchronous layout.
+    ---------------------------------------------------------------------------
+
+    Lenis scrolls the real window, so native scroll events still fire and this
+    needs no Lenis specific wiring. It must never call window.scrollTo: Lenis
+    owns scroll position, per CLAUDE.md section 5.
+  */
+  (function () {
+    var nav = document.getElementById("site-nav");
+    if (!nav) return;
+
+    var fallback = nav.getAttribute("data-surface-default") || "canvas";
+    var bands = [];
+    var navMid = 0;
+
+    function scrollY() {
+      return window.scrollY || window.pageYOffset || 0;
+    }
+
+    function measure() {
+      navMid = nav.offsetHeight / 2;
+
+      var y = scrollY();
+      var found = document.querySelectorAll("[data-surface]");
+      bands = [];
+
+      for (var i = 0; i < found.length; i++) {
+        var el = found[i];
+        if (el === nav) continue;
+        var r = el.getBoundingClientRect();
+        bands.push({
+          top: r.top + y,
+          bottom: r.bottom + y,
+          surface: el.getAttribute("data-surface") || fallback,
+        });
+      }
+    }
+
+    function apply() {
+      var probe = scrollY() + navMid;
+      var surface = fallback;
+
+      // Last match wins, so a band nested inside another resolves to the
+      // inner one, which is what a reader sees.
+      for (var i = 0; i < bands.length; i++) {
+        if (bands[i].top <= probe && bands[i].bottom > probe) {
+          surface = bands[i].surface;
+        }
+      }
+
+      if (nav.getAttribute("data-surface") !== surface) {
+        nav.setAttribute("data-surface", surface);
+      }
+
+      var scrolled = scrollY() > 4 ? "true" : "false";
+      if (nav.getAttribute("data-scrolled") !== scrolled) {
+        nav.setAttribute("data-scrolled", scrolled);
+      }
+    }
+
+    function remeasure() {
+      measure();
+      apply();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", remeasure);
+    } else {
+      remeasure();
+    }
+
+    window.addEventListener("scroll", apply, { passive: true });
+    window.addEventListener("resize", remeasure, { passive: true });
+    window.addEventListener("load", remeasure);
+    // Restoring from bfcache does not fire load, and the scroll position is
+    // already somewhere in the middle of the document when it happens.
+    window.addEventListener("pageshow", remeasure);
+
+    // font-display: swap means the first paint is in a fallback face and the
+    // page reflows when Instrument Sans arrives. Cached offsets have to move
+    // with it.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(remeasure);
+    }
+
+    // Catches everything else that changes the page height: images, an
+    // accordion, a Phase 2 pinned section releasing its spacer.
+    if (typeof ResizeObserver === "function") {
+      new ResizeObserver(remeasure).observe(document.documentElement);
+    }
+  })();
+</script>
+
+<style>
+  /*
+    ONE COLOUR ONLY.
+
+    Every mark in this nav paints with var(--nav-fg). Nothing here uses
+    --fg-muted or --fg-muted-on-inverted, and that is deliberate rather than
+    lazy: measured against their own grounds, #8B8983 on canvas is 3.2:1 and
+    #6E6C66 on the dark band is 3.6:1. Both are below the 4.5:1 that small
+    text needs. Those tokens are fine for a large mono eyebrow and wrong for a
+    12px nav label, and the nav is the exact element whose contrast failure
+    already shipped once.
+
+    Hierarchy inside the wordmark is therefore carried by WEIGHT, which is
+    A-D1's own device, and costs no contrast.
+  */
+  .site-nav {
+    --nav-fg: var(--fg);
+    --nav-hairline: var(--hairline-color);
+    --nav-bg: var(--bg);
+
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: var(--z-nav);
+
+    /*
+      THREE TRACKS, EQUAL OUTER. Corrected 2026-08-11.
+
+      The links were centred with auto margins on both sides, which centres
+      them in the space LEFT OVER. With the wordmark removed there is nothing
+      on the left and the tools group on the right, so the leftover space was
+      asymmetric and the whole bar sat off centre. Equal 1fr tracks either side
+      put the links on the real midline of the page regardless of what the
+      outer tracks hold, including nothing.
+    */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--s-4);
+
+    height: var(--nav-height);
+    padding-inline: var(--gutter);
+
+    color: var(--nav-fg);
+
+    /* Transparent AT REST, which is correct at the top of a page: the surface
+       below shows through, and that is the whole reason the foreground has to
+       move. It goes solid once scrolled, see the rule below. */
+    background-color: transparent;
+
+    border-block-end: var(--hairline) solid transparent;
+    /*
+      A CROSSFADE, NOT A CUT. Lengthened 2026-08-11.
+
+      At --dur-quick the bar changed ink and ground in 160ms, which at a normal
+      scroll speed lands inside a single perceived instant and reads as a snap.
+      --dur-cine-phase carries it across the band boundary so the white ink
+      walks to dark ink while the ground walks the other way, which is what the
+      reference does and what "gradient between the colours" means here: an
+      interpolation in TIME, not a gradient fill, which gate 9 bans.
+
+      Three properties, one duration, one ease, so nothing arrives early and
+      leaves the pair briefly illegible.
+    */
+    transition:
+      color var(--dur-cine-phase) var(--ease-cine),
+      background-color var(--dur-cine-phase) var(--ease-cine),
+      border-color var(--dur-cine-phase) var(--ease-cine);
+  }
+
+  .nav-tools {
+    grid-column: 3;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: var(--s-8);
+  }
+
+  /* THE MENU. Two rules, not three, matching the reference. It is a button
+     with no handler yet: the panel is a separate piece of work and a control
+     that does nothing is worse than no control, so it is opt in per site. */
+  .nav-menu {
+    display: grid;
+    gap: var(--s-1);
+    padding: var(--s-2) 0;
+    margin: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    inline-size: var(--s-8);
+  }
+
+  .nav-menu span {
+    display: block;
+    block-size: var(--hairline);
+    background-color: var(--nav-fg);
+    transition: background-color var(--dur-cine-phase) var(--ease-cine);
+  }
+
+  /* The three surfaces. Each one only re-points existing semantic tokens. */
+  .site-nav[data-surface="inverted"] {
+    --nav-fg: var(--fg-on-inverted);
+    --nav-hairline: var(--hairline-on-inverted);
+    --nav-bg: var(--surface-inverted);
+  }
+
+  .site-nav[data-surface="accent"] {
+    --nav-fg: var(--fg-on-accent);
+    --nav-hairline: var(--hairline-on-accent);
+    --nav-bg: var(--surface-accent);
+  }
+
+  /* Hairline appears once the page has moved, so the nav sits on nothing at
+     rest. A rule, not a container. */
+  /*
+    SOLID GROUND ONCE SCROLLED. Ruled 2026-08-10, and it is a legibility fix,
+    not a style change.
+
+    The bar is transparent at rest, which is correct at the top of a page. The
+    moment it travels over display-scale ink headlines, the wordmark and the
+    address sit directly on top of black glyphs and disappear. Found on Bucket
+    B over --t-display headlines and confirmed on Bucket A over "Who are we?".
+    A hairline alone does not separate the bar from what is behind it.
+
+    --nav-bg, not a literal, so an inverted or accent section that re-points
+    --nav-fg re-points the ground with it and the pair stays legible together.
+
+    NO BLUR AND NO TRANSLUCENCY. A frosted bar is the obvious move and it is
+    banned by gate 9, which prohibits blur filters outright. Solid is also
+    cheaper: a backdrop-filter on a fixed element repaints the strip on every
+    scroll frame, which is exactly the long main thread task section 7 names
+    as the INP risk on a cinematic site.
+  */
+  .site-nav[data-scrolled="true"] {
+    background-color: var(--nav-bg);
+    border-block-end-color: var(--nav-hairline);
+  }
+
+  /*
+    Section links. Set at the predecessor's own values, measured on it rather
+    than chosen: 13.12px, sentence case, normal tracking, no transform. They
+    are deliberately NOT in the mono eyebrow register, because the old nav was
+    not, and A-D5 is deferred with the rest of the aesthetic direction.
+
+    They paint with --nav-fg like everything else in this bar, so they follow
+    the surface and inherit the contrast fix rather than needing their own.
+  */
+  .nav-links {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    gap: clamp(var(--s-6), 4vw, var(--s-24));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /*
+    NO RESTING RULE. Removed 2026-08-11.
+
+    Six permanently underlined items read as six visited links, and the bar
+    looked busier than everything under it. The hover sweep stays, because that
+    was the part worth having: nothing at rest, a rule that fills from the left
+    when the pointer arrives.
+
+    A TRANSFORM, NOT A WIDTH. Animating width writes a layout property inside
+    the interaction the INP budget is measured on. scaleX is composited.
+  */
+  .nav-link {
+    position: relative;
+    color: var(--nav-fg);
+    text-decoration: none;
+    font-size: var(--t-mono-md);
+    line-height: 1;
+    white-space: nowrap;
+    padding-block-end: var(--s-2);
+    transition: color var(--dur-cine-phase) var(--ease-cine);
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline: 0;
+    block-size: var(--hairline);
+    background-color: var(--nav-fg);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-base) var(--ease-snap);
+  }
+
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /*
+    THE COUNT. The design reference carries one on its nav items, Work (12),
+    Services (08), and it is the cheapest piece of that grammar to take: a
+    label with a count beside it is what an index in a technical document does
+    and what a marketing nav never does. A-D5, drawn rather than described.
+
+    Mono, small, raised, and painted with --nav-fg like everything else in this
+    bar, so it follows the surface and inherits the contrast fix rather than
+    needing its own. The count is DERIVED at the call site, never authored, so
+    it cannot go stale or become a figure with no source.
+  */
+  .nav-count {
+    margin-inline-start: var(--s-1);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    font-variant-numeric: tabular-nums;
+    vertical-align: 0.35em;
+  }
+
+  /*
+    NARROW. The predecessor hid this list below its own breakpoint rather than
+    building a drawer, and a drawer would be a new composition. Hidden with
+    display, not with a transform, because these are duplicate links to
+    sections that remain reachable by scrolling, so nothing becomes
+    unreachable. The address survives at every width.
+  */
+  @media (max-width: 60rem) {
+    .nav-links {
+      display: none;
+    }
+  }
+
+  .nav-wordmark {
+    color: var(--nav-fg);
+    text-decoration: none;
+    font-size: var(--t-body-sm);
+    line-height: 1;
+    letter-spacing: var(--ls-heading);
+    white-space: nowrap;
+  }
+
+  .nav-wordmark-name {
+    font-weight: var(--fw-bold);
+  }
+
+  .nav-wordmark-suffix {
+    font-weight: var(--fw-regular);
+  }
+
+  .nav-route {
+    color: var(--nav-fg);
+    text-decoration: none;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--ls-mono);
+    white-space: nowrap;
+
+    /* Underline grows from the left on hover. A transform, not an opacity
+       fade, and it is decoration rather than content so it cannot hide
+       anything if it stalls. */
+    position: relative;
+  }
+
+  .nav-route::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: calc(var(--s-1) * -1);
+    height: var(--hairline);
+    background: var(--nav-fg);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-base) var(--ease-snap);
+  }
+
+  .nav-route:hover::after,
+  .nav-route:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  @media (max-width: 26rem) {
+    /* The address is the longer of the two and the wordmark is the anchor,
+       so the address is what gives way. It is still reachable in the footer
+       at display scale, twice, by name. */
+    .nav-route {
+      font-size: var(--t-mono-xs);
+    }
+  }
+</style>

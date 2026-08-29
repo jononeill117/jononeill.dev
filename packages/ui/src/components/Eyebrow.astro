@@ -1,0 +1,36 @@
+---
+/**
+ * EYEBROW. The mono register.
+ *
+ * Monospace carries eyebrows, labels and figure captions. That split between
+ * mono and sans IS the field manual register (A-D5); it is not decoration.
+ * Always caps, always tracked out at --ls-mono.
+ *
+ * This is also the Phase 0 proof that a component authored once in
+ * packages/ui renders identically in an app with Tailwind (Bucket B) and an
+ * app without it (Bucket A). It styles itself from tokens through Astro
+ * scoped CSS, so it carries no dependency on either app's CSS strategy.
+ */
+interface Props {
+  /** Rendered element. A label above a heading is not itself a heading. */
+  as?: "p" | "span" | "div" | "h2" | "h3";
+  class?: string;
+}
+
+const { as: Tag = "p", class: className } = Astro.props;
+---
+
+<Tag class:list={["eyebrow", className]}><slot /></Tag>
+
+<style>
+  .eyebrow {
+    margin: 0;
+    font-family: var(--font-label);
+    font-size: var(--eyebrow-size);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--eyebrow-track);
+    font-weight: var(--fw-medium);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+</style>
