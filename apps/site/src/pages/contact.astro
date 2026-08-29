@@ -6,24 +6,32 @@ import { SITE } from "../components/site";
 ---
 
 <BaseLayout
-  title="Contact. Jon ONeill."
-  description="Phoenix, AZ. Phone, email, LinkedIn."
+  title="Contact Jon O'Neill. Product manager, Phoenix."
+  description="Open to product roles at startups. Email, phone, LinkedIn, resume."
   canonicalPath="/contact/"
   navSurface="accent"
 >
   <Band surface="accent" as="header" class="page-hero contact-hero">
     <div class="page-inner">
       <Eyebrow>Contact</Eyebrow>
-      <h1 class="page-title">Phoenix, AZ</h1>
+      <h1 class="page-title">Open to product roles</h1>
+      <p class="page-lede">
+        I am looking for a product role at a startup, the kind where the roadmap,
+        the number, and the go to market sit inside one job. Phoenix, AZ, and
+        glad to work remote. Email is the fastest way to reach me.
+      </p>
       <ul class="lines" role="list">
+        <li>
+          <a href={`mailto:${SITE.email}`} data-email-reveal>Show email</a>
+        </li>
         <li>
           <a href={SITE.phoneHref}>{SITE.phone}</a>
         </li>
         <li>
-          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          <a href={SITE.linkedin}>linkedin.com/in/jon-oneill-020196</a>
         </li>
         <li>
-          <a href={SITE.linkedin}>linkedin.com/in/jon-oneill-020196</a>
+          <a href={SITE.resume}>Resume, PDF</a>
         </li>
       </ul>
     </div>

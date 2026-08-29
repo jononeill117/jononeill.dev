@@ -1,6 +1,6 @@
 ---
 /**
- * Home. Hire packet.
+ * Home. A recruiter has ninety seconds. Claim, proof, numbers, then the roles.
  */
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -8,25 +8,61 @@ import Band from "@jononeill/ui/Band.astro";
 import Eyebrow from "@jononeill/ui/Eyebrow.astro";
 import { SITE } from "../components/site";
 
-const studies = (await getCollection("work")).sort(
+const entries = (await getCollection("work")).sort(
   (a, b) => a.data.order - b.data.order,
 );
+
+const roles = entries.filter((entry) => entry.data.kind !== "project");
+const side = entries.filter((entry) => entry.data.kind === "project");
+
+/** Reverse chronological, and Zoom Drain does not open the page. */
+const PROOF = ["Zillow", "HomeLight", "Stoa", "Livable", "Zoom Drain"];
+
+const STATS = [
+  "$1B underwritten",
+  "$800M annual book",
+  "2,000 units in four months",
+  "Cycle time down 85%",
+];
 ---
 
-<BaseLayout title="Jon ONeill. Product, operations, and analytics.">
+<BaseLayout title="Jon O'Neill. Product manager, zero to one SaaS and pricing platforms.">
   <Band surface="canvas" as="header" class="hero">
     <div class="page-inner">
-      <Eyebrow>Phoenix, AZ</Eyebrow>
+      <Eyebrow>Product manager. Phoenix, AZ.</Eyebrow>
       <h1 class="hero__title">{SITE.name}</h1>
       <p class="hero__lede">
-        Product, operations, and analytics. Director of Operations at Zoom Drain
-        Phoenix. Previously Head of Product at Livable. Product and analytics at
-        HomeLight, Stoa, and Zillow.
+        I build the product that makes the expensive decision. Underwriting
+        models at Zillow and HomeLight, the pricing platform forty analysts
+        worked in at Stoa, and a zero to one SaaS at Livable that reached 2,000
+        units in its first four months.
       </p>
       <p class="page-meta">
+        {
+          PROOF.map((name, i) => (
+            <>
+              {i > 0 && <span aria-hidden="true"> · </span>}
+              <span>{name}</span>
+            </>
+          ))
+        }
+      </p>
+      <p class="page-meta">
+        {
+          STATS.map((stat, i) => (
+            <>
+              {i > 0 && <span aria-hidden="true"> · </span>}
+              <span>{stat}</span>
+            </>
+          ))
+        }
+      </p>
+      <p class="page-meta">
+        <a href={SITE.resume}>Resume</a>
+        <span aria-hidden="true"> · </span>
         <a href={SITE.linkedin}>LinkedIn</a>
         <span aria-hidden="true"> · </span>
-        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        <a href="/contact/">Contact</a>
       </p>
     </div>
   </Band>
@@ -34,20 +70,25 @@ const studies = (await getCollection("work")).sort(
   <Band surface="canvas" as="section" id="work" class="page-section">
     <div class="page-inner">
       <Eyebrow>Work</Eyebrow>
-      <h2 class="page-section-title">Two writeups</h2>
+      <h2 class="page-section-title">Five seats, same job.</h2>
       <p class="page-body">
-        This site is the hire packet. Short pages and facts. Not a product
-        marketing site.
+        Product on enterprise models, on a marketplace acquisitions book, on a
+        pricing platform, and on a zero to one SaaS. Then the operating side of a
+        live P&amp;L, to find out what my roadmaps had been costing the people
+        who ran them.
       </p>
       <ul class="work-list" role="list">
         {
-          studies.map((study) => (
+          roles.map((entry) => (
             <li class="work-item">
-              <Eyebrow>{study.data.role}</Eyebrow>
+              <Eyebrow>
+                {entry.data.role} · {entry.data.dates}
+              </Eyebrow>
               <h3 class="work-item__title">
-                <a href={`/work/${study.id}/`}>{study.data.title}</a>
+                <a href={`/work/${entry.id}/`}>{entry.data.title}</a>
               </h3>
-              <p class="work-item__lede">{study.data.lede}</p>
+              <p class="work-item__lede">{entry.data.lede}</p>
+              <p class="page-meta">{entry.data.outcome}</p>
             </li>
           ))
         }
@@ -58,12 +99,31 @@ const studies = (await getCollection("work")).sort(
     </div>
   </Band>
 
+  {
+    side.map((entry) => (
+      <Band surface="canvas" as="section" class="page-section">
+        <div class="page-inner">
+          <Eyebrow>On the side · {entry.data.dates}</Eyebrow>
+          <h2 class="work-item__title">
+            <a href={`/work/${entry.id}/`}>{entry.data.title}</a>
+          </h2>
+          <p class="work-item__lede">{entry.data.lede}</p>
+          <p class="page-meta">{entry.data.outcome}</p>
+        </div>
+      </Band>
+    ))
+  }
+
   <Band surface="accent" as="section" id="contact" class="page-section section--contact">
     <div class="page-inner">
       <Eyebrow>Contact</Eyebrow>
-      <h2 class="page-section-title">Phoenix, AZ</h2>
+      <h2 class="page-section-title">I want the next zero to one.</h2>
       <p class="page-body">
-        <a href="/contact/">Phone, email, LinkedIn</a>
+        A product role at a startup, where the roadmap, the number, and the go to
+        market sit inside one job. Phoenix, AZ, and glad to work remote.
+      </p>
+      <p class="page-meta">
+        <a href="/contact/">Phone, email, LinkedIn, resume</a>
       </p>
     </div>
   </Band>

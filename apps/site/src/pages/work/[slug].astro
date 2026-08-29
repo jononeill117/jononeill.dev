@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const title = `${entry.data.title}. ${entry.data.role}.`;
+const title = `${entry.data.title}. ${entry.data.role}. Jon O'Neill.`;
 ---
 
 <BaseLayout
@@ -24,9 +24,10 @@ const title = `${entry.data.title}. ${entry.data.role}.`;
 >
   <Band surface="canvas" as="header" class="page-hero">
     <div class="page-inner">
-      <Eyebrow>{entry.data.role}</Eyebrow>
+      <Eyebrow>{entry.data.role} · {entry.data.dates}</Eyebrow>
       <h1 class="page-title">{entry.data.title}</h1>
       <p class="page-lede">{entry.data.lede}</p>
+      <p class="page-meta">{entry.data.outcome}</p>
     </div>
   </Band>
 
@@ -34,7 +35,11 @@ const title = `${entry.data.title}. ${entry.data.role}.`;
     <div class="page-inner prose">
       <Content />
       <p class="page-meta">
-        <a href="/#work">Back to work</a>
+        <a href="/#work">All work</a>
+        <span aria-hidden="true"> · </span>
+        <a href="/experience/">Experience</a>
+        <span aria-hidden="true"> · </span>
+        <a href="/contact/">Contact</a>
       </p>
     </div>
   </Band>

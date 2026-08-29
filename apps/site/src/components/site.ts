@@ -8,21 +8,30 @@
 export const SITE = {
   origin: "https://jononeill.dev",
   domain: "jononeill.dev",
-  name: "Jon ONeill",
-  legalName: "Jon ONeill",
+  name: "Jon O'Neill",
+  legalName: "Jon O'Neill",
+  /**
+   * Used for mailto hrefs and JSON-LD only. The address is never printed as
+   * visible copy on a page; pages carry a "Show email" control instead.
+   */
   email: "jon.oneill.m@gmail.com",
   wordmark: "jononeill",
   wordmarkSuffix: ".dev",
 
+  /** Asset path. The PDF itself is wired separately. */
+  resume: "/jon-oneill-resume.pdf",
+
+  jobTitle: "Product Manager",
+
   description:
-    "Personal site for Jon ONeill. Product, operations, and analytics. Phoenix, AZ.",
+    "Product manager. Zero to one SaaS at Livable, the underwriting platform at Stoa, acquisitions models at HomeLight and Zillow. Phoenix, AZ.",
 
   locality: ["Phoenix, Arizona", "United States"],
 
   practice:
-    "Product, operations, and analytics. Currently Director of Operations at Zoom Drain Phoenix.",
+    "Product management. Zero to one SaaS, pricing and underwriting platforms, data and machine learning, and the go to market that has to follow.",
 
-  categories: ["Product", "Operations", "Analytics"],
+  categories: ["Product", "Pricing and underwriting", "Data and ML", "Go to market"],
 
   postal: {
     locality: "Phoenix",
@@ -49,6 +58,7 @@ export function personSchema() {
     "@id": `${SITE.origin}/#person`,
     name: SITE.name,
     url: `${SITE.origin}/`,
+    jobTitle: SITE.jobTitle,
     email: SITE.email,
     telephone: SITE.phoneHref.replace("tel:", ""),
     description: SITE.description,

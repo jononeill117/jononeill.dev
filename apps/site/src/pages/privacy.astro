@@ -16,12 +16,14 @@ import { SITE } from "../components/site";
         personal data.
       </p>
       <p>
-        If you email {SITE.email}, that message is handled as ordinary
-        correspondence. Hosting and CDN logs may retain standard request
-        metadata for a limited time.
+        If you email me, that message is handled as ordinary correspondence.
+        Hosting and CDN logs may retain standard request metadata for a limited
+        time.
       </p>
       <p>
-        Questions: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+        Questions: <a href={`mailto:${SITE.email}`} data-email-reveal
+          >Show email</a
+        >.
       </p>
     </div>
   </article>

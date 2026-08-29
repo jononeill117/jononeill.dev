@@ -6,16 +6,17 @@ import { roles, projects } from "../data/roles";
 ---
 
 <BaseLayout
-  title="Experience. Jon ONeill."
-  description="Paid roles in reverse chronological order. Product, operations, and analytics."
+  title="Experience. Jon O'Neill, product manager."
+  description="Head of Product at Livable. Senior Product Manager at Stoa. Product Owner, Acquisitions at HomeLight. Associate at Zillow. Director of Operations at Zoom Drain Phoenix."
   canonicalPath="/experience/"
 >
   <Band surface="canvas" as="header" class="page-hero">
     <div class="page-inner">
       <Eyebrow>Experience</Eyebrow>
-      <h1 class="page-title">Paid roles</h1>
+      <h1 class="page-title">Five roles</h1>
       <p class="page-lede">
-        Reverse chronological. Enterprise product work starts at Zillow in 2019.
+        Four of them product. One of them the operating seat, where I had to live
+        with a roadmap instead of write one. Reverse chronological.
       </p>
     </div>
   </Band>
@@ -26,10 +27,12 @@ import { roles, projects } from "../data/roles";
         {
           roles.map((role) => (
             <li class="role">
-              {role.dates && <Eyebrow>{role.dates}</Eyebrow>}
+              <Eyebrow>{role.dates}</Eyebrow>
               <h2 class="role__title">{role.title}</h2>
               <p class="role__org">{role.org}</p>
-              <p class="role__body">{role.body}</p>
+              {role.bullets.map((bullet) => (
+                <p class="role__body">{bullet}</p>
+              ))}
             </li>
           ))
         }
@@ -40,12 +43,14 @@ import { roles, projects } from "../data/roles";
   <Band surface="inverted" as="section" class="page-section">
     <div class="page-inner">
       <Eyebrow>Projects</Eyebrow>
-      <h2 class="page-section-title">Not a job</h2>
+      <h2 class="page-section-title">On the side</h2>
       <ul class="project-list" role="list">
         {
           projects.map((project) => (
             <li class="project">
-              <Eyebrow>{project.kind}</Eyebrow>
+              <Eyebrow>
+                {project.kind} · {project.dates}
+              </Eyebrow>
               <h3 class="project__title">
                 <a href={project.href}>{project.name}</a>
               </h3>
