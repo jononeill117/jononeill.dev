@@ -106,6 +106,20 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
               <RoleDemo id={entry.id} />
               <p class="role__lede">{entry.data.lede}</p>
               <p class="role__outcome">{entry.data.outcome}</p>
+              {
+                entry.data.marketingUrl && (
+                  <p class="role__site">
+                    Also the marketing site:{" "}
+                    <a
+                      href={entry.data.marketingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {entry.data.marketingUrl.replace(/^https?:\/\//, "")}
+                    </a>
+                  </p>
+                )
+              }
               <div class="role__study prose">
                 <Content />
               </div>
@@ -138,6 +152,20 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
             <RoleDemo id="ecclesio" />
             <p class="role__lede">{ecclesio.data.lede}</p>
             <p class="role__outcome">{ecclesio.data.outcome}</p>
+            {
+              ecclesio.data.marketingUrl && (
+                <p class="role__site">
+                  Also the marketing site:{" "}
+                  <a
+                    href={ecclesio.data.marketingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {ecclesio.data.marketingUrl.replace(/^https?:\/\//, "")}
+                  </a>
+                </p>
+              )
+            }
             <div class="role__study prose">
               <ecclesioRendered.Content />
             </div>
@@ -341,6 +369,23 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
     font-size: var(--t-stat);
     line-height: var(--lh-body);
     color: var(--fg);
+  }
+
+  .role__site {
+    margin-block-start: var(--s-3);
+    font-size: var(--t-proof, var(--t-body-sm));
+    color: var(--fg-muted);
+  }
+
+  .role__site a {
+    color: var(--fg-secondary);
+    text-decoration: underline;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.2em;
+  }
+
+  .role__site a:hover {
+    color: var(--accent);
   }
 
   .role__study {

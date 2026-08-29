@@ -14,6 +14,8 @@ const work = defineCollection({
     kind: z.enum(["product", "operations", "project"]),
     order: z.number(),
     visualCaption: z.string(),
+    /** Optional live marketing site Jon shipped for this role. */
+    marketingUrl: z.string().url().optional(),
   }),
 });
 

@@ -7,6 +7,7 @@ outcome: Zero to beta in four months · Dashboard 2s → ~50ms · Isolated datab
 kind: project
 order: 6
 visualCaption: dashboard load time, first build against the current one
+marketingUrl: https://ecclesiosoftware.com
 ---
 
 **Problem.** I wanted to know whether I could still take a product from nothing to beta without a company behind me. Church software was the excuse. It is a side project and it stays one.
