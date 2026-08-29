@@ -39,11 +39,11 @@ const ecclesioRendered = ecclesio ? await render(ecclesio) : null;
 const PROOF = ["Zillow", "HomeLight", "Stoa", "Livable", "Zoom Drain"];
 
 const STATS = [
-  "$1B underwritten",
-  "$800M annual book",
-  "2,000 units in four months",
-  "Cycle time down 85%",
-];
+  { value: "$1B", label: "underwritten" },
+  { value: "$800M", label: "annual book" },
+  { value: "2,000", label: "units in four months" },
+  { value: "85%", label: "cycle-time reduction" },
+] as const;
 
 const COMPANY_INDEX = experienceEntries.map((entry) => ({
   id: entry.id,
@@ -52,20 +52,21 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
 ---
 
 <BaseLayout
-  title="Jon O'Neill. Product and Operations Manager."
+  title="Jon O'Neill. Product leader."
   description={SITE.description}
   canonicalPath="/"
 >
   <Band surface="canvas" as="header" class="hero">
     <div class="page-inner">
-      <Eyebrow>Product and Operations Manager</Eyebrow>
+      <Eyebrow>Product leader</Eyebrow>
       <h1 class="hero__title">{SITE.name}</h1>
       <p class="hero__lede">
-        Data driven, customer focused product manager. I help sales, marketing,
-        and the company grow fast by building products customers will happily pay
-        for.
+        Product professional with seven years across product management,
+        operations, strategy, and analytics. I work at the point where product
+        and operations meet: turn a manual process into a system, then use what
+        that system produces to make better calls.
       </p>
-      <p class="page-meta page-meta--proof">
+      <p class="proof-row">
         {
           PROOF.map((name, i) => (
             <>
@@ -75,18 +76,20 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
           ))
         }
       </p>
-      <p class="page-meta page-meta--stats">
+      <ul class="stat-grid" role="list">
         {
-          STATS.map((stat, i) => (
-            <>
-              {i > 0 && <span aria-hidden="true"> · </span>}
-              <span>{stat}</span>
-            </>
+          STATS.map((stat) => (
+            <li class="stat-grid__item">
+              <span class="stat-grid__value">{stat.value}</span>
+              <span class="stat-grid__label">{stat.label}</span>
+            </li>
           ))
         }
-      </p>
-      <p class="page-meta page-meta--actions">
+      </ul>
+      <p class="hero-actions">
         <a href="#experience">Experience</a>
+        <span aria-hidden="true"> · </span>
+        <a href="#ecclesio">Portfolio</a>
         <span aria-hidden="true"> · </span>
         <a href="#resume" data-resume-open>Resume</a>
         <span aria-hidden="true"> · </span>
@@ -138,7 +141,7 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
                 </a>
               </h3>
               <p class="role__lede">{entry.data.lede}</p>
-              <p class="page-meta role__outcome">{entry.data.outcome}</p>
+              <p class="role__outcome">{entry.data.outcome}</p>
               <div class="role__study prose">
                 <Content />
                 <RoleDemo id={entry.id} />
@@ -147,6 +150,12 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
           ))
         }
       </ol>
+
+      <p class="portfolio-tease">
+        <a href="#ecclesio">Portfolio</a>
+        {" "}
+        — Ecclesio, church software I build on the side.
+      </p>
 
       {
         ecclesio && ecclesioRendered && (
@@ -161,7 +170,7 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
               </a>
             </h3>
             <p class="role__lede">{ecclesio.data.lede}</p>
-            <p class="page-meta role__outcome">{ecclesio.data.outcome}</p>
+            <p class="role__outcome">{ecclesio.data.outcome}</p>
             <div class="role__study prose">
               <ecclesioRendered.Content />
               <RoleDemo id="ecclesio" />
@@ -177,7 +186,7 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
       <Eyebrow>About</Eyebrow>
       <h2 class="page-section-title">Models, then platforms, then a P&amp;L.</h2>
       <p class="page-lede about__lede">
-        I am a product manager. I like the problems where the answer is a number.
+        I am a product leader. I like the problems where the answer is a number.
       </p>
       <div class="page-body about__body">
         <p>
@@ -198,17 +207,20 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
           monthly, 2,000 units in four months.
         </p>
         <p>
-          Then I ran operations at Zoom Drain Phoenix. Dispatch, intake, an office
-          I hired, a live P&amp;L I had to live with. It taught me what my old
-          roadmaps cost the people downstream.
+          Then I applied product and systems thinking to a live operating
+          business at Zoom Drain Phoenix. Dispatch, intake, an office I hired, a
+          P&amp;L I had to live with. It taught me what my old roadmaps cost the
+          people downstream.
         </p>
         <p>
           Open to startups and to established companies that move with a sense of
           urgency. Phoenix, AZ, and glad to work remote.
         </p>
       </div>
-      <p class="page-meta">
+      <p class="hero-actions hero-actions--on-inverted">
         <a href="#experience">Experience</a>
+        <span aria-hidden="true"> · </span>
+        <a href="#ecclesio">Portfolio</a>
         <span aria-hidden="true"> · </span>
         <a href="#resume" data-resume-open>Resume</a>
         <span aria-hidden="true"> · </span>
@@ -244,13 +256,16 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
 <style>
   .hero {
     padding-block: var(--s-section-tight);
-    padding-block-start: var(--s-6);
+    padding-block-start: calc(
+      var(--nav-stack-height, var(--nav-height-mobile, var(--nav-height))) +
+        var(--s-6)
+    );
   }
 
   @media (min-width: 60.0625rem) {
     .hero {
       padding-block-start: calc(
-        var(--nav-stack-height, var(--nav-height)) + var(--s-6)
+        var(--nav-stack-height, var(--nav-height)) + var(--s-8)
       );
     }
   }
@@ -268,7 +283,67 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
     margin-block-start: var(--s-6);
     max-width: var(--measure-tight);
     font-size: var(--t-body-lg);
+    line-height: var(--lh-body);
     color: var(--fg-secondary);
+  }
+
+  .proof-row {
+    margin-block-start: var(--s-8);
+    font-size: var(--t-proof);
+    line-height: var(--lh-body);
+    color: var(--fg);
+  }
+
+  .stat-grid {
+    list-style: none;
+    margin: var(--s-8) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-4) var(--s-6);
+  }
+
+  @media (min-width: 48rem) {
+    .stat-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .stat-grid__item {
+    display: grid;
+    gap: var(--s-1);
+    padding-block: var(--s-3);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+
+  .stat-grid__value {
+    font-size: var(--t-stat);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--ls-heading);
+    color: var(--accent);
+  }
+
+  .stat-grid__label {
+    font-size: var(--t-proof);
+    line-height: var(--lh-body);
+    color: var(--fg-secondary);
+  }
+
+  .hero-actions {
+    margin-block-start: var(--s-8);
+    font-size: var(--t-proof);
+    line-height: 1.6;
+  }
+
+  .hero-actions a {
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+    padding-block: var(--s-2);
+  }
+
+  .hero-actions--on-inverted {
+    color: var(--fg-on-inverted);
   }
 
   .company-index {
@@ -286,10 +361,7 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
   }
 
   .company-index__link {
-    font-family: var(--font-label);
-    font-size: var(--t-mono-sm);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
+    font-size: var(--t-proof);
     color: var(--accent);
     text-decoration: underline;
     text-decoration-thickness: var(--hairline);
@@ -326,11 +398,15 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
   .role__lede {
     margin-block-start: var(--s-4);
     max-width: var(--measure);
+    font-size: var(--t-body);
     color: var(--fg-secondary);
   }
 
   .role__outcome {
     margin-block-start: var(--s-4);
+    font-size: var(--t-stat);
+    line-height: var(--lh-body);
+    color: var(--fg);
   }
 
   .role__study {
@@ -346,8 +422,18 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
     margin-block-start: var(--s-6);
   }
 
+  .portfolio-tease {
+    margin-block-start: var(--s-16);
+    font-size: var(--t-proof);
+    color: var(--fg-secondary);
+  }
+
+  .portfolio-tease a {
+    color: var(--accent);
+  }
+
   .role--side {
-    margin-block-start: var(--s-24);
+    margin-block-start: var(--s-12);
     padding-block-start: var(--s-12);
     border-block-start: var(--hairline) solid var(--hairline-color);
   }

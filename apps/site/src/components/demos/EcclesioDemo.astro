@@ -2,87 +2,399 @@
 import DemoFrame from "./DemoFrame.astro";
 ---
 
-<DemoFrame class="ecclesio-demo" aspect="16 / 10">
+<DemoFrame
+  class="ecclesio-demo"
+  system="Users → application → data → action"
+  cta="Open the church dashboard we shipped to beta."
+  caption="Interactive walkthrough"
+>
   <div class="ec" data-ec>
-    <header class="ec__top">
-      <div>
-        <h4 class="ec__title">Church Analytics Dashboard</h4>
-        <p class="ec__sub">Welcome back. Community snapshot.</p>
+    <header class="ec__bar">
+      <div class="ec__brand">
+        <span class="ec__mark">Ecclesio</span>
+        <span class="ec__mode" data-ec-mode>Staff view</span>
       </div>
-      <select class="ec__campus" aria-label="Campus">
-        <option>All Locations</option>
-        <option>North Campus</option>
-        <option>Downtown</option>
-        <option>West Ridge</option>
-      </select>
+      <div class="ec__controls">
+        <label class="ec__control ec__control--pulse" data-ec-pulse>
+          <span class="ec__control-label">Location</span>
+          <select class="ec__select" data-ec-campus aria-label="Campus location" disabled>
+            <option value="all">All campuses</option>
+            <option value="north">North Campus</option>
+            <option value="downtown">Downtown Hall</option>
+            <option value="west">West Ridge</option>
+            <option value="river">Riverbend</option>
+          </select>
+        </label>
+        <div class="ec__ranges" role="group" aria-label="Time range">
+          <button type="button" class="ec__chip is-active" data-ec-range="7d" disabled>7D</button>
+          <button type="button" class="ec__chip" data-ec-range="1m" disabled>1M</button>
+        </div>
+      </div>
     </header>
 
-    <div class="ec__grid">
-      <div class="ec__cards">
-        <div class="ec__card">
-          <span class="ec__card-label">Total Members</span>
-          <strong>2,847</strong>
-          <span class="ec__up">+12.5%</span>
-        </div>
-        <div class="ec__card">
-          <span class="ec__card-label">New This Month</span>
-          <strong>143</strong>
-          <span class="ec__up">+8.3%</span>
-        </div>
-        <div class="ec__card">
-          <span class="ec__card-label">Active Engagement</span>
-          <strong>87%</strong>
-          <span class="ec__up">+3.2%</span>
-        </div>
-        <div class="ec__card">
-          <span class="ec__card-label">First Time Guests</span>
-          <strong>89</strong>
-          <span class="ec__up">+15.7%</span>
-        </div>
-      </div>
+    <p class="ec__status" data-ec-status>Opening dashboard</p>
 
-      <div class="ec__health">
-        <div class="ec__health-head">
-          <span>Church Health Score</span>
-          <strong class="ec__score">76%</strong>
-        </div>
-        <div class="ec__tabs" role="tablist">
-          <span>7D</span><span>2W</span><span class="is-active">1M</span><span>1Q</span><span>YTD</span>
-        </div>
-        <svg class="ec__chart" viewBox="0 0 300 100" aria-hidden="true">
-          <line x1="0" y1="25" x2="300" y2="25" class="ec__gridline" />
-          <line x1="0" y1="50" x2="300" y2="50" class="ec__gridline" />
-          <line x1="0" y1="75" x2="300" y2="75" class="ec__gridline" />
-          <polyline
-            class="ec__line ec__line--bench"
-            points="0,30 50,32 100,55 150,65 200,45 250,38 300,24"
-            fill="none"
-            stroke-dasharray="4 3"></polyline>
-          <polyline
-            class="ec__line ec__line--main"
-            points="0,28 50,30 100,62 150,70 200,48 250,35 300,24"
-            fill="none"></polyline>
-          <circle class="ec__dot" cx="300" cy="24" r="4"></circle>
-        </svg>
-        <div class="ec__alert">
-          <span>12 members need immediate follow-up</span>
-          <button type="button" class="ec__view" data-ec-view>View</button>
-        </div>
+    <div class="ec__stats" data-ec-stats>
+      <div class="ec__stat" data-ec-stat="members">
+        <span class="ec__stat-label">Members</span>
+        <strong data-ec-val="members">2,847</strong>
+      </div>
+      <div class="ec__stat" data-ec-stat="new">
+        <span class="ec__stat-label">New</span>
+        <strong data-ec-val="new">143</strong>
+      </div>
+      <div class="ec__stat" data-ec-stat="followups">
+        <span class="ec__stat-label">Follow-ups</span>
+        <strong data-ec-val="followups">12</strong>
+      </div>
+      <div class="ec__stat ec__stat--demo" data-ec-stat="health">
+        <span class="ec__stat-label">Health (demo data)</span>
+        <strong data-ec-val="health">76%</strong>
       </div>
     </div>
 
-    <p class="ec__invite">Invite-only beta. No public directory.</p>
+    <div class="ec__alert" data-ec-alert hidden>
+      <span data-ec-alert-text>12 members need follow-up</span>
+      <span class="ec__alert-tag">Queue</span>
+    </div>
+
+    <div class="ec__body">
+      <section class="ec__panel ec__panel--list" data-ec-panel="list" aria-label="Members needing follow-up">
+        <header class="ec__panel-head">
+          <h4 class="ec__panel-title">Needs follow-up</h4>
+          <span class="ec__panel-meta" data-ec-list-meta>12 open</span>
+        </header>
+        <ul class="ec__members" data-ec-members>
+          <li class="ec__member" data-ec-member="0">
+            <span class="ec__member-name">Maya Chen</span>
+            <span class="ec__member-meta">North Campus · quiet 18 days</span>
+          </li>
+          <li class="ec__member" data-ec-member="1">
+            <span class="ec__member-name">Jordan Hale</span>
+            <span class="ec__member-meta">Downtown Hall · missed group</span>
+          </li>
+          <li class="ec__member" data-ec-member="2">
+            <span class="ec__member-name">Priya Nair</span>
+            <span class="ec__member-meta">West Ridge · first visit</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="ec__panel ec__panel--detail" data-ec-panel="detail" aria-label="Member detail" hidden>
+        <header class="ec__panel-head">
+          <h4 class="ec__panel-title" data-ec-detail-name>Maya Chen</h4>
+          <span class="ec__panel-meta">North Campus</span>
+        </header>
+        <div class="ec__history" data-ec-history>
+          <p class="ec__history-title">Engagement history</p>
+          <ol class="ec__timeline">
+            <li>Sun service · checked in</li>
+            <li>Small group · no show</li>
+            <li>Last message · 18 days ago</li>
+          </ol>
+        </div>
+        <div class="ec__compose" data-ec-compose hidden>
+          <p class="ec__compose-label">New follow-up</p>
+          <p class="ec__compose-body" data-ec-compose-body>
+            Check in after missed group. Offer a call this week.
+          </p>
+          <button type="button" class="ec__compose-btn" data-ec-create disabled>
+            Create follow-up
+          </button>
+        </div>
+        <p class="ec__done" data-ec-done hidden>Follow-up queued. Dashboard updated.</p>
+      </section>
+    </div>
+
+    <footer class="ec__foot">
+      <span class="ec__demo-note">Demo data · invite-only beta</span>
+      <div class="ec__actions">
+        <button type="button" class="ec__btn" data-ec-replay hidden>Replay</button>
+      </div>
+    </footer>
   </div>
 </DemoFrame>
 
 <script>
-  function wireEcclesio(root: HTMLElement) {
-    if (root.hasAttribute("data-ec-wired")) return;
-    root.setAttribute("data-ec-wired", "true");
+  type EcCampus = "all" | "north" | "downtown" | "west" | "river";
+  type EcRange = "7d" | "1m";
 
-    root.querySelector("[data-ec-view]")?.addEventListener("click", () => {
-      const alert = root.querySelector(".ec__alert");
-      alert?.classList.toggle("is-highlight");
+  type EcSnapshot = {
+    members: string;
+    new: string;
+    followups: string;
+    health: string;
+  };
+
+  const CAMPUS_STATS: Record<EcCampus, Record<EcRange, EcSnapshot>> = {
+    all: {
+      "7d": { members: "2,847", new: "38", followups: "12", health: "76%" },
+      "1m": { members: "2,847", new: "143", followups: "12", health: "76%" },
+    },
+    north: {
+      "7d": { members: "912", new: "14", followups: "5", health: "81%" },
+      "1m": { members: "912", new: "48", followups: "5", health: "79%" },
+    },
+    downtown: {
+      "7d": { members: "741", new: "11", followups: "4", health: "72%" },
+      "1m": { members: "741", new: "39", followups: "4", health: "74%" },
+    },
+    west: {
+      "7d": { members: "684", new: "8", followups: "2", health: "78%" },
+      "1m": { members: "684", new: "31", followups: "2", health: "77%" },
+    },
+    river: {
+      "7d": { members: "510", new: "5", followups: "1", health: "83%" },
+      "1m": { members: "510", new: "25", followups: "1", health: "82%" },
+    },
+  };
+
+  function sleep(ms: number) {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
+  function wireEcclesio(root: HTMLElement) {
+    const frame = root.closest<HTMLElement>("[data-demo-frame]");
+    if (!frame || frame.hasAttribute("data-ec-wired")) return;
+    frame.setAttribute("data-ec-wired", "true");
+
+    const status = root.querySelector<HTMLElement>("[data-ec-status]");
+    const mode = root.querySelector<HTMLElement>("[data-ec-mode]");
+    const alert = root.querySelector<HTMLElement>("[data-ec-alert]");
+    const alertText = root.querySelector<HTMLElement>("[data-ec-alert-text]");
+    const listMeta = root.querySelector<HTMLElement>("[data-ec-list-meta]");
+    const detailPanel = root.querySelector<HTMLElement>("[data-ec-panel='detail']");
+    const listPanel = root.querySelector<HTMLElement>("[data-ec-panel='list']");
+    const history = root.querySelector<HTMLElement>("[data-ec-history]");
+    const compose = root.querySelector<HTMLElement>("[data-ec-compose]");
+    const done = root.querySelector<HTMLElement>("[data-ec-done]");
+    const createBtn = root.querySelector<HTMLButtonElement>("[data-ec-create]");
+    const campus = root.querySelector<HTMLSelectElement>("[data-ec-campus]");
+    const pulseWrap = root.querySelector<HTMLElement>("[data-ec-pulse]");
+    const replayBtn = root.querySelector<HTMLButtonElement>("[data-ec-replay]");
+    const rangeBtns = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-ec-range]"));
+    const vals = {
+      members: root.querySelector("[data-ec-val='members']"),
+      new: root.querySelector("[data-ec-val='new']"),
+      followups: root.querySelector("[data-ec-val='followups']"),
+      health: root.querySelector("[data-ec-val='health']"),
+    };
+    const members = Array.from(root.querySelectorAll<HTMLElement>("[data-ec-member]"));
+
+    let running = false;
+    let token = 0;
+    let interactive = false;
+    let followupsOpen = 12;
+    let range: EcRange = "7d";
+    let campusKey: EcCampus = "all";
+
+    const setStatus = (text: string) => {
+      if (status) status.textContent = text;
+    };
+
+    const applyStats = (snapshot: EcSnapshot, followupsOverride?: number) => {
+      if (vals.members) vals.members.textContent = snapshot.members;
+      if (vals.new) vals.new.textContent = snapshot.new;
+      if (vals.health) vals.health.textContent = snapshot.health;
+      const follow = followupsOverride ?? Number(snapshot.followups);
+      if (vals.followups) vals.followups.textContent = String(follow);
+      if (listMeta) listMeta.textContent = `${follow} open`;
+      if (alertText) {
+        alertText.textContent =
+          follow === 1 ? "1 member needs follow-up" : `${follow} members need follow-up`;
+      }
+    };
+
+    const refreshFromControls = () => {
+      const base = CAMPUS_STATS[campusKey][range];
+      const follow =
+        campusKey === "all"
+          ? followupsOpen
+          : Math.min(followupsOpen, Number(base.followups));
+      applyStats(base, follow);
+    };
+
+    const clearHighlights = () => {
+      members.forEach((m) => m.classList.remove("is-active", "is-done"));
+      alert?.classList.remove("is-live");
+      root.classList.remove("is-try");
+      pulseWrap?.classList.remove("is-pulse");
+    };
+
+    const setControlsEnabled = (on: boolean) => {
+      interactive = on;
+      if (campus) campus.disabled = !on;
+      rangeBtns.forEach((b) => {
+        b.disabled = !on;
+      });
+      if (createBtn) createBtn.disabled = !on;
+    };
+
+    const resetBoard = () => {
+      followupsOpen = 12;
+      range = "7d";
+      campusKey = "all";
+      if (campus) campus.value = "all";
+      rangeBtns.forEach((b) => {
+        b.classList.toggle("is-active", b.dataset.ecRange === "7d");
+      });
+      clearHighlights();
+      setControlsEnabled(false);
+      if (alert) alert.hidden = true;
+      if (detailPanel) detailPanel.hidden = true;
+      if (listPanel) listPanel.hidden = false;
+      if (history) history.hidden = false;
+      if (compose) compose.hidden = true;
+      if (done) done.hidden = true;
+      if (replayBtn) replayBtn.hidden = true;
+      if (mode) mode.textContent = "Staff view";
+      applyStats(CAMPUS_STATS.all["7d"], 12);
+      setStatus("Opening dashboard");
+      root.dataset.ecPhase = "idle";
+    };
+
+    const finishTry = () => {
+      running = false;
+      setControlsEnabled(true);
+      root.classList.add("is-try");
+      pulseWrap?.classList.add("is-pulse");
+      if (replayBtn) replayBtn.hidden = false;
+      if (alert) alert.hidden = false;
+      if (detailPanel) detailPanel.hidden = false;
+      if (compose) compose.hidden = false;
+      if (done) done.hidden = false;
+      members[0]?.classList.add("is-done");
+      setStatus("Try it: change location or range");
+      if (mode) mode.textContent = "Try mode";
+      root.dataset.ecPhase = "try";
+      frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
+    };
+
+    const showFinalFrame = () => {
+      followupsOpen = 11;
+      applyStats(CAMPUS_STATS.all["7d"], 11);
+      if (alert) alert.hidden = false;
+      alert?.classList.add("is-live");
+      if (detailPanel) detailPanel.hidden = false;
+      if (compose) compose.hidden = false;
+      if (done) done.hidden = false;
+      members[0]?.classList.add("is-done");
+      setStatus("Follow-up queued. Dashboard updated.");
+      finishTry();
+    };
+
+    const run = async () => {
+      const my = ++token;
+      running = true;
+      resetBoard();
+      root.dataset.ecPhase = "walk";
+
+      // 1. Staff opens dashboard (~1.6s)
+      setStatus("Staff opens dashboard");
+      root.classList.add("is-reveal");
+      await sleep(1600);
+      if (my !== token) return;
+
+      // 2. Alert: 12 members need follow-up (~2s)
+      setStatus("12 members need follow-up");
+      if (alert) alert.hidden = false;
+      alert?.classList.add("is-live");
+      root.querySelector("[data-ec-stat='followups']")?.classList.add("is-hot");
+      await sleep(2000);
+      if (my !== token) return;
+      root.querySelector("[data-ec-stat='followups']")?.classList.remove("is-hot");
+
+      // 3. Highlight a member (~2s)
+      setStatus("Highlighting Maya Chen");
+      members[0]?.classList.add("is-active");
+      await sleep(2000);
+      if (my !== token) return;
+
+      // 4. Engagement history (~2.4s)
+      setStatus("Engagement history");
+      if (detailPanel) detailPanel.hidden = false;
+      if (history) history.hidden = false;
+      if (compose) compose.hidden = true;
+      if (done) done.hidden = true;
+      await sleep(2400);
+      if (my !== token) return;
+
+      // 5. Create follow-up (~2s)
+      setStatus("Creating follow-up");
+      if (compose) compose.hidden = false;
+      createBtn?.classList.add("is-press");
+      await sleep(900);
+      if (my !== token) return;
+      createBtn?.classList.remove("is-press");
+      createBtn?.classList.add("is-sent");
+      await sleep(1100);
+      if (my !== token) return;
+      createBtn?.classList.remove("is-sent");
+
+      // 6. Dashboard updates (~2s)
+      setStatus("Dashboard updates");
+      followupsOpen = 11;
+      applyStats(CAMPUS_STATS.all["7d"], 11);
+      members[0]?.classList.remove("is-active");
+      members[0]?.classList.add("is-done");
+      if (done) done.hidden = false;
+      root.querySelector("[data-ec-stat='followups']")?.classList.add("is-hot");
+      await sleep(2000);
+      if (my !== token) return;
+      root.querySelector("[data-ec-stat='followups']")?.classList.remove("is-hot");
+
+      showFinalFrame();
+    };
+
+    const onCreate = () => {
+      if (!interactive || running) return;
+      if (followupsOpen <= 0) return;
+      followupsOpen -= 1;
+      refreshFromControls();
+      members[0]?.classList.add("is-done");
+      if (done) {
+        done.hidden = false;
+        done.textContent = "Follow-up queued. Dashboard updated.";
+      }
+      setStatus("Follow-up created");
+      createBtn?.classList.add("is-sent");
+      window.setTimeout(() => createBtn?.classList.remove("is-sent"), 500);
+    };
+
+    frame.addEventListener("demo-play", (e) => {
+      const detail = (e as CustomEvent).detail as { reduced?: boolean } | undefined;
+      if (detail?.reduced) {
+        resetBoard();
+        showFinalFrame();
+        return;
+      }
+      void run();
+    });
+    frame.addEventListener("demo-replay", () => void run());
+
+    campus?.addEventListener("change", () => {
+      if (!interactive) return;
+      campusKey = (campus.value as EcCampus) || "all";
+      refreshFromControls();
+      pulseWrap?.classList.remove("is-pulse");
+      setStatus(`Location: ${campus.selectedOptions[0]?.textContent ?? campusKey}`);
+    });
+
+    rangeBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (!interactive) return;
+        const next = (btn.dataset.ecRange as EcRange) || "7d";
+        range = next;
+        rangeBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
+        refreshFromControls();
+        pulseWrap?.classList.remove("is-pulse");
+        setStatus(`Range: ${next.toUpperCase()}`);
+      });
+    });
+
+    createBtn?.addEventListener("click", onCreate);
+    replayBtn?.addEventListener("click", () => {
+      frame.dispatchEvent(new CustomEvent("demo-request-replay", { bubbles: true }));
     });
   }
 
@@ -94,201 +406,383 @@ import DemoFrame from "./DemoFrame.astro";
 
 <style>
   .ec {
-    --ec-pink: #e91e8c;
-    --ec-teal: #2dd4bf;
-    --ec-glass: color-mix(in srgb, #1a1228 72%, transparent);
+    --ec-canvas: var(--c-canvas, #0b0a09);
+    --ec-ink: var(--c-ink, #f2ebe1);
+    --ec-copper: var(--c-copper, #b87333);
+    --ec-muted: var(--c-n-400, #8a837a);
+    --ec-secondary: var(--c-n-600, #b8afa3);
+    --ec-line: var(--c-n-100, #1f1d1b);
+    --ec-panel: var(--c-n-200, #2e2b28);
     height: 100%;
-    padding: var(--s-3);
+    padding: var(--s-3) var(--s-4);
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto auto auto auto 1fr auto;
     gap: var(--s-3);
-    background: radial-gradient(ellipse at 30% 0%, #2a1545 0%, #0d0b14 55%);
-    color: #f0eaf8;
-    font-size: 0.7rem;
+    color: var(--ec-ink);
+    background:
+      radial-gradient(ellipse at 12% 0%, color-mix(in srgb, var(--ec-copper) 16%, transparent), transparent 48%),
+      linear-gradient(165deg, #141210 0%, var(--ec-canvas) 55%, #0a0908 100%);
+    font-size: var(--t-body-sm);
+    opacity: 0.92;
+    transition: opacity 0.35s var(--ease-out, ease-out);
   }
 
-  .ec__top {
+  .ec.is-reveal,
+  .ec.is-try {
+    opacity: 1;
+  }
+
+  .ec__bar {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    align-items: flex-start;
     gap: var(--s-3);
+    align-items: flex-end;
   }
 
-  .ec__title {
-    margin: 0;
-    font-size: 0.85rem;
-    font-weight: var(--fw-semibold);
-    color: var(--ec-pink);
-  }
-
-  .ec__sub {
-    margin: var(--s-1) 0 0;
-    color: #a89bc4;
-    font-size: 0.65rem;
-  }
-
-  .ec__campus {
-    padding: var(--s-1) var(--s-2);
-    border: var(--hairline) solid #4a3d66;
-    border-radius: 4px;
-    background: var(--ec-glass);
-    color: inherit;
-    font-size: 0.6rem;
-  }
-
-  .ec__grid {
+  .ec__brand {
     display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    gap: var(--s-3);
-    min-height: 0;
+    gap: var(--s-1);
   }
 
-  @media (max-width: 28rem) {
-    .ec__grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .ec__cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--s-2);
-  }
-
-  .ec__card {
-    padding: var(--s-2);
-    border-radius: 6px;
-    background: var(--ec-glass);
-    border: var(--hairline) solid color-mix(in srgb, #fff 8%, transparent);
-    backdrop-filter: blur(8px);
-  }
-
-  .ec__card-label {
-    display: block;
+  .ec__mark {
     font-family: var(--font-label);
-    font-size: 0.55rem;
+    font-size: var(--t-mono-md);
     letter-spacing: var(--ls-mono);
     text-transform: uppercase;
-    color: #9b8fb8;
+    color: var(--ec-copper);
   }
 
-  .ec__card strong {
-    display: block;
-    margin-block: var(--s-1);
-    font-size: 0.95rem;
-  }
-
-  .ec__up {
-    font-size: 0.55rem;
-    color: var(--ec-teal);
-  }
-
-  .ec__health {
-    padding: var(--s-2);
-    border-radius: 6px;
-    background: var(--ec-glass);
-    border: var(--hairline) solid color-mix(in srgb, #fff 8%, transparent);
-    backdrop-filter: blur(8px);
-    display: grid;
-    grid-template-rows: auto auto 1fr auto;
-    gap: var(--s-2);
-    min-height: 0;
-  }
-
-  .ec__health-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .ec__mode {
+    font-size: var(--t-mono-xs);
     font-family: var(--font-label);
-    font-size: 0.55rem;
     letter-spacing: var(--ls-mono);
     text-transform: uppercase;
-    color: #c4b5fd;
+    color: var(--ec-muted);
   }
 
-  .ec__score {
-    font-size: 1.1rem;
-    color: var(--ec-pink);
-    font-weight: var(--fw-semibold);
-  }
-
-  .ec__tabs {
+  .ec__controls {
     display: flex;
-    gap: var(--s-2);
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    align-items: flex-end;
+  }
+
+  .ec__control {
+    display: grid;
+    gap: var(--s-1);
+  }
+
+  .ec__control-label {
     font-family: var(--font-label);
-    font-size: 0.5rem;
+    font-size: var(--t-mono-xs);
     letter-spacing: var(--ls-mono);
-    color: #7a6d94;
+    text-transform: uppercase;
+    color: var(--ec-muted);
   }
 
-  .ec__tabs .is-active {
-    color: var(--ec-pink);
-    border-block-end: 2px solid var(--ec-pink);
-    padding-block-end: 1px;
+  .ec__select {
+    min-width: 9.5rem;
+    padding: var(--s-2) var(--s-3);
+    border: var(--hairline) solid var(--ec-line);
+    background: color-mix(in srgb, var(--ec-panel) 80%, transparent);
+    color: var(--ec-ink);
+    font: inherit;
+    font-size: var(--t-mono-sm);
   }
 
-  .ec__chart {
-    width: 100%;
-    height: 100%;
-    min-height: 4rem;
-  }
-
-  .ec__gridline {
-    stroke: #3d3250;
-    stroke-width: 0.5;
-  }
-
-  .ec__line--main {
-    stroke: var(--ec-pink);
-    stroke-width: 2;
-  }
-
-  .ec__line--bench {
-    stroke: #6eb5ff;
-    stroke-width: 1.5;
+  .ec__select:disabled {
     opacity: 0.7;
   }
 
-  .ec__dot {
-    fill: var(--ec-pink);
+  .ec__control--pulse.is-pulse .ec__select {
+    border-color: var(--ec-copper);
+    animation: ec-pulse 1.6s ease-out infinite;
+  }
+
+  .ec__ranges {
+    display: flex;
+    gap: var(--s-1);
+  }
+
+  .ec__chip {
+    padding: var(--s-2) var(--s-3);
+    border: var(--hairline) solid var(--ec-line);
+    background: transparent;
+    color: var(--ec-muted);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .ec__chip:disabled {
+    cursor: default;
+  }
+
+  .ec__chip.is-active {
+    border-color: var(--ec-copper);
+    color: var(--ec-copper);
+  }
+
+  .ec__status {
+    margin: 0;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--ec-copper);
+    min-height: 1.2em;
+  }
+
+  .ec__stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--s-2);
+  }
+
+  .ec__stat {
+    padding-block-start: var(--s-2);
+    border-block-start: var(--hairline) solid var(--ec-line);
+    display: grid;
+    gap: var(--s-1);
+    transition: border-color 0.25s ease;
+  }
+
+  .ec__stat.is-hot {
+    border-color: var(--ec-copper);
+  }
+
+  .ec__stat-label {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--ec-muted);
+  }
+
+  .ec__stat strong {
+    font-size: var(--t-proof, var(--t-body));
+    font-weight: var(--fw-semibold);
+    color: var(--ec-ink);
+  }
+
+  .ec__stat--demo strong {
+    color: var(--ec-secondary);
   }
 
   .ec__alert {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: var(--s-2);
-    padding: var(--s-2);
-    border-radius: 4px;
-    background: color-mix(in srgb, #fbbf24 18%, transparent);
-    border: var(--hairline) solid color-mix(in srgb, #fbbf24 40%, transparent);
-    font-size: 0.6rem;
-    transition: background 0.2s;
+    gap: var(--s-3);
+    padding: var(--s-2) var(--s-3);
+    border: var(--hairline) solid color-mix(in srgb, var(--ec-copper) 45%, var(--ec-line));
+    background: color-mix(in srgb, var(--ec-copper) 12%, transparent);
+    font-size: var(--t-body-sm);
+    color: var(--ec-ink);
   }
 
-  .ec__alert.is-highlight {
-    background: color-mix(in srgb, #fbbf24 32%, transparent);
+  .ec__alert.is-live {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ec-copper) 35%, transparent);
   }
 
-  .ec__view {
-    padding: 0;
-    border: 0;
-    background: none;
-    color: #fbbf24;
+  .ec__alert-tag {
     font-family: var(--font-label);
-    font-size: 0.55rem;
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--ec-copper);
+  }
+
+  .ec__body {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: var(--s-3);
+    min-height: 0;
+  }
+
+  .ec__panel {
+    border: var(--hairline) solid var(--ec-line);
+    background: color-mix(in srgb, var(--ec-panel) 55%, transparent);
+    padding: var(--s-3);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: var(--s-3);
+    min-height: 0;
+  }
+
+  .ec__panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-2);
+  }
+
+  .ec__panel-title {
+    margin: 0;
+    font-size: var(--t-body-sm);
+    font-weight: var(--fw-semibold);
+  }
+
+  .ec__panel-meta {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--ec-muted);
+  }
+
+  .ec__members {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-2);
+    align-content: start;
+  }
+
+  .ec__member {
+    display: grid;
+    gap: 0.15rem;
+    padding: var(--s-2);
+    border: var(--hairline) solid transparent;
+    transition: border-color 0.25s ease, background 0.25s ease;
+  }
+
+  .ec__member.is-active {
+    border-color: var(--ec-copper);
+    background: color-mix(in srgb, var(--ec-copper) 10%, transparent);
+  }
+
+  .ec__member.is-done {
+    opacity: 0.55;
+  }
+
+  .ec__member-name {
+    font-weight: var(--fw-medium);
+  }
+
+  .ec__member-meta {
+    font-size: var(--t-mono-xs);
+    font-family: var(--font-label);
+    letter-spacing: var(--ls-mono);
+    color: var(--ec-muted);
+  }
+
+  .ec__history-title,
+  .ec__compose-label {
+    margin: 0 0 var(--s-2);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--ec-muted);
+  }
+
+  .ec__timeline {
+    margin: 0;
+    padding-inline-start: 1.1rem;
+    display: grid;
+    gap: var(--s-2);
+    color: var(--ec-secondary);
+    font-size: var(--t-body-sm);
+  }
+
+  .ec__compose {
+    display: grid;
+    gap: var(--s-2);
+    align-content: start;
+    border-block-start: var(--hairline) solid var(--ec-line);
+    padding-block-start: var(--s-3);
+  }
+
+  .ec__compose-body {
+    margin: 0;
+    color: var(--ec-secondary);
+    line-height: var(--lh-body);
+  }
+
+  .ec__compose-btn,
+  .ec__btn {
+    justify-self: start;
+    padding: var(--s-2) var(--s-4);
+    border: var(--hairline) solid var(--ec-line);
+    background: transparent;
+    color: var(--ec-ink);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
     letter-spacing: var(--ls-mono);
     text-transform: uppercase;
     cursor: pointer;
   }
 
-  .ec__invite {
+  .ec__compose-btn:disabled {
+    opacity: 0.65;
+    cursor: default;
+  }
+
+  .ec__compose-btn.is-press,
+  .ec__compose-btn.is-sent {
+    border-color: var(--ec-copper);
+    color: var(--ec-copper);
+  }
+
+  .ec__done {
     margin: 0;
+    font-size: var(--t-body-sm);
+    color: var(--ec-copper);
+  }
+
+  .ec__foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s-3);
+  }
+
+  .ec__demo-note {
     font-family: var(--font-label);
     font-size: var(--t-mono-xs);
     letter-spacing: var(--ls-mono);
     text-transform: uppercase;
-    color: #8b7aa8;
-    text-align: center;
+    color: var(--ec-muted);
+  }
+
+  .ec__actions {
+    display: flex;
+    gap: var(--s-2);
+  }
+
+  @keyframes ec-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--ec-copper) 0%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--ec-copper) 28%, transparent);
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .ec__stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ec__body {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ec,
+    .ec__member,
+    .ec__stat,
+    .ec__control--pulse.is-pulse .ec__select {
+      transition: none;
+      animation: none;
+    }
   }
 </style>

@@ -18,14 +18,14 @@ const year = new Date().getFullYear();
 
     <div class="site-page-footer__meta">
       <div class="meta-group">
-        <h3 class="meta-label">Where we are</h3>
+        <h3 class="meta-label">Location</h3>
         <p class="meta-value">
           {SITE.locality.map((line, i) => (i === 0 ? line : [<br />, line]))}
         </p>
       </div>
 
       <div class="meta-group">
-        <h3 class="meta-label">The practice</h3>
+        <h3 class="meta-label">Focus</h3>
         <p class="meta-value">{SITE.practice}</p>
       </div>
     </div>

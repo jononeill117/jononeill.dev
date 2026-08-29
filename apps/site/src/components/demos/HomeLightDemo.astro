@@ -2,73 +2,233 @@
 import DemoFrame from "./DemoFrame.astro";
 ---
 
-<DemoFrame class="homelight-demo">
+<DemoFrame
+  class="homelight-demo"
+  system="Lead → model → offer"
+  cta="Watch one lead become an automated offer."
+  caption="Interactive walkthrough"
+>
   <div class="hl" data-hl>
     <header class="hl__head">
-      <span>Cash Close</span>
-      <span class="hl__count" data-hl-count>0 of 300 offers</span>
+      <span class="hl__kicker" data-hl-step>Ready</span>
+      <span class="hl__count" data-hl-count>0 of 300</span>
     </header>
-    <ol class="hl__steps">
-      <li data-hl-step="lead">Lead</li>
-      <li data-hl-step="avm">AVM</li>
-      <li data-hl-step="tax">Tax</li>
-      <li data-hl-step="mls">MLS</li>
-      <li data-hl-step="rehab">Rehab</li>
-      <li data-hl-step="offer">Offer</li>
-    </ol>
-    <div class="hl__result" data-hl-result hidden>
-      <p class="hl__price">$412,000</p>
-      <p class="hl__pct">86% of list</p>
-      <p class="hl__addr">918 Maple Ave</p>
+
+    <p class="hl__addr" data-hl-addr>918 Maple Ave</p>
+
+    <div class="hl__nodes" role="list">
+      <div class="hl__node" data-hl-node="lead" role="listitem">
+        <span class="hl__node-name">Lead</span>
+        <span class="hl__node-detail" data-hl-detail="lead">Waiting</span>
+      </div>
+      <div class="hl__node" data-hl-node="avm" role="listitem">
+        <span class="hl__node-name">AVM</span>
+        <span class="hl__node-detail" data-hl-detail="avm">Waiting</span>
+      </div>
+      <div class="hl__node" data-hl-node="tax" role="listitem">
+        <span class="hl__node-name">Tax</span>
+        <span class="hl__node-detail" data-hl-detail="tax">Waiting</span>
+      </div>
+      <div class="hl__node" data-hl-node="mls" role="listitem">
+        <span class="hl__node-name">MLS</span>
+        <span class="hl__node-detail" data-hl-detail="mls">Waiting</span>
+      </div>
+      <div class="hl__node" data-hl-node="rehab" role="listitem">
+        <span class="hl__node-name">Rehab</span>
+        <span class="hl__node-detail" data-hl-detail="rehab">Waiting</span>
+      </div>
+      <div class="hl__node" data-hl-node="offer" role="listitem">
+        <span class="hl__node-name">Offer</span>
+        <span class="hl__node-detail" data-hl-detail="offer">Waiting</span>
+      </div>
+      <div class="hl__node" data-hl-node="email" role="listitem">
+        <span class="hl__node-name">Email</span>
+        <span class="hl__node-detail" data-hl-detail="email">Waiting</span>
+      </div>
     </div>
+
+    <div class="hl__result" data-hl-result hidden>
+      <p class="hl__price" data-hl-price>$412,000 · 86% of list</p>
+      <p class="hl__note">No analyst in the loop</p>
+    </div>
+
     <div class="hl__actions">
-      <button type="button" class="hl__btn hl__btn--primary" data-hl-run>Run offer</button>
+      <p class="hl__hint" data-hl-hint hidden>Now explore it yourself.</p>
+      <button type="button" class="hl__btn hl__btn--pulse" data-hl-try hidden>
+        Run another offer
+      </button>
       <button type="button" class="hl__btn" data-hl-replay hidden>Replay</button>
     </div>
   </div>
 </DemoFrame>
 
 <script>
+  type HlStep = {
+    id: string;
+    label: string;
+    detail: string;
+  };
+
+  type HlOffer = {
+    address: string;
+    price: string;
+  };
+
+  const STEPS: HlStep[] = [
+    { id: "lead", label: "Lead in", detail: "Listing intake · seller intent" },
+    { id: "avm", label: "AVM priced", detail: "Model estimate locked" },
+    { id: "tax", label: "Tax pull", detail: "Assessor record matched" },
+    { id: "mls", label: "MLS comps", detail: "Neighborhood comps loaded" },
+    { id: "rehab", label: "Rehab scored", detail: "Condition hold applied" },
+    { id: "offer", label: "Offer painted", detail: "$412,000 · 86% of list" },
+    { id: "email", label: "Email out", detail: "Offer sent · no analyst" },
+  ];
+
+  const OFFERS: HlOffer[] = [
+    { address: "918 Maple Ave", price: "$412,000 · 86% of list" },
+    { address: "441 Cedar Ct", price: "$389,500 · 84% of list" },
+    { address: "72 Birch Rd", price: "$455,200 · 87% of list" },
+  ];
+
+  const STEP_MS = 1200;
+
+  function sleep(ms: number) {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
   function wireHomeLight(root: HTMLElement) {
-    const frame = root.closest(".demo-frame");
-    if (!frame || root.hasAttribute("data-hl-wired")) return;
-    root.setAttribute("data-hl-wired", "true");
+    const frame = root.closest<HTMLElement>("[data-demo-frame]");
+    if (!frame || frame.hasAttribute("data-hl-wired")) return;
+    frame.setAttribute("data-hl-wired", "true");
 
-    const steps = ["lead", "avm", "tax", "mls", "rehab", "offer"];
-    const runBtn = root.querySelector<HTMLButtonElement>("[data-hl-run]");
-    const replayBtn = root.querySelector<HTMLButtonElement>("[data-hl-replay]");
+    const stepEl = root.querySelector<HTMLElement>("[data-hl-step]");
+    const countEl = root.querySelector<HTMLElement>("[data-hl-count]");
+    const addrEl = root.querySelector<HTMLElement>("[data-hl-addr]");
     const result = root.querySelector<HTMLElement>("[data-hl-result]");
-    const count = root.querySelector("[data-hl-count]");
+    const priceEl = root.querySelector<HTMLElement>("[data-hl-price]");
+    const tryBtn = root.querySelector<HTMLButtonElement>("[data-hl-try]");
+    const replayBtn = root.querySelector<HTMLButtonElement>("[data-hl-replay]");
+    const hint = root.querySelector<HTMLElement>("[data-hl-hint]");
 
-    const reset = () => {
-      steps.forEach((s) =>
-        root.querySelector(`[data-hl-step='${s}']`)?.classList.remove("is-done"),
-      );
-      result!.hidden = true;
-      count!.textContent = "0 of 300 offers";
-      runBtn!.hidden = false;
-      replayBtn!.hidden = true;
+    let running = false;
+    let token = 0;
+    let offerIndex = 0;
+    let completedCount = 0;
+
+    const applyOffer = (index: number) => {
+      const offer = OFFERS[index] ?? OFFERS[0];
+      if (addrEl) addrEl.textContent = offer.address;
+      if (priceEl) priceEl.textContent = offer.price;
+      const offerDetail = root.querySelector("[data-hl-detail='offer']");
+      if (offerDetail) offerDetail.textContent = offer.price;
+    };
+
+    const resetBoard = () => {
+      STEPS.forEach((s) => {
+        root.querySelector(`[data-hl-node='${s.id}']`)?.classList.remove("is-live");
+        const d = root.querySelector(`[data-hl-detail='${s.id}']`);
+        if (d) d.textContent = "Waiting";
+      });
+      if (stepEl) stepEl.textContent = "Ready";
+      if (countEl) countEl.textContent = `${completedCount} of 300`;
+      if (result) result.hidden = true;
+      if (tryBtn) tryBtn.hidden = true;
+      if (replayBtn) replayBtn.hidden = true;
+      if (hint) hint.hidden = true;
+      tryBtn?.classList.remove("is-pulse");
+      applyOffer(offerIndex);
+    };
+
+    const finish = () => {
+      running = false;
+      completedCount = Math.min(300, Math.max(completedCount, 1));
+      if (countEl) countEl.textContent = `${completedCount} of 300`;
+      if (stepEl) stepEl.textContent = "Offer sent";
+      if (result) result.hidden = false;
+      if (tryBtn) tryBtn.hidden = false;
+      if (replayBtn) replayBtn.hidden = false;
+      if (hint) hint.hidden = false;
+      tryBtn?.classList.add("is-pulse");
+      frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
+    };
+
+    const paintFinal = () => {
+      STEPS.forEach((s) => {
+        root.querySelector(`[data-hl-node='${s.id}']`)?.classList.add("is-live");
+        const d = root.querySelector(`[data-hl-detail='${s.id}']`);
+        if (d) {
+          if (s.id === "offer") {
+            d.textContent = OFFERS[offerIndex]?.price ?? s.detail;
+          } else {
+            d.textContent = s.detail;
+          }
+        }
+      });
+      if (result) result.hidden = false;
+      completedCount = Math.max(completedCount, 1);
+      if (countEl) countEl.textContent = `${completedCount} of 300`;
     };
 
     const run = async () => {
-      runBtn!.disabled = true;
-      for (const s of steps) {
-        root.querySelector(`[data-hl-step='${s}']`)?.classList.add("is-done");
-        await new Promise((r) => setTimeout(r, 380));
+      const my = ++token;
+      running = true;
+      resetBoard();
+      if (tryBtn) tryBtn.hidden = true;
+      if (replayBtn) replayBtn.hidden = true;
+      if (hint) hint.hidden = true;
+
+      for (const step of STEPS) {
+        if (my !== token) return;
+        root.querySelector(`[data-hl-node='${step.id}']`)?.classList.add("is-live");
+        const d = root.querySelector(`[data-hl-detail='${step.id}']`);
+        if (d) {
+          if (step.id === "offer") {
+            d.textContent = OFFERS[offerIndex]?.price ?? step.detail;
+          } else {
+            d.textContent = step.detail;
+          }
+        }
+        if (stepEl) stepEl.textContent = step.label;
+        if (step.id === "offer" && result) {
+          result.hidden = false;
+          applyOffer(offerIndex);
+        }
+        if (step.id === "email") {
+          completedCount = Math.max(completedCount, 1);
+          if (countEl) countEl.textContent = `${completedCount} of 300`;
+        }
+        await sleep(STEP_MS);
       }
-      result!.hidden = false;
-      count!.textContent = "1 of 300 offers";
-      runBtn!.hidden = true;
-      replayBtn!.hidden = false;
-      runBtn!.disabled = false;
+
+      if (my !== token) return;
+      finish();
     };
 
-    runBtn?.addEventListener("click", run);
-    replayBtn?.addEventListener("click", () => {
-      reset();
-      frame.dispatchEvent(new CustomEvent("demo-reset"));
+    frame.addEventListener("demo-play", (e) => {
+      const detail = (e as CustomEvent).detail as { reduced?: boolean } | undefined;
+      if (detail?.reduced) {
+        resetBoard();
+        paintFinal();
+        finish();
+        return;
+      }
+      void run();
     });
-    frame.addEventListener("demo-play", reset);
+    frame.addEventListener("demo-replay", () => {
+      offerIndex = 0;
+      completedCount = 0;
+      void run();
+    });
+
+    tryBtn?.addEventListener("click", () => {
+      if (running) return;
+      offerIndex = (offerIndex + 1) % OFFERS.length;
+      completedCount = Math.min(300, completedCount + 1);
+      void run();
+    });
+    replayBtn?.addEventListener("click", () => {
+      frame.dispatchEvent(new CustomEvent("demo-request-replay", { bubbles: true }));
+    });
   }
 
   document.querySelectorAll("[data-hl]").forEach((el) => wireHomeLight(el as HTMLElement));
@@ -79,101 +239,157 @@ import DemoFrame from "./DemoFrame.astro";
 
 <style>
   .hl {
+    --hl-copper: var(--accent, #b87333);
     height: 100%;
     padding: var(--s-4);
     display: grid;
-    grid-template-rows: auto auto 1fr auto;
-    gap: var(--s-4);
-    background: #0f1419;
-    color: #e8edf2;
+    grid-template-rows: auto auto 1fr auto auto;
+    gap: var(--s-3);
+    color: var(--fg);
+    background:
+      radial-gradient(ellipse at top right, color-mix(in srgb, var(--hl-copper) 16%, transparent), transparent 55%),
+      var(--bg);
   }
 
   .hl__head {
     display: flex;
     justify-content: space-between;
+    gap: var(--s-3);
     font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
+    font-size: var(--t-mono-md);
     letter-spacing: var(--ls-mono);
     text-transform: uppercase;
-    color: #7eb8da;
+  }
+
+  .hl__kicker {
+    color: var(--hl-copper);
   }
 
   .hl__count {
-    color: #a8b8c4;
+    color: var(--fg-muted);
   }
 
-  .hl__steps {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-2);
+  .hl__addr {
     margin: 0;
-    padding: 0;
-    list-style: none;
+    font-size: var(--t-proof, var(--t-body));
+    color: var(--fg-secondary);
   }
 
-  .hl__steps li {
-    padding: var(--s-2) var(--s-3);
-    border: var(--hairline) solid #2a3540;
+  .hl__nodes {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--s-2);
+    align-content: start;
+  }
+
+  .hl__node {
+    border: var(--hairline) solid var(--hairline-color);
+    padding: var(--s-3);
+    display: grid;
+    gap: var(--s-2);
+    min-height: 5rem;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hl__node.is-live {
+    border-color: var(--hl-copper);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hl-copper) 45%, transparent);
+  }
+
+  .hl__node-name {
     font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
+    font-size: var(--t-mono-md);
     letter-spacing: var(--ls-mono);
     text-transform: uppercase;
-    opacity: 0.4;
-    transition: opacity 0.2s, border-color 0.2s;
   }
 
-  .hl__steps li.is-done {
-    opacity: 1;
-    border-color: #3d8fd1;
-    color: #7eb8da;
+  .hl__node-detail {
+    font-size: var(--t-body-sm);
+    color: var(--fg-secondary);
+    line-height: 1.35;
   }
 
   .hl__result {
-    text-align: center;
-    align-self: center;
+    border-block-start: var(--hairline) solid var(--hairline-color);
+    padding-block-start: var(--s-3);
+    display: grid;
+    gap: var(--s-1);
   }
 
   .hl__price {
     margin: 0;
-    font-size: var(--t-h3);
-    font-weight: var(--fw-semibold);
-    color: #5cb85c;
+    font-size: var(--t-proof, var(--t-body));
+    color: var(--hl-copper);
   }
 
-  .hl__pct {
-    margin: var(--s-2) 0 0;
+  .hl__note {
+    margin: 0;
     font-family: var(--font-label);
-    font-size: var(--t-mono-sm);
+    font-size: var(--t-mono-md);
     letter-spacing: var(--ls-mono);
-    color: #a8b8c4;
-  }
-
-  .hl__addr {
-    margin: var(--s-4) 0 0;
-    font-size: var(--t-body-sm);
+    text-transform: uppercase;
+    color: var(--fg-muted);
   }
 
   .hl__actions {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: var(--s-3);
   }
 
+  .hl__hint {
+    margin: 0;
+    font-size: var(--t-proof, var(--t-body-sm));
+    color: var(--fg-secondary);
+  }
+
   .hl__btn {
-    flex: 1;
-    padding: var(--s-3);
-    border: var(--hairline) solid #2a3540;
-    background: transparent;
-    color: inherit;
+    padding: var(--s-2) var(--s-4);
+    border: var(--hairline) solid var(--hairline-color);
+    background: var(--bg);
+    color: var(--fg);
     font-family: var(--font-label);
-    font-size: var(--t-mono-xs);
+    font-size: var(--t-mono-md);
     letter-spacing: var(--ls-mono);
     text-transform: uppercase;
     cursor: pointer;
   }
 
-  .hl__btn--primary {
-    background: #3d8fd1;
-    border-color: #3d8fd1;
-    color: #0f1419;
+  .hl__btn--pulse.is-pulse {
+    border-color: var(--hl-copper);
+    color: var(--hl-copper);
+    animation: hl-pulse 1.6s ease-out infinite;
+  }
+
+  @keyframes hl-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--hl-copper) 0%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--hl-copper) 28%, transparent);
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .hl__nodes {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .hl__nodes {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hl__node,
+    .hl__btn--pulse.is-pulse {
+      transition: none;
+      animation: none;
+    }
   }
 </style>

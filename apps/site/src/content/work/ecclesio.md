@@ -1,9 +1,9 @@
 ---
 title: Ecclesio
-lede: Church software I build on the side. Invite-only, and it stays a side project.
+lede: A side project I build because I like building products. Invite-only, and it stays a side project.
 role: Side project
 dates: Dec 2025 to Present
-outcome: Zero to beta in four months. Dashboard at about 50ms, down from two seconds.
+outcome: Zero to beta in four months · Dashboard 2s → ~50ms · Isolated databases · Tokenized payments
 kind: project
 order: 6
 visualCaption: dashboard load time, first build against the current one

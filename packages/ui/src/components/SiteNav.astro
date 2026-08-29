@@ -539,43 +539,40 @@ const {
   }
 
   /*
-    NARROW. Row 1: brand (+ tools). Row 2: links, horizontal scroll.
-    Sticky with a solid ground so the hero eyebrow cannot show through.
+    NARROW. One row: brand + links (horizontal scroll). Never two rows that
+    crush the hero eyebrow. Sticky with a solid ground.
     --nav-stack-height is published from the inline script above.
   */
   @media (max-width: 60rem) {
     .site-nav {
       position: sticky;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      grid-template-rows: auto auto;
+      display: flex;
+      flex-wrap: nowrap;
       align-items: center;
-      height: auto;
-      min-height: var(--nav-height-mobile, 5.5rem);
-      padding-block: var(--s-3);
-      row-gap: var(--s-3);
-      column-gap: var(--s-6);
+      justify-content: space-between;
+      gap: var(--s-4);
+      height: var(--nav-height-mobile, 3.5rem);
+      min-height: var(--nav-height-mobile, 3.5rem);
+      padding-block: var(--s-2);
       background-color: var(--nav-bg);
       border-block-end-color: var(--nav-hairline);
     }
 
     .nav-wordmark {
-      grid-row: 1;
-      grid-column: 1;
+      flex: 0 0 auto;
       min-width: 0;
-      max-width: 100%;
+      max-width: 42%;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .nav-links {
-      grid-row: 2;
-      grid-column: 1 / -1;
       display: flex;
+      flex: 1 1 auto;
       flex-wrap: nowrap;
-      justify-content: flex-start;
+      justify-content: flex-end;
       align-items: center;
-      gap: var(--s-6);
+      gap: var(--s-4);
       min-width: 0;
       margin: 0;
       overflow-x: auto;
@@ -583,7 +580,6 @@ const {
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-x: contain;
       scrollbar-width: none;
-      padding-block-end: var(--s-1);
     }
 
     .nav-links::-webkit-scrollbar {
@@ -591,14 +587,12 @@ const {
     }
 
     .nav-route {
-      grid-row: 1;
-      grid-column: 2;
+      flex: 0 0 auto;
       justify-self: end;
     }
 
     .nav-tools {
-      grid-row: 1;
-      grid-column: 2;
+      flex: 0 0 auto;
       justify-self: end;
     }
   }
@@ -620,6 +614,7 @@ const {
 
   .nav-wordmark-suffix {
     font-weight: var(--fw-regular);
+    margin-inline-start: 0;
   }
 
   .nav-route {

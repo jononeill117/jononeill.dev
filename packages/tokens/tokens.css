@@ -82,6 +82,10 @@
   --t-mono-sm:   0.75rem;                                    /* 12px       */
   --t-mono-md:   0.8125rem;                                  /* 13px       */
 
+  /* Proof / stats / hero links. Do not use mono-sm for bragging numbers. */
+  --t-proof:     clamp(0.9375rem, 0.9rem + 0.3vw,  1.125rem); /* ~15-18px   */
+  --t-stat:      clamp(1.125rem,  1rem  + 0.6vw,  1.5rem);    /* ~18-24px   */
+
   --t-body-sm:   clamp(0.875rem, 0.84rem + 0.15vw,  0.9375rem);
   --t-body:      clamp(1rem,     0.95rem + 0.22vw,  1.125rem);
   --t-body-lg:   clamp(1.125rem, 1.03rem + 0.42vw,  1.375rem);
@@ -140,6 +144,8 @@
   --measure:       68ch;
   --measure-tight: 48ch;
   --max-w:         1512px;
+  --demo-max:      52rem;
+  --demo-aspect:   16 / 9;
 
   --hairline:      1px;
   --rule:          var(--hairline) solid var(--c-n-100);
@@ -265,7 +271,7 @@
 
 :root {
   --nav-height:        64px;
-  --nav-height-mobile: 5.5rem;
+  --nav-height-mobile: 3.5rem;
   --nav-stack-height:  var(--nav-height);
   --nav-fg:            var(--fg);
   /* Any section on an accent or inverted surface must set --nav-fg locally. */

@@ -1,81 +1,22 @@
 ---
 /**
- * Mailbox reveal. Address is assembled in the browser from split parts.
- * No mailto and no full address in the initial HTML payload.
+ * Mailbox link. Address is visible. Recruiters should not hunt for it.
  */
-import { EMAIL_USER, EMAIL_HOST } from "./site";
+import { SITE } from "./site";
 
 interface Props {
   class?: string;
-  label?: string;
 }
 
-const { class: className, label = "Show email" } = Astro.props;
-const uid = `reveal-email-${Math.random().toString(36).slice(2, 9)}`;
+const { class: className } = Astro.props;
 ---
 
-<button
-  type="button"
-  class:list={["reveal-email", className]}
-  id={uid}
-  data-user={EMAIL_USER}
-  data-host={EMAIL_HOST}
-  aria-controls={`${uid}-out`}
-  aria-expanded="false"
->
-  {label}
-</button>
-<span class="reveal-email__out" id={`${uid}-out`} hidden></span>
-
-<script>
-  function wireRevealEmail(button: HTMLButtonElement) {
-    const outId = button.getAttribute("aria-controls");
-    if (!outId) return;
-
-    const out = document.getElementById(outId);
-    if (!out) return;
-
-    button.addEventListener("click", () => {
-      const user = button.dataset.user ?? "";
-      const host = button.dataset.host ?? "";
-      if (!user || !host) return;
-
-      const address = `${user}@${host}`;
-      button.hidden = true;
-      button.setAttribute("aria-expanded", "true");
-
-      out.hidden = false;
-      out.textContent = address;
-
-      const link = document.createElement("a");
-      link.href = `mailto:${address}`;
-      link.textContent = address;
-      link.className = "reveal-email__link";
-      out.appendChild(link);
-    });
-  }
-
-  document.querySelectorAll<HTMLButtonElement>(".reveal-email").forEach(wireRevealEmail);
-</script>
+<a class:list={["reveal-email", className]} href={`mailto:${SITE.email}`}>
+  {SITE.email}
+</a>
 
 <style>
   .reveal-email {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: inherit;
-    font: inherit;
-    cursor: pointer;
-    text-decoration: none;
-    border-block-end: var(--hairline) solid currentColor;
-  }
-
-  .reveal-email__out {
-    display: block;
-  }
-
-  .reveal-email__out :global(.reveal-email__link) {
     color: inherit;
     text-decoration: none;
     border-block-end: var(--hairline) solid currentColor;

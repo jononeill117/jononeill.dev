@@ -2,8 +2,7 @@
  * Site constants for jononeill.dev.
  *
  * One place the shell reads identity from so nav, footer, canonical URL,
- * and JSON-LD cannot disagree. The mailbox is stored in parts and assembled
- * in the browser on demand. Do not join the parts in server-rendered HTML.
+ * and JSON-LD cannot disagree.
  */
 
 export const SITE = {
@@ -16,10 +15,12 @@ export const SITE = {
 
   resume: "/Jon-ONeill-Director-of-Product.pdf",
 
-  jobTitle: "Product and Operations Manager",
+  jobTitle: "Product leader",
 
   description:
-    "Data driven, customer focused product manager. Zero to one SaaS at Livable, the underwriting platform at Stoa, acquisitions models at HomeLight and Zillow. Phoenix, AZ.",
+    "Product professional with seven years across product management, operations, strategy, and analytics. Zillow, HomeLight, Stoa, Livable, Zoom Drain. Phoenix, AZ.",
+
+  email: "jon.oneill.m@gmail.com",
 
   locality: ["Phoenix, Arizona", "United States"],
 
@@ -37,12 +38,13 @@ export const SITE = {
   linkedin: "https://www.linkedin.com/in/jon-oneill-020196",
 } as const;
 
-/** Split mailbox parts. Never concatenate in server-rendered HTML. */
+/** Split mailbox parts kept for any remaining client-side assembly. */
 export const EMAIL_USER = "jon.oneill.m";
 export const EMAIL_HOST = "gmail.com";
 
 export const NAV_LINKS = [
   { label: "Experience", href: "#experience" },
+  { label: "Portfolio", href: "#ecclesio" },
   { label: "About", href: "#about" },
   { label: "Resume", href: "#resume", resume: true },
   { label: "Contact", href: "#contact" },
@@ -56,6 +58,7 @@ export function personSchema() {
     url: `${SITE.origin}/`,
     jobTitle: SITE.jobTitle,
     description: SITE.description,
+    email: SITE.email,
     address: {
       "@type": "PostalAddress",
       addressLocality: SITE.postal.locality,
