@@ -4,515 +4,1305 @@ import DemoFrame from "./DemoFrame.astro";
 
 <DemoFrame
   class="homelight-demo"
+  aspect="16 / 10"
   system="Lead → model → offer"
   cta="Watch one lead become an automated offer."
   caption="Interactive walkthrough"
 >
-  <div class="hl" data-hl>
-    <header class="hl__head">
-      <span class="hl__kicker" data-hl-step>Ready</span>
-      <span class="hl__count" data-hl-count>0 of 300</span>
+  <div class="cc" data-cc>
+    <header class="cc__head">
+      <div class="cc__brand">
+        <span class="cc__mark" aria-hidden="true">CC</span>
+        <span class="cc__name">Cash Close</span>
+        <span class="cc__tag">Automated Offer Engine</span>
+      </div>
+      <div class="cc__meta">
+        <span>Market: <strong>Greenfield, OH</strong></span>
+        <span class="cc__dot" aria-hidden="true"></span>
+        <span>Queue: <strong>14 pending</strong></span>
+        <span class="cc__dot" aria-hidden="true"></span>
+        <span>Model: <strong>v2.4.1</strong></span>
+      </div>
+      <div class="cc__count-box">
+        <span class="cc__count" data-cc-count>0</span>
+        <span class="cc__count-label">/ 300 offers / mo</span>
+      </div>
     </header>
 
-    <p class="hl__addr" data-hl-addr>918 Maple Ave</p>
+    <div class="cc__main">
+      <aside class="cc__listing">
+        <div class="cc__photo">
+          <svg class="cc__photo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" aria-hidden="true">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span class="cc__photo-label">No photo · demo only</span>
+        </div>
+        <div class="cc__listing-body">
+          <h3 class="cc__addr">918 Maple Ave</h3>
+          <p class="cc__city">Greenfield, OH 45123 · Greene County</p>
+          <div class="cc__stats">
+            <div class="cc__stat">
+              <span class="cc__stat-val">3</span>
+              <span class="cc__stat-lab">Beds</span>
+            </div>
+            <div class="cc__stat">
+              <span class="cc__stat-val">1.5</span>
+              <span class="cc__stat-lab">Baths</span>
+            </div>
+            <div class="cc__stat">
+              <span class="cc__stat-val">1,842</span>
+              <span class="cc__stat-lab">Sq Ft</span>
+            </div>
+          </div>
+          <dl class="cc__facts">
+            <div><dt>List price</dt><dd class="cc__mono">$389,000</dd></div>
+            <div><dt>Year built</dt><dd>1964</dd></div>
+            <div><dt>Lot size</dt><dd>0.28 ac</dd></div>
+            <div><dt>Type</dt><dd>SFR</dd></div>
+            <div><dt>Lead source</dt><dd>Inbound web</dd></div>
+            <div><dt>Agent</dt><dd>M. Calloway</dd></div>
+            <div><dt>Days on market</dt><dd>12</dd></div>
+          </dl>
+          <p class="cc__status">
+            <span class="cc__status-dot" data-cc-status-dot></span>
+            Status: <strong data-cc-status>Awaiting offer</strong>
+          </p>
+        </div>
+      </aside>
 
-    <div class="hl__nodes" role="list">
-      <div class="hl__node" data-hl-node="lead" role="listitem">
-        <span class="hl__node-name">Lead</span>
-        <span class="hl__node-detail" data-hl-detail="lead">Waiting</span>
-      </div>
-      <div class="hl__node" data-hl-node="avm" role="listitem">
-        <span class="hl__node-name">AVM</span>
-        <span class="hl__node-detail" data-hl-detail="avm">Waiting</span>
-      </div>
-      <div class="hl__node" data-hl-node="tax" role="listitem">
-        <span class="hl__node-name">Tax</span>
-        <span class="hl__node-detail" data-hl-detail="tax">Waiting</span>
-      </div>
-      <div class="hl__node" data-hl-node="mls" role="listitem">
-        <span class="hl__node-name">MLS</span>
-        <span class="hl__node-detail" data-hl-detail="mls">Waiting</span>
-      </div>
-      <div class="hl__node" data-hl-node="rehab" role="listitem">
-        <span class="hl__node-name">Rehab</span>
-        <span class="hl__node-detail" data-hl-detail="rehab">Waiting</span>
-      </div>
-      <div class="hl__node" data-hl-node="offer" role="listitem">
-        <span class="hl__node-name">Offer</span>
-        <span class="hl__node-detail" data-hl-detail="offer">Waiting</span>
-      </div>
-      <div class="hl__node" data-hl-node="email" role="listitem">
-        <span class="hl__node-name">Email</span>
-        <span class="hl__node-detail" data-hl-detail="email">Waiting</span>
-      </div>
-    </div>
+      <div class="cc__right">
+        <section class="cc__pipeline">
+          <div class="cc__pipeline-head">
+            <div>
+              <h3 class="cc__pipeline-title">Offer Pipeline</h3>
+              <p class="cc__pipeline-sub">918 Maple Ave · Run #OCE-2847 · 2026-08-29</p>
+            </div>
+            <div class="cc__pipeline-actions">
+              <button type="button" class="cc__btn cc__btn--ghost" data-cc-replay hidden>
+                Replay
+              </button>
+              <button type="button" class="cc__btn cc__btn--run" data-cc-run>
+                <span class="cc__spin" data-cc-spin hidden aria-hidden="true"></span>
+                <span data-cc-run-label>Run offer</span>
+              </button>
+            </div>
+          </div>
 
-    <div class="hl__result" data-hl-result hidden>
-      <p class="hl__price" data-hl-price>$412,000 · 86% of list</p>
-      <p class="hl__note">No analyst in the loop</p>
-    </div>
+          <div class="cc__nodes" role="list">
+            <div class="cc__node" data-cc-node="lead" role="listitem">
+              <div class="cc__node-icon" data-cc-icon="lead">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <span class="cc__node-label">Lead In</span>
+              <span class="cc__node-sub">Inbound web</span>
+            </div>
+            <div class="cc__line" data-cc-line="0"><span></span></div>
+            <div class="cc__node" data-cc-node="sources" role="listitem">
+              <div class="cc__node-icon" data-cc-icon="sources">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+              </div>
+              <span class="cc__node-label">Data Sources</span>
+              <span class="cc__node-sub">4 feeds</span>
+            </div>
+            <div class="cc__line" data-cc-line="1"><span></span></div>
+            <div class="cc__node" data-cc-node="model" role="listitem">
+              <div class="cc__node-icon" data-cc-icon="model">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <path d="M8 21h8M12 17v4"></path>
+                </svg>
+              </div>
+              <span class="cc__node-label">Underwriting</span>
+              <span class="cc__node-sub">Model v2.4</span>
+            </div>
+            <div class="cc__line" data-cc-line="2"><span></span></div>
+            <div class="cc__node cc__node--green" data-cc-node="email" role="listitem">
+              <div class="cc__node-icon" data-cc-icon="email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+              </div>
+              <span class="cc__node-label">Offer Email</span>
+              <span class="cc__node-sub">Outbound</span>
+            </div>
+          </div>
 
-    <div class="hl__actions">
-      <p class="hl__hint" data-hl-hint hidden>Now explore it yourself.</p>
-      <button type="button" class="hl__btn hl__btn--pulse" data-hl-try hidden>
-        Run another offer
-      </button>
-      <button type="button" class="hl__btn" data-hl-replay hidden>Replay</button>
+          <div class="cc__sources">
+            <p class="cc__sources-label">Data Sources</p>
+            <div class="cc__chips">
+              <div class="cc__chip" data-cc-chip="0">
+                <span class="cc__chip-name">AVM</span>
+                <span class="cc__chip-desc">Automated valuation</span>
+              </div>
+              <div class="cc__chip" data-cc-chip="1">
+                <span class="cc__chip-name">Tax Record</span>
+                <span class="cc__chip-desc">County assessor</span>
+              </div>
+              <div class="cc__chip" data-cc-chip="2">
+                <span class="cc__chip-name">MLS</span>
+                <span class="cc__chip-desc">Active listing data</span>
+              </div>
+              <div class="cc__chip" data-cc-chip="3">
+                <span class="cc__chip-name">Rehab Model</span>
+                <span class="cc__chip-desc">Repair estimate</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="cc__results">
+          <section class="cc__model" data-cc-model>
+            <div class="cc__model-head">
+              <span class="cc__eyebrow">Underwriting Output</span>
+              <span class="cc__badge" data-cc-badge hidden>Complete</span>
+            </div>
+            <div class="cc__model-idle" data-cc-model-idle>Awaiting model run</div>
+            <div class="cc__model-live" data-cc-model-live hidden>
+              <div class="cc__offer-block">
+                <span class="cc__offer-label">Cash offer price</span>
+                <span class="cc__offer-price">$412,000</span>
+              </div>
+              <div class="cc__conf">
+                <div class="cc__conf-row">
+                  <span>Model confidence</span>
+                  <span class="cc__mono">86%</span>
+                </div>
+                <div class="cc__conf-track">
+                  <div class="cc__conf-fill" data-cc-conf></div>
+                </div>
+              </div>
+              <div class="cc__metrics">
+                <div class="cc__metric">
+                  <span class="cc__metric-lab">AVM range</span>
+                  <span class="cc__metric-val">$398-$425k</span>
+                </div>
+                <div class="cc__metric">
+                  <span class="cc__metric-lab">ARV</span>
+                  <span class="cc__metric-val">$461,000</span>
+                </div>
+                <div class="cc__metric">
+                  <span class="cc__metric-lab">Repair est.</span>
+                  <span class="cc__metric-val">$18,500</span>
+                </div>
+                <div class="cc__metric">
+                  <span class="cc__metric-lab">MAO</span>
+                  <span class="cc__metric-val">$398,000</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="cc__email" data-cc-email>
+            <div class="cc__email-idle" data-cc-email-idle>
+              Email preview appears<br />after underwriting completes
+            </div>
+            <div class="cc__email-live" data-cc-email-live hidden>
+              <div class="cc__email-bar">
+                <div>
+                  <span class="cc__eyebrow">Offer Email Preview</span>
+                  <p class="cc__email-queued">
+                    <span class="cc__email-dot" aria-hidden="true"></span>
+                    Queued for delivery
+                  </p>
+                </div>
+                <span class="cc__email-id">#OE-1847</span>
+              </div>
+              <div class="cc__email-body">
+                <div class="cc__email-fields">
+                  <p><span>To:</span> seller@918maple.example.com</p>
+                  <p><span>From:</span> offers@cashclose.io</p>
+                  <p><span>Subject:</span> Cash offer - 918 Maple Ave</p>
+                </div>
+                <div class="cc__email-copy">
+                  <p class="cc__email-headline">Offer ready for 918 Maple Ave.</p>
+                  <p>
+                    We're pleased to present a cash offer of
+                    <strong class="cc__green">$412,000</strong>
+                    for your property at 918 Maple Ave, Greenfield, OH.
+                  </p>
+                  <p>
+                    This offer <strong>expires in 48 hours</strong>. No repairs required. Close on your schedule.
+                  </p>
+                  <button type="button" class="cc__accept" tabindex="-1">Review &amp; Accept Offer →</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="cc__try-row" data-cc-try-row hidden>
+          <p class="cc__hint" data-cc-hint>Now explore it yourself.</p>
+          <button type="button" class="cc__btn cc__btn--run cc__btn--pulse" data-cc-try>
+            Run another offer
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </DemoFrame>
 
 <script>
-  type HlBeat = {
-    id: string;
-    progressLabel: string;
-    resolvedLabel: string;
-    progressDetail: string;
-    valueKey: keyof HlOfferValues;
-    progressMs: number;
-    resolveMs: number;
+  type CcStage = "idle" | "sources" | "model" | "email" | "complete";
+
+  const CHECK_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+  const ICON_SVGS: Record<string, string> = {
+    lead: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`,
+    sources: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>`,
+    model: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><path d="M8 21h8M12 17v4"></path></svg>`,
+    email: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>`,
   };
 
-  type HlOfferValues = {
-    address: string;
-    lead: string;
-    avm: string;
-    tax: string;
-    mls: string;
-    rehab: string;
-    offer: string;
-    email: string;
-  };
-
-  const BEATS: HlBeat[] = [
-    {
-      id: "lead",
-      progressLabel: "Receiving lead…",
-      resolvedLabel: "Lead in",
-      progressDetail: "Ingesting listing…",
-      valueKey: "lead",
-      progressMs: 1000,
-      resolveMs: 500,
-    },
-    {
-      id: "avm",
-      progressLabel: "Pricing AVM…",
-      resolvedLabel: "AVM locked",
-      progressDetail: "Running valuation model…",
-      valueKey: "avm",
-      progressMs: 1400,
-      resolveMs: 600,
-    },
-    {
-      id: "tax",
-      progressLabel: "Pulling assessor…",
-      resolvedLabel: "Tax matched",
-      progressDetail: "Querying public records…",
-      valueKey: "tax",
-      progressMs: 1200,
-      resolveMs: 500,
-    },
-    {
-      id: "mls",
-      progressLabel: "Loading comps…",
-      resolvedLabel: "MLS loaded",
-      progressDetail: "Matching neighborhood comps…",
-      valueKey: "mls",
-      progressMs: 1200,
-      resolveMs: 500,
-    },
-    {
-      id: "rehab",
-      progressLabel: "Scoring condition…",
-      resolvedLabel: "Rehab scored",
-      progressDetail: "Estimating scope hold…",
-      valueKey: "rehab",
-      progressMs: 1200,
-      resolveMs: 500,
-    },
-    {
-      id: "offer",
-      progressLabel: "Calculating offer…",
-      resolvedLabel: "Offer painted",
-      progressDetail: "Risk-adjusting price…",
-      valueKey: "offer",
-      progressMs: 1600,
-      resolveMs: 700,
-    },
-    {
-      id: "email",
-      progressLabel: "Sending offer…",
-      resolvedLabel: "Email out",
-      progressDetail: "Composing seller email…",
-      valueKey: "email",
-      progressMs: 1000,
-      resolveMs: 500,
-    },
-  ];
-
-  const OFFERS: HlOfferValues[] = [
-    {
-      address: "918 Maple Ave",
-      lead: "918 Maple Ave · seller intent",
-      avm: "$428,000",
-      tax: "Assessed $401,200 · 2025",
-      mls: "18 DOM · last list $479,000",
-      rehab: "Rehab scope $18,400",
-      offer: "$412,000 · 86% of list",
-      email: "Sent · no analyst in loop",
-    },
-    {
-      address: "441 Cedar Ct",
-      lead: "441 Cedar Ct · seller intent",
-      avm: "$402,500",
-      tax: "Assessed $378,900 · 2025",
-      mls: "24 DOM · last list $465,000",
-      rehab: "Rehab scope $22,100",
-      offer: "$389,500 · 84% of list",
-      email: "Sent · no analyst in loop",
-    },
-    {
-      address: "72 Birch Rd",
-      lead: "72 Birch Rd · seller intent",
-      avm: "$471,000",
-      tax: "Assessed $449,800 · 2025",
-      mls: "11 DOM · last list $522,000",
-      rehab: "Rehab scope $14,900",
-      offer: "$455,200 · 87% of list",
-      email: "Sent · no analyst in loop",
-    },
-  ];
-
-  function sleep(ms: number) {
-    return new Promise((r) => setTimeout(r, ms));
-  }
-
-  function wireHomeLight(root: HTMLElement) {
+  function wireCashClose(root: HTMLElement) {
     const frame = root.closest<HTMLElement>("[data-demo-frame]");
-    if (!frame || frame.hasAttribute("data-hl-wired")) return;
-    frame.setAttribute("data-hl-wired", "true");
+    if (!frame || frame.hasAttribute("data-cc-wired")) return;
+    frame.setAttribute("data-cc-wired", "true");
 
-    const stepEl = root.querySelector<HTMLElement>("[data-hl-step]");
-    const countEl = root.querySelector<HTMLElement>("[data-hl-count]");
-    const addrEl = root.querySelector<HTMLElement>("[data-hl-addr]");
-    const result = root.querySelector<HTMLElement>("[data-hl-result]");
-    const priceEl = root.querySelector<HTMLElement>("[data-hl-price]");
-    const tryBtn = root.querySelector<HTMLButtonElement>("[data-hl-try]");
-    const replayBtn = root.querySelector<HTMLButtonElement>("[data-hl-replay]");
-    const hint = root.querySelector<HTMLElement>("[data-hl-hint]");
+    const countEl = root.querySelector<HTMLElement>("[data-cc-count]");
+    const statusEl = root.querySelector<HTMLElement>("[data-cc-status]");
+    const statusDot = root.querySelector<HTMLElement>("[data-cc-status-dot]");
+    const runBtn = root.querySelector<HTMLButtonElement>("[data-cc-run]");
+    const runLabel = root.querySelector<HTMLElement>("[data-cc-run-label]");
+    const spin = root.querySelector<HTMLElement>("[data-cc-spin]");
+    const replayBtn = root.querySelector<HTMLButtonElement>("[data-cc-replay]");
+    const tryBtn = root.querySelector<HTMLButtonElement>("[data-cc-try]");
+    const tryRow = root.querySelector<HTMLElement>("[data-cc-try-row]");
+    const modelCard = root.querySelector<HTMLElement>("[data-cc-model]");
+    const modelIdle = root.querySelector<HTMLElement>("[data-cc-model-idle]");
+    const modelLive = root.querySelector<HTMLElement>("[data-cc-model-live]");
+    const badge = root.querySelector<HTMLElement>("[data-cc-badge]");
+    const conf = root.querySelector<HTMLElement>("[data-cc-conf]");
+    const emailCard = root.querySelector<HTMLElement>("[data-cc-email]");
+    const emailIdle = root.querySelector<HTMLElement>("[data-cc-email-idle]");
+    const emailLive = root.querySelector<HTMLElement>("[data-cc-email-live]");
+    const chips = Array.from(root.querySelectorAll<HTMLElement>("[data-cc-chip]"));
+    const lines = [
+      root.querySelector<HTMLElement>('[data-cc-line="0"] span'),
+      root.querySelector<HTMLElement>('[data-cc-line="1"] span'),
+      root.querySelector<HTMLElement>('[data-cc-line="2"] span'),
+    ];
 
-    let running = false;
-    let token = 0;
-    let offerIndex = 0;
-    let completedCount = 0;
+    let stage: CcStage = "idle";
+    let offerCount = 0;
+    let activeSourceIdx = -1;
+    let timers: ReturnType<typeof setTimeout>[] = [];
+    let tryMode = false;
 
-    const currentOffer = () => OFFERS[offerIndex] ?? OFFERS[0]!;
-
-    const clearNodeState = (id: string) => {
-      root.querySelector(`[data-hl-node='${id}']`)?.classList.remove("is-working", "is-live");
+    const clearTimers = () => {
+      timers.forEach(clearTimeout);
+      timers = [];
     };
 
-    const setWorking = (id: string, detail: string) => {
-      clearNodeState(id);
-      root.querySelector(`[data-hl-node='${id}']`)?.classList.add("is-working");
-      const d = root.querySelector(`[data-hl-detail='${id}']`);
-      if (d) d.textContent = detail;
+    const schedule = (fn: () => void, ms: number) => {
+      timers.push(setTimeout(fn, ms));
     };
 
-    const setLive = (id: string, detail: string) => {
-      clearNodeState(id);
-      root.querySelector(`[data-hl-node='${id}']`)?.classList.add("is-live");
-      const d = root.querySelector(`[data-hl-detail='${id}']`);
-      if (d) d.textContent = detail;
+    const setNode = (id: string, active: boolean, done: boolean) => {
+      const node = root.querySelector(`[data-cc-node="${id}"]`);
+      const icon = root.querySelector(`[data-cc-icon="${id}"]`);
+      if (!node || !icon) return;
+      node.classList.toggle("is-active", active);
+      node.classList.toggle("is-done", done);
+      if (done) {
+        icon.innerHTML = CHECK_SVG;
+      } else {
+        icon.innerHTML = ICON_SVGS[id] ?? "";
+      }
+    };
+
+    const setLine = (index: number, pct: number) => {
+      const el = lines[index];
+      if (el) el.style.width = `${pct}%`;
+    };
+
+    const setChips = (idx: number) => {
+      activeSourceIdx = idx;
+      chips.forEach((chip, i) => {
+        chip.classList.toggle("is-active", idx >= i);
+      });
+    };
+
+    const setRunningUi = (running: boolean) => {
+      if (runBtn) runBtn.disabled = running;
+      if (spin) spin.hidden = !running;
+      if (runLabel) runLabel.textContent = running ? "Running…" : "Run offer";
+    };
+
+    const paintStage = (next: CcStage) => {
+      stage = next;
+      const order: CcStage[] = ["idle", "sources", "model", "email", "complete"];
+      const idx = order.indexOf(next);
+      const showModel = idx >= 2;
+      const showEmail = idx >= 3;
+
+      setNode("lead", idx >= 1, idx >= 1);
+      setNode("sources", idx >= 1, idx >= 2);
+      setNode("model", idx >= 2, idx >= 3);
+      setNode("email", idx >= 3, idx >= 4);
+
+      if (modelCard) modelCard.classList.toggle("is-live", showModel);
+      if (modelIdle) modelIdle.hidden = showModel;
+      if (modelLive) modelLive.hidden = !showModel;
+      if (badge) badge.hidden = !showModel;
+      if (conf) {
+        conf.style.width = showModel ? "86%" : "0%";
+      }
+
+      if (emailCard) emailCard.classList.toggle("is-live", showEmail);
+      if (emailIdle) emailIdle.hidden = showEmail;
+      if (emailLive) emailLive.hidden = !showEmail;
+
+      if (statusEl) {
+        statusEl.textContent =
+          next === "complete" ? "Offer queued" : next === "idle" ? "Awaiting offer" : "Generating offer";
+      }
+      if (statusDot) {
+        statusDot.classList.toggle("is-done", next === "complete");
+        statusDot.classList.toggle("is-run", idx > 0 && next !== "complete");
+      }
+
+      if (countEl) countEl.textContent = String(offerCount);
+      if (replayBtn) replayBtn.hidden = next !== "complete";
+      setRunningUi(idx > 0 && idx < 4);
     };
 
     const resetBoard = () => {
-      BEATS.forEach((s) => {
-        clearNodeState(s.id);
-        const d = root.querySelector(`[data-hl-detail='${s.id}']`);
-        if (d) d.textContent = "Waiting";
-      });
-      if (stepEl) stepEl.textContent = "Ready";
-      if (countEl) countEl.textContent = `${completedCount} of 300`;
-      if (addrEl) addrEl.textContent = currentOffer().address;
-      if (result) result.hidden = true;
-      if (tryBtn) tryBtn.hidden = true;
-      if (replayBtn) replayBtn.hidden = true;
-      if (hint) hint.hidden = true;
-      tryBtn?.classList.remove("is-pulse");
-    };
-
-    const paintFinal = () => {
-      const offer = currentOffer();
-      BEATS.forEach((s) => setLive(s.id, offer[s.valueKey]));
-      if (addrEl) addrEl.textContent = offer.address;
-      if (priceEl) priceEl.textContent = offer.offer;
-      if (result) result.hidden = false;
-      completedCount = Math.max(completedCount, 1);
-      if (countEl) countEl.textContent = `${completedCount} of 300`;
+      clearTimers();
+      offerCount = 0;
+      setChips(-1);
+      setLine(0, 0);
+      setLine(1, 0);
+      setLine(2, 0);
+      if (conf) conf.style.width = "0%";
+      if (tryRow) tryRow.hidden = true;
+      paintStage("idle");
     };
 
     const finish = () => {
-      running = false;
-      completedCount = Math.min(300, Math.max(completedCount, 1));
-      if (countEl) countEl.textContent = `${completedCount} of 300`;
-      if (stepEl) stepEl.textContent = "Offer sent";
-      if (result) result.hidden = false;
-      if (tryBtn) tryBtn.hidden = false;
-      if (replayBtn) replayBtn.hidden = false;
-      if (hint) hint.hidden = false;
-      tryBtn?.classList.add("is-pulse");
+      offerCount = 1;
+      paintStage("complete");
+      if (tryMode && tryRow) tryRow.hidden = false;
       frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
     };
 
-    const run = async () => {
-      const my = ++token;
-      running = true;
-      resetBoard();
-      if (tryBtn) tryBtn.hidden = true;
+    const runOffer = () => {
+      clearTimers();
+      offerCount = 0;
+      setChips(-1);
+      setLine(0, 0);
+      setLine(1, 0);
+      setLine(2, 0);
+      if (conf) conf.style.width = "0%";
+      if (tryRow) tryRow.hidden = true;
       if (replayBtn) replayBtn.hidden = true;
-      if (hint) hint.hidden = true;
+      paintStage("idle");
 
-      const offer = currentOffer();
-      if (addrEl) addrEl.textContent = offer.address;
+      schedule(() => {
+        paintStage("sources");
+        setLine(0, 100);
+      }, 300);
+      schedule(() => setChips(0), 600);
+      schedule(() => setChips(1), 960);
+      schedule(() => setChips(2), 1320);
+      schedule(() => setChips(3), 1680);
+      schedule(() => {
+        paintStage("model");
+        setLine(1, 100);
+      }, 2350);
+      schedule(() => {
+        paintStage("email");
+        setLine(2, 100);
+      }, 3700);
+      schedule(() => finish(), 4600);
+    };
 
-      for (const beat of BEATS) {
-        if (my !== token) return;
-
-        if (stepEl) stepEl.textContent = beat.progressLabel;
-        setWorking(beat.id, beat.progressDetail);
-        await sleep(beat.progressMs);
-        if (my !== token) return;
-
-        const value = offer[beat.valueKey];
-        setLive(beat.id, value);
-        if (stepEl) stepEl.textContent = beat.resolvedLabel;
-
-        if (beat.id === "offer") {
-          if (priceEl) priceEl.textContent = offer.offer;
-          if (result) result.hidden = false;
-        }
-
-        if (beat.id === "email") {
-          completedCount = Math.max(completedCount, 1);
-          if (countEl) countEl.textContent = `${completedCount} of 300`;
-        }
-
-        await sleep(beat.resolveMs);
-        if (my !== token) return;
-      }
-
-      finish();
+    const paintFinal = () => {
+      clearTimers();
+      setChips(3);
+      setLine(0, 100);
+      setLine(1, 100);
+      setLine(2, 100);
+      offerCount = 1;
+      paintStage("complete");
+      if (tryMode && tryRow) tryRow.hidden = false;
     };
 
     frame.addEventListener("demo-play", (e) => {
       const detail = (e as CustomEvent).detail as { reduced?: boolean } | undefined;
+      tryMode = false;
       if (detail?.reduced) {
-        resetBoard();
         paintFinal();
-        finish();
+        frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
         return;
       }
-      void run();
+      runOffer();
     });
+
     frame.addEventListener("demo-replay", () => {
-      offerIndex = 0;
-      completedCount = 0;
-      void run();
+      tryMode = false;
+      resetBoard();
+      runOffer();
+    });
+
+    frame.addEventListener("demo-complete", () => {
+      tryMode = true;
+      if (stage === "complete" && tryRow) tryRow.hidden = false;
+    });
+
+    runBtn?.addEventListener("click", () => {
+      if (stage !== "idle" && stage !== "complete") return;
+      runOffer();
     });
 
     tryBtn?.addEventListener("click", () => {
-      if (running) return;
-      offerIndex = (offerIndex + 1) % OFFERS.length;
-      completedCount = Math.min(300, completedCount + 1);
-      void run();
+      if (stage !== "idle" && stage !== "complete") return;
+      runOffer();
     });
+
     replayBtn?.addEventListener("click", () => {
       frame.dispatchEvent(new CustomEvent("demo-request-replay", { bubbles: true }));
     });
   }
 
-  document.querySelectorAll("[data-hl]").forEach((el) => wireHomeLight(el as HTMLElement));
+  document.querySelectorAll("[data-cc]").forEach((el) => wireCashClose(el as HTMLElement));
   document.addEventListener("astro:page-load", () => {
-    document.querySelectorAll("[data-hl]").forEach((el) => wireHomeLight(el as HTMLElement));
+    document.querySelectorAll("[data-cc]").forEach((el) => wireCashClose(el as HTMLElement));
   });
 </script>
 
 <style>
-  .hl {
-    --hl-copper: var(--accent, #b87333);
+  .cc {
+    --cc-navy: #0d2240;
+    --cc-navy-deep: #0b1929;
+    --cc-navy-mid: #1b2d52;
+    --cc-green: #16a34a;
+    --cc-green-dark: #15803d;
+    --cc-green-bright: #22c55e;
+    --cc-green-soft: #f0fdf4;
+    --cc-green-border: #86efac;
+    --cc-green-badge: #bbf7d0;
+    --cc-bg: #eef0f5;
+    --cc-card: #ffffff;
+    --cc-muted: #8693ae;
+    --cc-faint: #bcc5d8;
+    --cc-line: #d4daea;
+    --cc-soft: #f4f6fa;
+    --cc-track: #e8ebf3;
+    --cc-body: #4a5568;
+    --cc-amber: #f59e0b;
+    --cc-sans: "DM Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+    --cc-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+
     height: 100%;
-    padding: var(--s-4);
-    display: grid;
-    grid-template-rows: auto auto 1fr auto auto;
-    gap: var(--s-3);
-    color: var(--fg);
-    background:
-      radial-gradient(ellipse at top right, color-mix(in srgb, var(--hl-copper) 16%, transparent), transparent 55%),
-      var(--bg);
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--cc-bg);
+    color: var(--cc-navy);
+    font-family: var(--cc-sans);
+    font-size: 13px;
+    line-height: 1.4;
+    overflow: auto;
   }
 
-  .hl__head {
+  .cc__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding: 0.65rem 1rem;
+    background: var(--cc-navy);
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .cc__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 0;
+  }
+
+  .cc__mark {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.35rem;
+    background: var(--cc-green-bright);
+    color: var(--cc-navy);
+    display: grid;
+    place-items: center;
+    font-size: 0.625rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  .cc__name {
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: -0.01em;
+  }
+
+  .cc__tag {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.6875rem;
+  }
+
+  .cc__meta {
+    display: none;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .cc__meta strong {
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+  }
+
+  .cc__dot {
+    width: 0.2rem;
+    height: 0.2rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .cc__count-box {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .cc__count {
+    font-family: var(--cc-mono);
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    transition: color 0.4s ease;
+  }
+
+  .cc__count-label {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.8125rem;
+  }
+
+  .cc__main {
+    display: grid;
+    grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr);
+    gap: 0.85rem;
+    padding: 0.85rem;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .cc__listing {
+    background: var(--cc-card);
+    border: 1px solid var(--cc-line);
+    border-radius: 1rem;
+    overflow: hidden;
+    align-self: start;
+  }
+
+  .cc__photo {
+    position: relative;
+    height: 5.5rem;
+    display: flex;
+    align-items: flex-end;
+    padding: 0.65rem;
+    background: linear-gradient(135deg, var(--cc-navy-mid) 0%, var(--cc-navy-deep) 100%);
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .cc__photo-icon {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 3.5rem;
+    height: 3.5rem;
+    opacity: 0.08;
+    color: #fff;
+  }
+
+  .cc__photo-label {
+    position: relative;
+    font-family: var(--cc-mono);
+    font-size: 0.625rem;
+  }
+
+  .cc__listing-body {
+    padding: 0.85rem;
+  }
+
+  .cc__addr {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .cc__city {
+    margin: 0.2rem 0 0.75rem;
+    color: var(--cc-muted);
+    font-size: 0.7rem;
+  }
+
+  .cc__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .cc__stat {
+    background: var(--cc-soft);
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.2rem;
+    text-align: center;
+  }
+
+  .cc__stat-val {
+    display: block;
+    font-family: var(--cc-mono);
+    font-weight: 700;
+    font-size: 0.8rem;
+  }
+
+  .cc__stat-lab {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--cc-muted);
+    font-size: 0.6rem;
+  }
+
+  .cc__facts {
+    margin: 0;
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .cc__facts > div {
     display: flex;
     justify-content: space-between;
-    gap: var(--s-3);
-    font-family: var(--font-label);
-    font-size: var(--t-mono-md);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
+    gap: 0.5rem;
+    font-size: 0.7rem;
   }
 
-  .hl__kicker {
-    color: var(--hl-copper);
-  }
-
-  .hl__count {
-    color: var(--fg-muted);
-  }
-
-  .hl__addr {
+  .cc__facts dt {
     margin: 0;
-    font-size: var(--t-proof, var(--t-body));
-    color: var(--fg-secondary);
+    color: var(--cc-muted);
   }
 
-  .hl__nodes {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: var(--s-2);
-    align-content: start;
+  .cc__facts dd {
+    margin: 0;
+    font-weight: 500;
   }
 
-  .hl__node {
-    border: var(--hairline) solid var(--hairline-color);
-    padding: var(--s-3);
-    display: grid;
-    gap: var(--s-2);
-    min-height: 5rem;
-    background: color-mix(in srgb, var(--bg) 92%, transparent);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  .cc__mono {
+    font-family: var(--cc-mono);
   }
 
-  .hl__node.is-working {
-    border-color: color-mix(in srgb, var(--hl-copper) 70%, var(--hairline-color));
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hl-copper) 30%, transparent);
-    animation: hl-working 1.4s ease-in-out infinite;
+  .cc__status {
+    margin: 0.75rem 0 0;
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--cc-bg);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.625rem;
+    color: var(--cc-muted);
   }
 
-  .hl__node.is-live {
-    border-color: var(--hl-copper);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hl-copper) 45%, transparent);
+  .cc__status strong {
+    color: var(--cc-navy);
+    font-weight: 500;
+  }
+
+  .cc__status-dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background: var(--cc-amber);
+    flex-shrink: 0;
+  }
+
+  .cc__status-dot.is-run {
+    background: var(--cc-green);
+    animation: cc-pulse-dot 1s ease-in-out infinite;
+  }
+
+  .cc__status-dot.is-done {
+    background: var(--cc-green-bright);
     animation: none;
   }
 
-  .hl__node-name {
-    font-family: var(--font-label);
-    font-size: var(--t-mono-md);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
+  .cc__right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
   }
 
-  .hl__node-detail {
-    font-size: var(--t-body-sm);
-    color: var(--fg-secondary);
-    line-height: 1.35;
+  .cc__pipeline {
+    background: var(--cc-card);
+    border: 1px solid var(--cc-line);
+    border-radius: 1rem;
+    padding: 0.9rem;
   }
 
-  .hl__node.is-working .hl__node-detail {
-    color: var(--hl-copper);
+  .cc__pipeline-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+    flex-wrap: wrap;
   }
 
-  .hl__result {
-    border-block-start: var(--hairline) solid var(--hairline-color);
-    padding-block-start: var(--s-3);
+  .cc__pipeline-title {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .cc__pipeline-sub {
+    margin: 0.15rem 0 0;
+    color: var(--cc-muted);
+    font-size: 0.65rem;
+  }
+
+  .cc__pipeline-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .cc__btn {
+    appearance: none;
+    border: 0;
+    border-radius: 0.5rem;
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    transition: background 0.2s ease, opacity 0.2s ease;
+  }
+
+  .cc__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .cc__btn--run {
+    background: var(--cc-green);
+    color: #fff;
+  }
+
+  .cc__btn--run:hover:not(:disabled) {
+    background: var(--cc-green-dark);
+  }
+
+  .cc__btn--ghost {
+    background: transparent;
+    color: var(--cc-muted);
+    border: 1px solid var(--cc-line);
+  }
+
+  .cc__btn--ghost:hover {
+    background: var(--cc-soft);
+  }
+
+  .cc__btn--pulse {
+    animation: cc-pulse-btn 1.6s ease-out infinite;
+  }
+
+  .cc__spin {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    animation: cc-spin 0.7s linear infinite;
+  }
+
+  .cc__nodes {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+  }
+
+  .cc__node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 5.5rem;
+    flex-shrink: 0;
+  }
+
+  .cc__node-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.7rem;
+    border: 2px solid var(--cc-line);
+    background: var(--cc-soft);
+    color: var(--cc-faint);
     display: grid;
-    gap: var(--s-1);
+    place-items: center;
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
   }
 
-  .hl__price {
-    margin: 0;
-    font-size: var(--t-proof, var(--t-body));
-    color: var(--hl-copper);
+  .cc__node-icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
-  .hl__note {
-    margin: 0;
-    font-family: var(--font-label);
-    font-size: var(--t-mono-md);
-    letter-spacing: var(--ls-mono);
+  .cc__node.is-active .cc__node-icon {
+    background: var(--cc-navy);
+    border-color: var(--cc-navy);
+    color: #fff;
+  }
+
+  .cc__node--green.is-active .cc__node-icon {
+    background: var(--cc-green);
+    border-color: var(--cc-green);
+  }
+
+  .cc__node-label {
+    margin-top: 0.4rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--cc-faint);
+    transition: color 0.3s ease;
+  }
+
+  .cc__node.is-active .cc__node-label {
+    color: var(--cc-navy);
+  }
+
+  .cc__node-sub {
+    margin-top: 0.1rem;
+    font-size: 0.6rem;
+    color: var(--cc-muted);
+  }
+
+  .cc__line {
+    flex: 1;
+    min-width: 1.25rem;
+    height: 2px;
+    margin: 0 0.35rem 1.6rem;
+    background: var(--cc-track);
+    border-radius: 999px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cc__line span {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    background: var(--cc-green);
+    border-radius: 999px;
+    transition: width 750ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .cc__sources {
+    margin-top: 0.9rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--cc-bg);
+  }
+
+  .cc__sources-label {
+    margin: 0 0 0.5rem;
+    color: var(--cc-muted);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--fg-muted);
   }
 
-  .hl__actions {
+  .cc__chips {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+
+  .cc__chip {
+    border-radius: 0.7rem;
+    border: 1px solid var(--cc-line);
+    background: var(--cc-soft);
+    padding: 0.5rem 0.55rem;
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+
+  .cc__chip.is-active {
+    background: var(--cc-green-soft);
+    border-color: var(--cc-green-border);
+  }
+
+  .cc__chip-name {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--cc-faint);
+    transition: color 0.3s ease;
+  }
+
+  .cc__chip.is-active .cc__chip-name {
+    color: var(--cc-green-dark);
+  }
+
+  .cc__chip-desc {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.6rem;
+    color: var(--cc-line);
+    transition: color 0.3s ease;
+  }
+
+  .cc__chip.is-active .cc__chip-desc {
+    color: #4ade80;
+  }
+
+  .cc__results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .cc__model,
+  .cc__email {
+    background: var(--cc-card);
+    border: 1px solid var(--cc-line);
+    border-radius: 1rem;
+    padding: 0.9rem;
+    opacity: 0.5;
+    transition: opacity 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+    min-height: 11rem;
+  }
+
+  .cc__model.is-live {
+    opacity: 1;
+    border-color: var(--cc-green);
+    box-shadow: 0 0 0 1px rgba(22, 163, 74, 0.1);
+  }
+
+  .cc__email {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .cc__email.is-live {
+    opacity: 1;
+    border-color: var(--cc-navy);
+  }
+
+  .cc__model-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.65rem;
+  }
+
+  .cc__eyebrow {
+    color: var(--cc-muted);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cc__badge {
+    font-size: 0.6rem;
+    font-weight: 500;
+    color: var(--cc-green);
+    background: var(--cc-green-soft);
+    border: 1px solid var(--cc-green-badge);
+    border-radius: 999px;
+    padding: 0.1rem 0.45rem;
+  }
+
+  .cc__model-idle,
+  .cc__email-idle {
+    display: grid;
+    place-items: center;
+    min-height: 8rem;
+    color: var(--cc-faint);
+    font-size: 0.75rem;
+    text-align: center;
+    line-height: 1.5;
+    padding: 1rem;
+  }
+
+  .cc__offer-label {
+    display: block;
+    color: var(--cc-muted);
+    font-size: 0.7rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .cc__offer-price {
+    display: block;
+    font-family: var(--cc-mono);
+    font-size: 1.55rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+
+  .cc__conf {
+    margin-bottom: 0.75rem;
+  }
+
+  .cc__conf-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.35rem;
+    color: var(--cc-muted);
+    font-size: 0.7rem;
+  }
+
+  .cc__conf-row .cc__mono {
+    color: var(--cc-navy);
+    font-weight: 700;
+  }
+
+  .cc__conf-track {
+    height: 0.375rem;
+    background: var(--cc-bg);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .cc__conf-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--cc-green);
+    border-radius: 999px;
+    transition: width 1.1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .cc__metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+  }
+
+  .cc__metric {
+    background: var(--cc-soft);
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.5rem;
+  }
+
+  .cc__metric-lab {
+    display: block;
+    color: var(--cc-muted);
+    font-size: 0.6rem;
+  }
+
+  .cc__metric-val {
+    display: block;
+    margin-top: 0.15rem;
+    font-family: var(--cc-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .cc__email-bar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.7rem 0.85rem;
+    background: var(--cc-soft);
+    border-bottom: 1px solid var(--cc-line);
+  }
+
+  .cc__email-queued {
+    margin: 0.2rem 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+
+  .cc__email-dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background: var(--cc-green-bright);
+  }
+
+  .cc__email-id {
+    font-family: var(--cc-mono);
+    font-size: 0.6rem;
+    color: var(--cc-muted);
+  }
+
+  .cc__email-body {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .cc__email-fields {
+    display: grid;
+    gap: 0.2rem;
+    margin-bottom: 0.65rem;
+    font-size: 0.7rem;
+  }
+
+  .cc__email-fields p {
+    margin: 0;
+    display: flex;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  .cc__email-fields span {
+    color: var(--cc-muted);
+    width: 3rem;
+    flex-shrink: 0;
+  }
+
+  .cc__email-copy {
+    border-top: 1px solid var(--cc-bg);
+    padding-top: 0.65rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .cc__email-headline {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .cc__email-copy p {
+    margin: 0;
+    color: var(--cc-body);
+    font-size: 0.7rem;
+    line-height: 1.45;
+  }
+
+  .cc__green {
+    color: var(--cc-green);
+  }
+
+  .cc__accept {
+    appearance: none;
+    width: 100%;
+    margin-top: 0.25rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: var(--cc-navy);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.55rem;
+    cursor: default;
+  }
+
+  .cc__try-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--s-3);
+    gap: 0.65rem;
   }
 
-  .hl__hint {
+  .cc__hint {
     margin: 0;
-    font-size: var(--t-proof, var(--t-body-sm));
-    color: var(--fg-secondary);
+    color: var(--cc-muted);
+    font-size: 0.75rem;
   }
 
-  .hl__btn {
-    padding: var(--s-2) var(--s-4);
-    border: var(--hairline) solid var(--hairline-color);
-    background: var(--bg);
-    color: var(--fg);
-    font-family: var(--font-label);
-    font-size: var(--t-mono-md);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
-    cursor: pointer;
+  @keyframes cc-spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 
-  .hl__btn--pulse.is-pulse {
-    border-color: var(--hl-copper);
-    color: var(--hl-copper);
-    animation: hl-pulse 1.6s ease-out infinite;
-  }
-
-  @keyframes hl-working {
+  @keyframes cc-pulse-dot {
     0%,
     100% {
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hl-copper) 20%, transparent);
       opacity: 1;
     }
     50% {
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hl-copper) 55%, transparent);
-      opacity: 0.88;
+      opacity: 0.45;
     }
   }
 
-  @keyframes hl-pulse {
+  @keyframes cc-pulse-btn {
     0%,
     100% {
-      box-shadow: 0 0 0 0 color-mix(in srgb, var(--hl-copper) 0%, transparent);
+      box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
     }
     50% {
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--hl-copper) 28%, transparent);
+      box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.28);
     }
   }
 
-  @media (max-width: 48rem) {
-    .hl__nodes {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+  @media (min-width: 52rem) {
+    .cc__meta {
+      display: flex;
+    }
+
+    .cc__tag {
+      display: inline;
     }
   }
 
-  @media (max-width: 30rem) {
-    .hl__nodes {
+  @media (max-width: 40rem) {
+    .cc__tag {
+      display: none;
+    }
+
+    .cc__main {
+      grid-template-columns: 1fr;
+    }
+
+    .cc__results {
+      grid-template-columns: 1fr;
+    }
+
+    .cc__chips {
       grid-template-columns: 1fr 1fr;
+    }
+
+    .cc__node {
+      min-width: 4.5rem;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hl__node.is-working,
-    .hl__btn--pulse.is-pulse {
+    .cc__line span,
+    .cc__conf-fill,
+    .cc__node-icon,
+    .cc__chip {
       transition: none;
+    }
+
+    .cc__spin,
+    .cc__status-dot.is-run,
+    .cc__btn--pulse {
       animation: none;
     }
   }
