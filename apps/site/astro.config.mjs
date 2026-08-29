@@ -12,7 +12,7 @@ export default defineConfig({
 
   build: { format: "directory" },
 
-  // Recruiter run path: http://localhost:4371/preview/tokens/
+  // Recruiter run path: http://localhost:4371/
   server: { port: 4371 },
 
   // Gate: Astro smartypants rewrites -- into an em dash. Off by rule.

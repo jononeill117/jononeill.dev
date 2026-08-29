@@ -1,0 +1,58 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Band from "@jononeill/ui/Band.astro";
+import Eyebrow from "@jononeill/ui/Eyebrow.astro";
+import { SITE } from "../components/site";
+---
+
+<BaseLayout
+  title="Contact. Jon ONeill."
+  description="Phoenix, AZ. Phone, email, LinkedIn."
+  canonicalPath="/contact/"
+  navSurface="accent"
+>
+  <Band surface="accent" as="header" class="page-hero contact-hero">
+    <div class="page-inner">
+      <Eyebrow>Contact</Eyebrow>
+      <h1 class="page-title">Phoenix, AZ</h1>
+      <ul class="lines" role="list">
+        <li>
+          <a href={SITE.phoneHref}>{SITE.phone}</a>
+        </li>
+        <li>
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </li>
+        <li>
+          <a href={SITE.linkedin}>linkedin.com/in/jon-oneill-020196</a>
+        </li>
+      </ul>
+    </div>
+  </Band>
+</BaseLayout>
+
+<style>
+  .contact-hero {
+    min-height: calc(100vh - var(--nav-height));
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .contact-hero .page-title {
+    color: var(--fg-on-accent);
+  }
+
+  .lines {
+    list-style: none;
+    margin: var(--s-12) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-4);
+    font-size: var(--t-body-lg);
+  }
+
+  .lines a {
+    color: inherit;
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+  }
+</style>

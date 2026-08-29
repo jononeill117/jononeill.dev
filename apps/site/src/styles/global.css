@@ -12,3 +12,63 @@
 @import "@jononeill/tokens/tokens.css";
 @import "@jononeill/ui/fonts.css";
 @import "@jononeill/ui/base.css";
+
+/* Shared page frame. Tokens only. Used by every real route. */
+.page-inner {
+  width: min(100%, var(--max-w));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.page-hero {
+  padding-block: var(--s-section);
+}
+
+.page-title {
+  margin-block-start: var(--s-4);
+  font-size: var(--t-h1-tight);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-heading);
+  font-weight: var(--fw-semibold);
+}
+
+.page-lede {
+  margin-block-start: var(--s-6);
+  max-width: var(--measure-tight);
+  font-size: var(--t-body-lg);
+  color: var(--fg-secondary);
+}
+
+.page-body {
+  margin-block-start: var(--s-6);
+  max-width: var(--measure);
+  color: var(--fg-secondary);
+}
+
+.page-body > * + * {
+  margin-block-start: var(--s-6);
+}
+
+.page-meta {
+  margin-block-start: var(--s-8);
+  font-family: var(--font-label);
+  font-size: var(--t-mono-sm);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+}
+
+.page-meta a {
+  text-decoration: none;
+  border-block-end: var(--hairline) solid currentColor;
+}
+
+.page-section {
+  padding-block: var(--s-section-tight);
+}
+
+.page-section-title {
+  margin-block-start: var(--s-3);
+  font-size: var(--t-h2);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-heading);
+}

@@ -6,7 +6,7 @@ import "../styles/global.css";
 import SiteNav from "@jononeill/ui/SiteNav.astro";
 import SiteFooter from "@jononeill/ui/SiteFooter.astro";
 import JsonLd from "@jononeill/ui/JsonLd.astro";
-import { SITE, personSchema, webSiteSchema } from "../components/site";
+import { SITE, NAV_LINKS, personSchema, webSiteSchema } from "../components/site";
 
 type NavSurface = "canvas" | "inverted" | "accent";
 
@@ -85,10 +85,7 @@ const graph = [personSchema(), webSiteSchema(), ...schema];
           wordmarkSuffix={SITE.wordmarkSuffix}
           email={SITE.email}
           initialSurface={navSurface}
-          links={[
-            { label: "Work", href: "#work" },
-            { label: "Contact", href: "#contact" },
-          ]}
+          links={[...NAV_LINKS]}
         />
       )
     }

@@ -2,7 +2,7 @@
 
 Source for jononeill.dev, a hire-packet personal site. Dark editorial, not SaaS marketing.
 
-**Status:** In progress. Design system locked. Pages next. Domain not live.
+**Status:** Pages are in the repo. Domain is not live. Atlas points jononeill.dev after the Worker exists.
 
 ## If you are a recruiter
 
@@ -14,9 +14,8 @@ A personal site for hiring managers and recruiters. It shows who Jon is, the loc
 
 ### Status
 
-- In progress
+- Pages live in this repo
 - Design locked (tokens, motion, shared UI)
-- Pages next
 - Domain not live (jononeill.dev is not serving this site yet)
 
 ### Who Jon is
@@ -47,9 +46,19 @@ pnpm install
 pnpm dev
 ```
 
-Then open [http://localhost:4371/preview/tokens/](http://localhost:4371/preview/tokens/).
+Then open [http://localhost:4371/](http://localhost:4371/).
 
-That preview route is throwaway and marked for deletion. Home is [http://localhost:4371/](http://localhost:4371/).
+### Routes
+
+| Path | Page |
+| --- | --- |
+| `/` | Home |
+| `/work/zoom-drain/` | Zoom Drain case study |
+| `/work/ecclesio/` | Ecclesio case study |
+| `/experience/` | Paid roles, then projects |
+| `/about/` | About |
+| `/contact/` | Phone, email, LinkedIn |
+| `/privacy/` | Privacy |
 
 ## Stack
 
@@ -59,6 +68,7 @@ That preview route is throwaway and marked for deletion. Home is [http://localho
 | Design tokens | Token CSS | `@jononeill/tokens` |
 | Motion | GSAP / Lenis | `@jononeill/motion` |
 | UI | Shared Astro components | `@jononeill/ui` |
+| Hosting | Cloudflare Workers static assets | Worker name `jononeill-site` |
 | Package manager | pnpm | Workspace root |
 
 ## Repo map
@@ -70,6 +80,7 @@ That preview route is throwaway and marked for deletion. Home is [http://localho
 | `packages/motion` | GSAP / Lenis |
 | `packages/ui` | Shared UI + Instrument Sans fonts |
 | `scripts/sync-fonts.mjs` | Copies fonts into `apps/site/public/fonts` |
+| `wrangler.jsonc` | Workers static assets config |
 
 ## Palette
 
@@ -86,7 +97,7 @@ No indigo. No `#864AEC`. No purple brand accent.
 - No em dashes or en dashes
 - Do not brand Jon as executive, owner, founder, entrepreneur, or co-owner
 - No secrets, no `dist`, no `node_modules` in git
-- `/preview/tokens/` is temporary and marked for deletion
+- Ecclesio is a side project, not a job
 
 ## Contact
 

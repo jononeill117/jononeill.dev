@@ -1,16 +1,21 @@
 ---
 /**
- * Home. Design locked. Page content still landing.
+ * Home. Hire packet.
  */
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Band from "@jononeill/ui/Band.astro";
 import Eyebrow from "@jononeill/ui/Eyebrow.astro";
 import { SITE } from "../components/site";
+
+const studies = (await getCollection("work")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 ---
 
 <BaseLayout title="Jon ONeill. Product, operations, and analytics.">
   <Band surface="canvas" as="header" class="hero">
-    <div class="hero__inner">
+    <div class="page-inner">
       <Eyebrow>Phoenix, AZ</Eyebrow>
       <h1 class="hero__title">{SITE.name}</h1>
       <p class="hero__lede">
@@ -18,7 +23,7 @@ import { SITE } from "../components/site";
         Phoenix. Previously Head of Product at Livable. Product and analytics at
         HomeLight, Stoa, and Zillow.
       </p>
-      <p class="hero__meta">
+      <p class="page-meta">
         <a href={SITE.linkedin}>LinkedIn</a>
         <span aria-hidden="true"> · </span>
         <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
@@ -26,28 +31,39 @@ import { SITE } from "../components/site";
     </div>
   </Band>
 
-  <Band surface="canvas" as="section" id="work" class="section">
-    <div class="section__inner">
-      <Eyebrow>Status</Eyebrow>
-      <h2 class="section__title">Site in progress</h2>
-      <p class="section__body">
-        Design system is locked. Tokens, motion, and shared UI are in the repo.
-        Pages and long form content come next. The domain is not live yet.
+  <Band surface="canvas" as="section" id="work" class="page-section">
+    <div class="page-inner">
+      <Eyebrow>Work</Eyebrow>
+      <h2 class="page-section-title">Two writeups</h2>
+      <p class="page-body">
+        This site is the hire packet. Short pages and facts. Not a product
+        marketing site.
       </p>
-      <p class="section__body">
-        Recruiter preview of the locked palette:
-        <a href="/preview/tokens/">/preview/tokens/</a>
-        (throwaway route, marked for deletion).
+      <ul class="work-list" role="list">
+        {
+          studies.map((study) => (
+            <li class="work-item">
+              <Eyebrow>{study.data.role}</Eyebrow>
+              <h3 class="work-item__title">
+                <a href={`/work/${study.id}/`}>{study.data.title}</a>
+              </h3>
+              <p class="work-item__lede">{study.data.lede}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="page-meta">
+        <a href="/experience/">Full experience</a>
       </p>
     </div>
   </Band>
 
-  <Band surface="accent" as="section" id="contact" class="section section--contact">
-    <div class="section__inner">
+  <Band surface="accent" as="section" id="contact" class="page-section section--contact">
+    <div class="page-inner">
       <Eyebrow>Contact</Eyebrow>
-      <h2 class="section__title">Say hello</h2>
-      <p class="section__body">
-        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      <h2 class="page-section-title">Phoenix, AZ</h2>
+      <p class="page-body">
+        <a href="/contact/">Phone, email, LinkedIn</a>
       </p>
     </div>
   </Band>
@@ -59,13 +75,6 @@ import { SITE } from "../components/site";
     display: flex;
     align-items: flex-end;
     padding-block: var(--s-section);
-  }
-
-  .hero__inner,
-  .section__inner {
-    width: min(100%, var(--max-w));
-    margin-inline: auto;
-    padding-inline: var(--gutter);
   }
 
   .hero__title {
@@ -84,38 +93,38 @@ import { SITE } from "../components/site";
     color: var(--fg-secondary);
   }
 
-  .hero__meta {
-    margin-block-start: var(--s-8);
-    font-family: var(--font-label);
-    font-size: var(--t-mono-sm);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
+  .work-list {
+    list-style: none;
+    margin: var(--s-12) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-12);
   }
 
-  .hero__meta a {
-    text-decoration: none;
-    border-block-end: var(--hairline) solid currentColor;
-  }
-
-  .section {
-    padding-block: var(--s-section-tight);
-  }
-
-  .section__title {
+  .work-item__title {
     margin-block-start: var(--s-3);
-    font-size: var(--t-h2);
+    font-size: var(--t-h3);
     line-height: var(--lh-heading);
     letter-spacing: var(--ls-heading);
   }
 
-  .section__body {
+  .work-item__title a {
+    text-decoration: none;
+  }
+
+  .work-item__title a:hover,
+  .work-item__title a:focus-visible {
+    color: var(--accent);
+  }
+
+  .work-item__lede {
     margin-block-start: var(--s-4);
     max-width: var(--measure);
     color: var(--fg-secondary);
   }
 
-  .section--contact .section__body,
-  .section--contact .section__title {
+  .section--contact .page-section-title,
+  .section--contact .page-body {
     color: var(--fg-on-accent);
   }
 
