@@ -98,10 +98,12 @@ const {
 
     cover.addEventListener("click", (e) => {
       e.preventDefault();
+      cancelSettle();
       startWalkthrough();
     });
     root.querySelector("[data-demo-play]")?.addEventListener("click", (e) => {
       e.stopPropagation();
+      cancelSettle();
       startWalkthrough();
     });
 
@@ -124,14 +126,27 @@ const {
     setMode("cover");
 
     // Auto-play once when ~55% of the board is on screen. Manual play still works.
+    // Settle ~800ms so scroll-into-view does not instantly fire the walkthrough.
+    const AUTOPLAY_SETTLE_MS = 800;
     let autoPlayed = false;
+    let settleTimer: ReturnType<typeof setTimeout> | null = null;
+    const cancelSettle = () => {
+      if (settleTimer) {
+        clearTimeout(settleTimer);
+        settleTimer = null;
+      }
+    };
     const io = new IntersectionObserver(
       (entries) => {
         const hit = entries.some((e) => e.isIntersecting && e.intersectionRatio >= 0.55);
         if (!hit || autoPlayed || mode !== "cover") return;
         autoPlayed = true;
         io.disconnect();
-        startWalkthrough();
+        settleTimer = setTimeout(() => {
+          settleTimer = null;
+          if (mode !== "cover") return;
+          startWalkthrough();
+        }, AUTOPLAY_SETTLE_MS);
       },
       { threshold: [0, 0.55, 0.75, 1] },
     );
@@ -192,6 +207,16 @@ const {
     overflow: hidden;
   }
 
+  /* Phone: taller board so mini-apps fit without inner scrolling. */
+  @media (max-width: 40rem) {
+    .demo-frame__board {
+      aspect-ratio: auto;
+      height: min(34rem, 72vh);
+      max-height: min(34rem, 72vh);
+      min-height: 22rem;
+    }
+  }
+
   .demo-frame__cover {
     position: absolute;
     inset: 0;
@@ -233,7 +258,7 @@ const {
   .demo-frame__stage {
     position: absolute;
     inset: 0;
-    overflow: auto;
+    overflow: hidden;
     font-size: var(--t-body-sm);
   }
 

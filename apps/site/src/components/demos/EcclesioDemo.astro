@@ -593,7 +593,7 @@ import DemoFrame from "./DemoFrame.astro";
       setStatus(label);
       setWorking(statsEl);
       blankStats();
-      await sleep(480);
+      await sleep(1280);
       if (my !== token) {
         filterBusy = false;
         return;
@@ -615,7 +615,7 @@ import DemoFrame from "./DemoFrame.astro";
 
       setStatus("Loading Ecclesio dashboard…");
       setWorking(status);
-      await sleep(900);
+      await sleep(1700);
       if (my !== token) return;
       setLive(status);
 
@@ -623,20 +623,20 @@ import DemoFrame from "./DemoFrame.astro";
       setWorking(statsPanel);
       setWorking(statsEl);
       blankStats();
-      await sleep(1100);
+      await sleep(1900);
       if (my !== token) return;
       applySnapshot(BASE.all);
       setLive(statsEl);
       setLive(statsPanel);
       setStatus("Stats loaded");
-      await sleep(500);
+      await sleep(1300);
       if (my !== token) return;
 
       setStatus("Drawing health score…");
       setWorking(healthPanel);
       setWorking(healthScore);
       resetChart();
-      await sleep(400);
+      await sleep(1200);
       if (my !== token) return;
       if (vals.health) vals.health.textContent = "76%";
       drawChart();
@@ -644,7 +644,7 @@ import DemoFrame from "./DemoFrame.astro";
       setLive(healthScore);
       setLive(healthPanel);
       setStatus("Health score ready (demo data)");
-      await sleep(900);
+      await sleep(1700);
       if (my !== token) return;
 
       setStatus("Surfacing actionable insights…");
@@ -659,14 +659,14 @@ import DemoFrame from "./DemoFrame.astro";
       setLive(insightsPanel);
       if (insightMeta) insightMeta.textContent = "47 open";
       setStatus("Insights ready");
-      await sleep(450);
+      await sleep(1250);
       if (my !== token) return;
 
       setStatus("Picking a follow-up…");
       insightEls[0]?.classList.remove("is-live");
       insightEls[0]?.classList.add("is-active", "is-working");
       pickBtns[0]?.classList.add("is-press");
-      await sleep(700);
+      await sleep(1500);
       if (my !== token) return;
       selectedInsight = 0;
       insightEls[0]?.classList.remove("is-working");
@@ -676,7 +676,7 @@ import DemoFrame from "./DemoFrame.astro";
         setLive(picked);
       }
       setStatus("Follow-up queued for staff");
-      await sleep(700);
+      await sleep(1500);
       if (my !== token) return;
 
       paintFinal();
@@ -1381,14 +1381,57 @@ import DemoFrame from "./DemoFrame.astro";
     .ec__grid {
       grid-template-columns: 1fr;
       grid-template-rows: auto auto auto;
+      gap: 0.35rem;
     }
 
     .ec__panel--insights {
       grid-row: auto;
     }
 
+    .ec__insights {
+      overflow: hidden;
+      gap: 0.2rem;
+    }
+
+    .ec__insight {
+      padding: 0.28rem 0.32rem;
+    }
+
+    .ec__insight-title {
+      font-size: 0.58rem;
+    }
+
+    .ec__insight-sub {
+      font-size: 0.5rem;
+    }
+
     .ec__stats {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.25rem;
+    }
+
+    .ec__stat {
+      padding: 0.35rem 0.3rem;
+    }
+
+    .ec__stat-val {
+      font-size: 0.85rem;
+    }
+
+    .ec__stat-label {
+      font-size: 0.48rem;
+    }
+
+    .ec__panel {
+      padding: 0.45rem 0.5rem;
+    }
+
+    .ec__health-score {
+      font-size: 1.35rem;
+    }
+
+    .ec__chart {
+      min-height: 4.5rem;
     }
   }
 

@@ -393,10 +393,10 @@ import DemoFrame from "./DemoFrame.astro";
   ] as const;
 
   const FEEDS: { id: SpFeed; label: string; progressMs: number; resolveMs: number }[] = [
-    { id: "public", label: "Public Record", progressMs: 720, resolveMs: 320 },
-    { id: "mls", label: "MLS", progressMs: 780, resolveMs: 340 },
-    { id: "third", label: "3rd Party", progressMs: 700, resolveMs: 300 },
-    { id: "final", label: "Final Data", progressMs: 820, resolveMs: 360 },
+    { id: "public", label: "Public Record", progressMs: 1520, resolveMs: 1120 },
+    { id: "mls", label: "MLS", progressMs: 1580, resolveMs: 1140 },
+    { id: "third", label: "3rd Party", progressMs: 1500, resolveMs: 1100 },
+    { id: "final", label: "Final Data", progressMs: 1620, resolveMs: 1160 },
   ];
 
   function sleep(ms: number) {
@@ -657,7 +657,7 @@ import DemoFrame from "./DemoFrame.astro";
       // 1. File opens
       setStep("File opening…");
       if (addrEl) addrEl.textContent = "Loading #4418…";
-      await sleep(900);
+      await sleep(1700);
       if (my !== token) return;
 
       if (addrEl) addrEl.textContent = ADDRESS;
@@ -668,7 +668,7 @@ import DemoFrame from "./DemoFrame.astro";
       if (descBody) descBody.style.opacity = "1";
       mapEl?.classList.add("is-live");
       setStep("File open · Home Fact Verification");
-      await sleep(700);
+      await sleep(1500);
       if (my !== token) return;
 
       // 2. Feeds resolve into table cells (working → live)
@@ -687,18 +687,18 @@ import DemoFrame from "./DemoFrame.astro";
       }
       if (feedPill) feedPill.textContent = "Feeds live";
       setStep("Vendor feeds resolved");
-      await sleep(450);
+      await sleep(1250);
       if (my !== token) return;
 
       // 3. Valuation calculates
       setStep("Calculating Stoa valuation…");
       setValuation(0, true);
-      await sleep(1400);
+      await sleep(2200);
       if (my !== token) return;
       setValuation(0, false);
       hexes?.setAttribute("opacity", "1");
       setStep("Stoa valuation locked at $392,547");
-      await sleep(800);
+      await sleep(1600);
       if (my !== token) return;
 
       // 4. Flags / contingencies
@@ -724,13 +724,13 @@ import DemoFrame from "./DemoFrame.astro";
         if (my !== token) return;
       }
       setStep("Contingencies ready for review");
-      await sleep(500);
+      await sleep(1300);
       if (my !== token) return;
 
       // 5. Accept
       setStep("Analyst review");
       if (acceptBtn) acceptBtn.disabled = false;
-      await sleep(1100);
+      await sleep(1900);
       if (my !== token) return;
 
       if (acceptBtn) {
@@ -738,7 +738,7 @@ import DemoFrame from "./DemoFrame.astro";
         acceptBtn.textContent = "Accepted";
       }
       setStep("Decision recorded");
-      await sleep(700);
+      await sleep(1500);
       if (my !== token) return;
 
       finish();
@@ -783,7 +783,7 @@ import DemoFrame from "./DemoFrame.astro";
       setStep("Recalculating valuation…");
       setValuation(valuationIdx, true);
       recalcBtn?.classList.add("is-nudge");
-      await sleep(1100);
+      await sleep(1900);
       const nextIdx = (valuationIdx + 1) % VALUATIONS.length;
       setValuation(nextIdx, false);
       setStep(`Valuation updated to ${VALUATIONS[nextIdx]!.price}`);
@@ -1526,33 +1526,154 @@ import DemoFrame from "./DemoFrame.astro";
   @media (max-width: 40rem) {
     .sp {
       grid-template-columns: 1fr;
+      font-size: 0.62rem;
     }
 
     .sp__rail {
       display: none;
     }
 
+    .sp__top {
+      padding: 0.3rem 0.5rem;
+      gap: 0.45rem;
+    }
+
+    .sp__status {
+      padding: 0.22rem 0.5rem;
+      font-size: 0.52rem;
+    }
+
     .sp__workspace {
       grid-template-columns: 1fr;
-      grid-template-rows: auto minmax(9rem, 38%);
+      grid-template-rows: 1fr minmax(5.5rem, 22%);
     }
 
     .sp__details {
       border-right: 0;
       border-bottom: 1px solid var(--sp-line);
       order: 1;
+      overflow: hidden;
+      padding: 0.4rem 0.5rem 0.45rem;
+      gap: 0.3rem;
     }
 
     .sp__map {
       order: 2;
+      min-height: 0;
+    }
+
+    .sp__map-chrome,
+    .sp__map-foot {
+      padding: 0.2rem 0.35rem;
+    }
+
+    .sp__map-modes .sp__map-mode:nth-child(n + 3),
+    .sp__layers .sp__layer:nth-child(n + 3),
+    .sp__view-images {
+      display: none;
     }
 
     .sp__summary {
       grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+
+    .sp__desc {
+      display: none;
+    }
+
+    .sp__val {
+      padding: 0.45rem 0.55rem;
+      order: -1;
+    }
+
+    .sp__val-label {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--sp-purple);
+    }
+
+    .sp__val-price strong {
+      font-size: 1.2rem;
+    }
+
+    .sp__range-labels {
+      font-size: 0.44rem;
+    }
+
+    .sp__addr {
+      font-size: 0.72rem;
+      line-height: 1.25;
+    }
+
+    .sp__facts {
+      font-size: 0.52rem;
+    }
+
+    .sp__scores {
+      gap: 0.2rem;
+    }
+
+    .sp__score {
+      font-size: 0.48rem;
+      padding: 0.1rem 0.35rem;
+    }
+
+    .sp__table-scroll {
+      overflow: hidden;
+      max-height: none;
+    }
+
+    .sp__table {
+      font-size: 0.5rem;
+    }
+
+    .sp__table th,
+    .sp__table td {
+      padding: 0.2rem 0.28rem;
+    }
+
+    .sp__table th:nth-child(2),
+    .sp__table td:nth-child(2),
+    .sp__table th:nth-child(5),
+    .sp__table td:nth-child(5),
+    .sp__table th:nth-child(7),
+    .sp__table td:nth-child(7) {
+      display: none;
+    }
+
+    .sp__final {
+      min-width: 2.4rem;
+      padding: 0.1rem 0.25rem;
+    }
+
+    .sp__flags {
+      gap: 0.2rem;
+    }
+
+    .sp__flag {
+      font-size: 0.48rem;
+      padding: 0.12rem 0.35rem;
+    }
+
+    .sp__actions {
+      gap: 0.3rem;
+    }
+
+    .sp__accept,
+    .sp__recalc,
+    .sp__replay {
+      padding: 0.28rem 0.55rem;
+      font-size: 0.52rem;
     }
 
     .sp__tabs .sp__tab:nth-child(n + 4) {
       display: none;
+    }
+
+    .sp__tab {
+      font-size: 0.55rem;
     }
   }
 

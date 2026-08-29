@@ -555,7 +555,7 @@ import DemoFrame from "./DemoFrame.astro";
 
       setStep("Loading recoveries…");
       Object.values(stats).forEach((el) => el?.classList.add("is-working"));
-      await sleep(700);
+      await sleep(1500);
       if (my !== token) return;
 
       setStep("Recovered this month");
@@ -563,26 +563,26 @@ import DemoFrame from "./DemoFrame.astro";
       stats.recovered?.classList.add("is-live");
       await tickRecovered(BASE_RECOVERED, 700, my);
       if (my !== token) return;
-      await sleep(350);
+      await sleep(1150);
       if (my !== token) return;
 
       setStep("Open recoveries");
       stats.open?.classList.remove("is-working");
       stats.open?.classList.add("is-live");
       setOpen(OPEN_BEFORE);
-      await sleep(450);
+      await sleep(1250);
       if (my !== token) return;
 
       setStep("CSAT score");
       stats.csat?.classList.remove("is-working");
       stats.csat?.classList.add("is-live");
       if (csatEl) csatEl.textContent = "4.6";
-      await sleep(500);
+      await sleep(1300);
       if (my !== token) return;
 
       setStep("Charting months…");
       chart?.classList.add("is-working");
-      await sleep(400);
+      await sleep(1200);
       if (my !== token) return;
       chart?.classList.remove("is-working");
       chart?.classList.add("is-live");
@@ -593,13 +593,13 @@ import DemoFrame from "./DemoFrame.astro";
       }
       bars[bars.length - 1]?.classList.add("is-pulse-bar");
       setStep("August peak");
-      await sleep(550);
+      await sleep(1350);
       if (my !== token) return;
       bars[bars.length - 1]?.classList.remove("is-pulse-bar");
 
       setStep("Scanning units…");
       tableCard?.classList.add("is-working");
-      await sleep(350);
+      await sleep(1150);
       if (my !== token) return;
       tableCard?.classList.remove("is-working");
       tableCard?.classList.add("is-live");
@@ -609,12 +609,12 @@ import DemoFrame from "./DemoFrame.astro";
         await sleep(90);
       }
       rows.forEach((row) => row.classList.add("is-visible"));
-      await sleep(300);
+      await sleep(1100);
       if (my !== token) return;
 
       setStep("Unit 12 needs reply");
       unit12Row?.classList.add("is-highlight");
-      await sleep(900);
+      await sleep(1700);
       if (my !== token) return;
 
       setStep("Resident statement");
@@ -626,7 +626,7 @@ import DemoFrame from "./DemoFrame.astro";
         payBtn.classList.add("is-pulse");
       }
       if (detailsBtn) detailsBtn.disabled = false;
-      await sleep(1100);
+      await sleep(1900);
       if (my !== token) return;
 
       setStep("Posting payment…");
@@ -635,7 +635,7 @@ import DemoFrame from "./DemoFrame.astro";
       await applyPaid(my, true);
       if (my !== token) return;
       setStep("Payment posted");
-      await sleep(700);
+      await sleep(1500);
       if (my !== token) return;
 
       finish();
@@ -1449,11 +1449,63 @@ import DemoFrame from "./DemoFrame.astro";
     }
 
     .lv__stats {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.3rem;
+    }
+
+    .lv__stat {
+      padding: 0.4rem 0.45rem 0.35rem;
+    }
+
+    .lv__stat-value {
+      font-size: 0.85rem;
+    }
+
+    .lv__stat-label {
+      font-size: 0.48rem;
     }
 
     .lv__grid {
       grid-template-columns: 1fr;
+      gap: 0.4rem;
+    }
+
+    .lv__panel--resident {
+      overflow: hidden;
+    }
+
+    .lv__table-scroll {
+      overflow: hidden;
+    }
+
+    .lv__table {
+      font-size: 0.6rem;
+    }
+
+    .lv__table th,
+    .lv__table td {
+      padding: 0.28rem 0.4rem;
+    }
+
+    .lv__chart {
+      min-height: 4.5rem;
+    }
+
+    .lv__bill {
+      padding: 0.65rem 0.75rem;
+    }
+
+    .lv__bill-amt {
+      font-size: 1.35rem;
+    }
+
+    .lv__title {
+      font-size: 0.82rem;
+    }
+
+    .lv__step {
+      font-size: 0.52rem;
+      padding: 0.22rem 0.5rem;
     }
 
     .lv__user-name {
