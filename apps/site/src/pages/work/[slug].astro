@@ -1,59 +1,15 @@
 ---
-import { getCollection, render } from "astro:content";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import Band from "@jononeill/ui/Band.astro";
-import Eyebrow from "@jononeill/ui/Eyebrow.astro";
-import VisualPlaceholder from "../../components/VisualPlaceholder.astro";
+import RedirectPage from "../../components/RedirectPage.astro";
 
 export async function getStaticPaths() {
-  const studies = await getCollection("work");
-  return studies.map((entry) => ({
-    params: { slug: entry.id },
-    props: { entry },
+  const slugs = ["zoom-drain", "livable", "stoa", "homelight", "zillow", "ecclesio"];
+  return slugs.map((slug) => ({
+    params: { slug },
+    props: { slug },
   }));
 }
 
-const { entry } = Astro.props;
-const { Content } = await render(entry);
-const title = `${entry.data.title}. ${entry.data.role}. Jon O'Neill.`;
+const { slug } = Astro.props;
 ---
 
-<BaseLayout
-  title={title}
-  description={entry.data.lede}
-  canonicalPath={`/work/${entry.id}/`}
->
-  <Band surface="canvas" as="header" class="page-hero">
-    <div class="page-inner">
-      <Eyebrow>{entry.data.role} · {entry.data.dates}</Eyebrow>
-      <h1 class="page-title">{entry.data.title}</h1>
-      <p class="page-lede">{entry.data.lede}</p>
-      <p class="page-meta">{entry.data.outcome}</p>
-    </div>
-  </Band>
-
-  <Band surface="canvas" as="article" class="page-section">
-    <div class="page-inner prose">
-      <Content />
-      <VisualPlaceholder caption={entry.data.visualCaption} />
-      <p class="page-meta">
-        <a href="/work/">All work</a>
-        <span aria-hidden="true"> · </span>
-        <a href="/experience/">Experience</a>
-        <span aria-hidden="true"> · </span>
-        <a href="/contact/">Contact</a>
-      </p>
-    </div>
-  </Band>
-</BaseLayout>
-
-<style>
-  .prose :global(p) {
-    max-width: var(--measure);
-    color: var(--fg-secondary);
-  }
-
-  .prose :global(p + p) {
-    margin-block-start: var(--s-6);
-  }
-</style>
+<RedirectPage hash={`#${slug}`} label={slug} />

@@ -16,10 +16,10 @@ export const SITE = {
 
   resume: "/Jon-ONeill-Director-of-Product.pdf",
 
-  jobTitle: "Product Manager",
+  jobTitle: "Product and Operations Manager",
 
   description:
-    "Product manager. Zero to one SaaS at Livable, the underwriting platform at Stoa, acquisitions models at HomeLight and Zillow. Phoenix, AZ.",
+    "Data driven, customer focused product manager. Zero to one SaaS at Livable, the underwriting platform at Stoa, acquisitions models at HomeLight and Zillow. Phoenix, AZ.",
 
   locality: ["Phoenix, Arizona", "United States"],
 
@@ -35,9 +35,6 @@ export const SITE = {
   },
 
   linkedin: "https://www.linkedin.com/in/jon-oneill-020196",
-
-  phone: "928.499.8446",
-  phoneHref: "tel:+19284998446",
 } as const;
 
 /** Split mailbox parts. Never concatenate in server-rendered HTML. */
@@ -45,11 +42,10 @@ export const EMAIL_USER = "jon.oneill.m";
 export const EMAIL_HOST = "gmail.com";
 
 export const NAV_LINKS = [
-  { label: "Work", href: "/work/" },
-  { label: "Experience", href: "/experience/" },
-  { label: "About", href: "/about/" },
-  { label: "Resume", href: SITE.resume },
-  { label: "Contact", href: "/contact/" },
+  { label: "Experience", href: "#experience" },
+  { label: "About", href: "#about" },
+  { label: "Resume", href: "#resume", resume: true },
+  { label: "Contact", href: "#contact" },
 ] as const;
 
 export function personSchema() {
@@ -59,7 +55,6 @@ export function personSchema() {
     name: SITE.name,
     url: `${SITE.origin}/`,
     jobTitle: SITE.jobTitle,
-    telephone: SITE.phoneHref.replace("tel:", ""),
     description: SITE.description,
     address: {
       "@type": "PostalAddress",

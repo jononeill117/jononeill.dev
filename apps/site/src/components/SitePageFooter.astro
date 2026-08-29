@@ -12,8 +12,8 @@ const year = new Date().getFullYear();
 
   <div class="site-page-footer__lay">
     <div class="site-page-footer__routes">
-      <a class="route" href="/contact/">Contact</a>
-      <a class="route" href={SITE.resume}>Resume</a>
+      <a class="route" href="#contact">Contact</a>
+      <a class="route" href="#resume" data-resume-open>Resume</a>
     </div>
 
     <div class="site-page-footer__meta">
@@ -149,12 +149,13 @@ const year = new Date().getFullYear();
 
   .site-page-footer__wordmark-wrap {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
+    padding-inline: var(--gutter);
   }
 
   .site-page-footer__wordmark {
     display: block;
-    margin-inline-start: calc(var(--gutter-wide) * -1);
+    margin-inline: auto;
     margin-block-end: calc(var(--s-4) * -1);
     font-family: var(--font-heading);
     font-size: var(--t-display-2);
