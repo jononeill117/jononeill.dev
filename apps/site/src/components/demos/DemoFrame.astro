@@ -1,0 +1,109 @@
+---
+/**
+ * Click-to-play shell for inline Make-style demos. No modal.
+ */
+interface Props {
+  class?: string;
+  aspect?: string;
+}
+
+const { class: className, aspect = "16 / 10" } = Astro.props;
+---
+
+<figure class:list={["demo-frame", className]} style={`--demo-aspect: ${aspect}`}>
+  <div class="demo-frame__board">
+    <div class="demo-frame__cover" data-demo-cover>
+      <button type="button" class="demo-frame__play">Click to play</button>
+    </div>
+    <div class="demo-frame__stage" data-demo-stage hidden>
+      <slot />
+    </div>
+  </div>
+  <figcaption class="demo-frame__caption">Dummy demo. Click to play.</figcaption>
+</figure>
+
+<script>
+  function wireDemoFrame(root: HTMLElement) {
+    if (root.hasAttribute("data-demo-wired")) return;
+    root.setAttribute("data-demo-wired", "true");
+
+    const cover = root.querySelector<HTMLElement>("[data-demo-cover]");
+    const stage = root.querySelector<HTMLElement>("[data-demo-stage]");
+    if (!cover || !stage) return;
+
+    const play = () => {
+      cover.hidden = true;
+      stage.hidden = false;
+      root.dispatchEvent(new CustomEvent("demo-play", { bubbles: true }));
+    };
+
+    cover.addEventListener("click", play);
+    root.querySelector(".demo-frame__play")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      play();
+    });
+
+    root.addEventListener("demo-reset", () => {
+      cover.hidden = false;
+      stage.hidden = true;
+    });
+  }
+
+  document.querySelectorAll(".demo-frame").forEach((el) => wireDemoFrame(el as HTMLElement));
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll(".demo-frame").forEach((el) => wireDemoFrame(el as HTMLElement));
+  });
+</script>
+
+<style>
+  .demo-frame {
+    margin: var(--s-12) 0 0;
+    max-width: var(--max-w);
+  }
+
+  .demo-frame__board {
+    position: relative;
+    aspect-ratio: var(--demo-aspect);
+    border: var(--hairline) solid var(--hairline-color);
+    background-color: var(--ghost-color);
+    overflow: hidden;
+  }
+
+  .demo-frame__cover {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background-color: color-mix(in srgb, var(--bg) 88%, transparent);
+    cursor: pointer;
+  }
+
+  .demo-frame__play {
+    padding: var(--s-3) var(--s-6);
+    border: var(--hairline) solid var(--hairline-color);
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .demo-frame__stage {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+    font-size: var(--t-body-sm);
+  }
+
+  .demo-frame__caption {
+    margin-block-start: var(--s-4);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+</style>

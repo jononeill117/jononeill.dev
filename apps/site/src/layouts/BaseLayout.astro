@@ -103,7 +103,7 @@ const graph = [personSchema(), webSiteSchema(), ...schema];
     <style is:global>
       @layer base {
         html {
-          scroll-padding-block-start: var(--nav-height);
+          scroll-padding-block-start: var(--nav-stack-height, var(--nav-height));
         }
 
         #main:focus {

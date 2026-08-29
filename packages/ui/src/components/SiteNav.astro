@@ -303,6 +303,19 @@ const {
     if (typeof ResizeObserver === "function") {
       new ResizeObserver(remeasure).observe(document.documentElement);
     }
+
+    function publishNavHeight() {
+      document.documentElement.style.setProperty(
+        "--nav-stack-height",
+        nav.offsetHeight + "px",
+      );
+    }
+
+    publishNavHeight();
+    window.addEventListener("resize", publishNavHeight, { passive: true });
+    if (typeof ResizeObserver === "function") {
+      new ResizeObserver(publishNavHeight).observe(nav);
+    }
   })();
 </script>
 
@@ -526,39 +539,49 @@ const {
   }
 
   /*
-    NARROW. Brand stays on its own row. Links scroll horizontally so every
-    route is reachable by swiping without crushing the wordmark into Work.
+    NARROW. Row 1: brand (+ tools). Row 2: links, horizontal scroll.
+    Sticky with a solid ground so the hero eyebrow cannot show through.
+    --nav-stack-height is published from the inline script above.
   */
   @media (max-width: 60rem) {
     .site-nav {
-      display: flex;
-      flex-wrap: wrap;
+      position: sticky;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-rows: auto auto;
       align-items: center;
-      align-content: center;
       height: auto;
-      min-height: var(--nav-height);
+      min-height: var(--nav-height-mobile, 5.5rem);
       padding-block: var(--s-3);
       row-gap: var(--s-3);
       column-gap: var(--s-6);
+      background-color: var(--nav-bg);
+      border-block-end-color: var(--nav-hairline);
     }
 
     .nav-wordmark {
-      flex: 0 1 auto;
+      grid-row: 1;
+      grid-column: 1;
       min-width: 0;
-      margin-inline-end: var(--s-4);
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .nav-links {
+      grid-row: 2;
+      grid-column: 1 / -1;
       display: flex;
-      flex: 1 1 100%;
       flex-wrap: nowrap;
-      grid-column: unset;
+      justify-content: flex-start;
       align-items: center;
       gap: var(--s-6);
       min-width: 0;
+      margin: 0;
       overflow-x: auto;
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
       scrollbar-width: none;
       padding-block-end: var(--s-1);
     }
@@ -568,14 +591,15 @@ const {
     }
 
     .nav-route {
-      flex: 0 0 auto;
-      margin-inline-start: auto;
+      grid-row: 1;
+      grid-column: 2;
+      justify-self: end;
     }
 
     .nav-tools {
-      grid-column: unset;
-      flex: 0 0 auto;
-      margin-inline-start: auto;
+      grid-row: 1;
+      grid-column: 2;
+      justify-self: end;
     }
   }
 

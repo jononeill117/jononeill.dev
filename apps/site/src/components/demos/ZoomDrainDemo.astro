@@ -1,0 +1,206 @@
+---
+import DemoFrame from "./DemoFrame.astro";
+---
+
+<DemoFrame class="zoom-drain-demo">
+  <div class="zd" data-zd>
+    <header class="zd__head">
+      <span class="zd__wo">WO-1842</span>
+      <span class="zd__fuse">Copper fuse</span>
+    </header>
+    <div class="zd__nodes">
+      <div class="zd__node" data-zd-node="portal">Vendor portal</div>
+      <div class="zd__wire" aria-hidden="true"></div>
+      <div class="zd__node" data-zd-node="csm">CSM</div>
+      <div class="zd__wire" aria-hidden="true"></div>
+      <div class="zd__node" data-zd-node="voip">VOIP text</div>
+      <div class="zd__wire" aria-hidden="true"></div>
+      <div class="zd__node" data-zd-node="truck">Tech on truck</div>
+    </div>
+    <div class="zd__stats">
+      <div class="zd__stat">
+        <span class="zd__stat-label">Booking</span>
+        <span class="zd__stat-val" data-zd-stat="booking">3 hr</span>
+      </div>
+      <div class="zd__stat">
+        <span class="zd__stat-label">Speed</span>
+        <span class="zd__stat-val" data-zd-stat="speed">baseline</span>
+      </div>
+      <div class="zd__stat">
+        <span class="zd__stat-label">Revenue</span>
+        <span class="zd__stat-val" data-zd-stat="revenue">baseline</span>
+      </div>
+    </div>
+    <div class="zd__actions">
+      <button type="button" class="zd__btn zd__btn--primary" data-zd-run>
+        Job comes in
+      </button>
+      <button type="button" class="zd__btn" data-zd-replay hidden>Replay</button>
+    </div>
+  </div>
+</DemoFrame>
+
+<script>
+  function wireZoomDrain(root: HTMLElement) {
+    const frame = root.closest(".demo-frame");
+    if (!frame || frame.hasAttribute("data-zd-wired")) return;
+    frame.setAttribute("data-zd-wired", "true");
+
+    const panel = root;
+    const runBtn = panel.querySelector<HTMLButtonElement>("[data-zd-run]");
+    const replayBtn = panel.querySelector<HTMLButtonElement>("[data-zd-replay]");
+    const nodes = panel.querySelectorAll<HTMLElement>("[data-zd-node]");
+    const stats = {
+      booking: panel.querySelector("[data-zd-stat='booking']"),
+      speed: panel.querySelector("[data-zd-stat='speed']"),
+      revenue: panel.querySelector("[data-zd-stat='revenue']"),
+    };
+
+    const reset = () => {
+      nodes.forEach((n) => n.classList.remove("is-live"));
+      stats.booking!.textContent = "3 hr";
+      stats.speed!.textContent = "baseline";
+      stats.revenue!.textContent = "baseline";
+      runBtn!.hidden = false;
+      replayBtn!.hidden = true;
+    };
+
+    const run = async () => {
+      runBtn!.disabled = true;
+      const order = ["portal", "csm", "voip", "truck"];
+      for (const id of order) {
+        const node = panel.querySelector(`[data-zd-node='${id}']`);
+        node?.classList.add("is-live");
+        await new Promise((r) => setTimeout(r, 450));
+      }
+      stats.booking!.textContent = "12 min";
+      stats.speed!.textContent = "+300%";
+      stats.revenue!.textContent = "+12%";
+      runBtn!.hidden = true;
+      replayBtn!.hidden = false;
+      runBtn!.disabled = false;
+    };
+
+    runBtn?.addEventListener("click", run);
+    replayBtn?.addEventListener("click", () => {
+      reset();
+      frame.dispatchEvent(new CustomEvent("demo-reset"));
+    });
+    frame.addEventListener("demo-play", () => reset());
+  }
+
+  document.querySelectorAll("[data-zd]").forEach((el) => wireZoomDrain(el as HTMLElement));
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll("[data-zd]").forEach((el) => wireZoomDrain(el as HTMLElement));
+  });
+</script>
+
+<style>
+  .zd {
+    --zd-copper: #b87333;
+    height: 100%;
+    padding: var(--s-4);
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    gap: var(--s-4);
+    background: linear-gradient(160deg, #1a120c 0%, #0b0a09 55%);
+    color: var(--c-ink);
+  }
+
+  .zd__head {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+  }
+
+  .zd__fuse {
+    color: var(--zd-copper);
+  }
+
+  .zd__nodes {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    overflow-x: auto;
+    padding-block: var(--s-2);
+  }
+
+  .zd__node {
+    flex: 0 0 auto;
+    padding: var(--s-2) var(--s-3);
+    border: var(--hairline) solid color-mix(in srgb, var(--zd-copper) 50%, transparent);
+    border-radius: 2px;
+    font-size: var(--t-mono-xs);
+    white-space: nowrap;
+    opacity: 0.45;
+    transition: opacity 0.2s, box-shadow 0.2s;
+  }
+
+  .zd__node.is-live {
+    opacity: 1;
+    box-shadow: 0 0 0 1px var(--zd-copper);
+  }
+
+  .zd__wire {
+    flex: 0 0 1rem;
+    height: var(--hairline);
+    background: var(--zd-copper);
+    opacity: 0.35;
+  }
+
+  .zd__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-3);
+  }
+
+  .zd__stat {
+    padding: var(--s-3);
+    border: var(--hairline) solid var(--c-n-200);
+    text-align: center;
+  }
+
+  .zd__stat-label {
+    display: block;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--c-n-400);
+  }
+
+  .zd__stat-val {
+    display: block;
+    margin-block-start: var(--s-2);
+    font-size: var(--t-h4);
+    font-weight: var(--fw-semibold);
+    color: var(--zd-copper);
+  }
+
+  .zd__actions {
+    display: flex;
+    gap: var(--s-3);
+  }
+
+  .zd__btn {
+    flex: 1;
+    padding: var(--s-3);
+    border: var(--hairline) solid var(--c-n-200);
+    background: transparent;
+    color: inherit;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .zd__btn--primary {
+    background: var(--zd-copper);
+    border-color: var(--zd-copper);
+    color: var(--c-copper-fg);
+  }
+</style>
