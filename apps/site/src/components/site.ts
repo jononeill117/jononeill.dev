@@ -2,7 +2,8 @@
  * Site constants for jononeill.dev.
  *
  * One place the shell reads identity from so nav, footer, canonical URL,
- * and JSON-LD cannot disagree.
+ * and JSON-LD cannot disagree. The mailbox is stored in parts and assembled
+ * in the browser on demand. Do not join the parts in server-rendered HTML.
  */
 
 export const SITE = {
@@ -10,16 +11,10 @@ export const SITE = {
   domain: "jononeill.dev",
   name: "Jon O'Neill",
   legalName: "Jon O'Neill",
-  /**
-   * Used for mailto hrefs and JSON-LD only. The address is never printed as
-   * visible copy on a page; pages carry a "Show email" control instead.
-   */
-  email: "jon.oneill.m@gmail.com",
   wordmark: "jononeill",
   wordmarkSuffix: ".dev",
 
-  /** Asset path. The PDF itself is wired separately. */
-  resume: "/jon-oneill-resume.pdf",
+  resume: "/Jon-ONeill-Director-of-Product.pdf",
 
   jobTitle: "Product Manager",
 
@@ -45,10 +40,15 @@ export const SITE = {
   phoneHref: "tel:+19284998446",
 } as const;
 
+/** Split mailbox parts. Never concatenate in server-rendered HTML. */
+export const EMAIL_USER = "jon.oneill.m";
+export const EMAIL_HOST = "gmail.com";
+
 export const NAV_LINKS = [
-  { label: "Work", href: "/#work" },
+  { label: "Work", href: "/work/" },
   { label: "Experience", href: "/experience/" },
   { label: "About", href: "/about/" },
+  { label: "Resume", href: SITE.resume },
   { label: "Contact", href: "/contact/" },
 ] as const;
 
@@ -59,7 +59,6 @@ export function personSchema() {
     name: SITE.name,
     url: `${SITE.origin}/`,
     jobTitle: SITE.jobTitle,
-    email: SITE.email,
     telephone: SITE.phoneHref.replace("tel:", ""),
     description: SITE.description,
     address: {

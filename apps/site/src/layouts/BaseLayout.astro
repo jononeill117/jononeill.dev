@@ -4,8 +4,8 @@
  */
 import "../styles/global.css";
 import SiteNav from "@jononeill/ui/SiteNav.astro";
-import SiteFooter from "@jononeill/ui/SiteFooter.astro";
 import JsonLd from "@jononeill/ui/JsonLd.astro";
+import SitePageFooter from "../components/SitePageFooter.astro";
 import { SITE, NAV_LINKS, personSchema, webSiteSchema } from "../components/site";
 
 type NavSurface = "canvas" | "inverted" | "accent";
@@ -83,7 +83,8 @@ const graph = [personSchema(), webSiteSchema(), ...schema];
         <SiteNav
           wordmark={SITE.wordmark}
           wordmarkSuffix={SITE.wordmarkSuffix}
-          email={SITE.email}
+          email=""
+          showEmail={false}
           initialSurface={navSurface}
           links={[...NAV_LINKS]}
         />
@@ -94,24 +95,7 @@ const graph = [personSchema(), webSiteSchema(), ...schema];
       <slot />
     </div>
 
-    {
-      chrome && (
-        <SiteFooter
-          email={SITE.email}
-          wordmark={SITE.wordmark}
-          entity={SITE.name}
-          locality={[...SITE.locality]}
-          practice={SITE.practice}
-          categories={[...SITE.categories]}
-          singleRoute={{
-            lead: "Email",
-            name: "Jon",
-            subject: "Product role",
-            sub: "Product roles. Phoenix or remote.",
-          }}
-        />
-      )
-    }
+    {chrome && <SitePageFooter />}
 
     <style is:global>
       @layer base {

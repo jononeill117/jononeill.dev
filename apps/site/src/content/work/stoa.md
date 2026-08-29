@@ -6,6 +6,7 @@ dates: May 2022 to Jul 2023
 outcome: $1B underwritten, $300M purchased. Cycle time down 85%.
 kind: product
 order: 2
+visualCaption: the underwriting queue after consolidation, twenty-two vendor feeds down to six
 ---
 
 **Problem.** Underwriting a house took too long and took too many people. Forty analysts worked across twenty-two vendor feeds to decide what to pay, and at that speed the calendar was setting the price instead of the model.
@@ -17,5 +18,3 @@ order: 2
 **Who I worked with.** Forty analysts as my users, daily, which is the best product feedback loop I have had. Engineering and data on the build. Vendors on the way out.
 
 **Result.** $1B underwritten and $300M purchased through the platform. Cycle time down 85%. Integration time down 40% and data accuracy up 25%.
-
-Figure placeholder. Caption: the underwriting queue after consolidation, twenty-two vendor feeds down to six.
