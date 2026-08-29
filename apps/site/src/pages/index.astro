@@ -36,15 +36,6 @@ const rendered = await Promise.all(
 const ecclesio = allEntries.find((e) => e.id === "ecclesio");
 const ecclesioRendered = ecclesio ? await render(ecclesio) : null;
 
-const PROOF = ["Zillow", "HomeLight", "Stoa", "Livable", "Zoom Drain"];
-
-const STATS = [
-  { value: "$1B", label: "underwritten" },
-  { value: "$800M", label: "annual book" },
-  { value: "2,000", label: "units in four months" },
-  { value: "85%", label: "cycle-time reduction" },
-] as const;
-
 const COMPANY_INDEX = experienceEntries.map((entry) => ({
   id: entry.id,
   name: entry.data.title,
@@ -66,44 +57,13 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
         and operations meet: turn a manual process into a system, then use what
         that system produces to make better calls.
       </p>
-      <p class="proof-row">
-        {
-          PROOF.map((name, i) => (
-            <>
-              {i > 0 && <span aria-hidden="true"> · </span>}
-              <span>{name}</span>
-            </>
-          ))
-        }
-      </p>
-      <ul class="stat-grid" role="list">
-        {
-          STATS.map((stat) => (
-            <li class="stat-grid__item">
-              <span class="stat-grid__value">{stat.value}</span>
-              <span class="stat-grid__label">{stat.label}</span>
-            </li>
-          ))
-        }
-      </ul>
-      <p class="hero-actions">
-        <a href="#experience">Experience</a>
-        <span aria-hidden="true"> · </span>
-        <a href="#ecclesio">Portfolio</a>
-        <span aria-hidden="true"> · </span>
-        <a href="#resume" data-resume-open>Resume</a>
-        <span aria-hidden="true"> · </span>
-        <a href="#contact">Contact</a>
-        <span aria-hidden="true"> · </span>
-        <a href={SITE.linkedin}>LinkedIn</a>
-      </p>
     </div>
   </Band>
 
   <Band surface="canvas" as="section" id="experience" class="page-section experience">
     <div class="page-inner">
       <Eyebrow>Experience</Eyebrow>
-      <h2 class="page-section-title">Product and operations, reverse chronological.</h2>
+      <h2 class="page-section-title">Product and operations expert.</h2>
       <p class="page-body">
         Four product seats and one operating seat. Click a company to jump to
         that role.
@@ -283,49 +243,6 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
     margin-block-start: var(--s-6);
     max-width: var(--measure-tight);
     font-size: var(--t-body-lg);
-    line-height: var(--lh-body);
-    color: var(--fg-secondary);
-  }
-
-  .proof-row {
-    margin-block-start: var(--s-8);
-    font-size: var(--t-proof);
-    line-height: var(--lh-body);
-    color: var(--fg);
-  }
-
-  .stat-grid {
-    list-style: none;
-    margin: var(--s-8) 0 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--s-4) var(--s-6);
-  }
-
-  @media (min-width: 48rem) {
-    .stat-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-  }
-
-  .stat-grid__item {
-    display: grid;
-    gap: var(--s-1);
-    padding-block: var(--s-3);
-    border-block-start: var(--hairline) solid var(--hairline-color);
-  }
-
-  .stat-grid__value {
-    font-size: var(--t-stat);
-    font-weight: var(--fw-bold);
-    line-height: var(--lh-snug);
-    letter-spacing: var(--ls-heading);
-    color: var(--accent);
-  }
-
-  .stat-grid__label {
-    font-size: var(--t-proof);
     line-height: var(--lh-body);
     color: var(--fg-secondary);
   }
