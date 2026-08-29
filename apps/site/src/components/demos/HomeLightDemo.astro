@@ -63,34 +63,125 @@ import DemoFrame from "./DemoFrame.astro";
 </DemoFrame>
 
 <script>
-  type HlStep = {
+  type HlBeat = {
     id: string;
-    label: string;
-    detail: string;
+    progressLabel: string;
+    resolvedLabel: string;
+    progressDetail: string;
+    valueKey: keyof HlOfferValues;
+    progressMs: number;
+    resolveMs: number;
   };
 
-  type HlOffer = {
+  type HlOfferValues = {
     address: string;
-    price: string;
+    lead: string;
+    avm: string;
+    tax: string;
+    mls: string;
+    rehab: string;
+    offer: string;
+    email: string;
   };
 
-  const STEPS: HlStep[] = [
-    { id: "lead", label: "Lead in", detail: "Listing intake · seller intent" },
-    { id: "avm", label: "AVM priced", detail: "Model estimate locked" },
-    { id: "tax", label: "Tax pull", detail: "Assessor record matched" },
-    { id: "mls", label: "MLS comps", detail: "Neighborhood comps loaded" },
-    { id: "rehab", label: "Rehab scored", detail: "Condition hold applied" },
-    { id: "offer", label: "Offer painted", detail: "$412,000 · 86% of list" },
-    { id: "email", label: "Email out", detail: "Offer sent · no analyst" },
+  const BEATS: HlBeat[] = [
+    {
+      id: "lead",
+      progressLabel: "Receiving lead…",
+      resolvedLabel: "Lead in",
+      progressDetail: "Ingesting listing…",
+      valueKey: "lead",
+      progressMs: 1000,
+      resolveMs: 500,
+    },
+    {
+      id: "avm",
+      progressLabel: "Pricing AVM…",
+      resolvedLabel: "AVM locked",
+      progressDetail: "Running valuation model…",
+      valueKey: "avm",
+      progressMs: 1400,
+      resolveMs: 600,
+    },
+    {
+      id: "tax",
+      progressLabel: "Pulling assessor…",
+      resolvedLabel: "Tax matched",
+      progressDetail: "Querying public records…",
+      valueKey: "tax",
+      progressMs: 1200,
+      resolveMs: 500,
+    },
+    {
+      id: "mls",
+      progressLabel: "Loading comps…",
+      resolvedLabel: "MLS loaded",
+      progressDetail: "Matching neighborhood comps…",
+      valueKey: "mls",
+      progressMs: 1200,
+      resolveMs: 500,
+    },
+    {
+      id: "rehab",
+      progressLabel: "Scoring condition…",
+      resolvedLabel: "Rehab scored",
+      progressDetail: "Estimating scope hold…",
+      valueKey: "rehab",
+      progressMs: 1200,
+      resolveMs: 500,
+    },
+    {
+      id: "offer",
+      progressLabel: "Calculating offer…",
+      resolvedLabel: "Offer painted",
+      progressDetail: "Risk-adjusting price…",
+      valueKey: "offer",
+      progressMs: 1600,
+      resolveMs: 700,
+    },
+    {
+      id: "email",
+      progressLabel: "Sending offer…",
+      resolvedLabel: "Email out",
+      progressDetail: "Composing seller email…",
+      valueKey: "email",
+      progressMs: 1000,
+      resolveMs: 500,
+    },
   ];
 
-  const OFFERS: HlOffer[] = [
-    { address: "918 Maple Ave", price: "$412,000 · 86% of list" },
-    { address: "441 Cedar Ct", price: "$389,500 · 84% of list" },
-    { address: "72 Birch Rd", price: "$455,200 · 87% of list" },
+  const OFFERS: HlOfferValues[] = [
+    {
+      address: "918 Maple Ave",
+      lead: "918 Maple Ave · seller intent",
+      avm: "$428,000",
+      tax: "Assessed $401,200 · 2025",
+      mls: "18 DOM · last list $479,000",
+      rehab: "Rehab scope $18,400",
+      offer: "$412,000 · 86% of list",
+      email: "Sent · no analyst in loop",
+    },
+    {
+      address: "441 Cedar Ct",
+      lead: "441 Cedar Ct · seller intent",
+      avm: "$402,500",
+      tax: "Assessed $378,900 · 2025",
+      mls: "24 DOM · last list $465,000",
+      rehab: "Rehab scope $22,100",
+      offer: "$389,500 · 84% of list",
+      email: "Sent · no analyst in loop",
+    },
+    {
+      address: "72 Birch Rd",
+      lead: "72 Birch Rd · seller intent",
+      avm: "$471,000",
+      tax: "Assessed $449,800 · 2025",
+      mls: "11 DOM · last list $522,000",
+      rehab: "Rehab scope $14,900",
+      offer: "$455,200 · 87% of list",
+      email: "Sent · no analyst in loop",
+    },
   ];
-
-  const STEP_MS = 1200;
 
   function sleep(ms: number) {
     return new Promise((r) => setTimeout(r, ms));
@@ -115,28 +206,50 @@ import DemoFrame from "./DemoFrame.astro";
     let offerIndex = 0;
     let completedCount = 0;
 
-    const applyOffer = (index: number) => {
-      const offer = OFFERS[index] ?? OFFERS[0]!;
-      if (addrEl) addrEl.textContent = offer.address;
-      if (priceEl) priceEl.textContent = offer.price;
-      const offerDetail = root.querySelector("[data-hl-detail='offer']");
-      if (offerDetail) offerDetail.textContent = offer.price;
+    const currentOffer = () => OFFERS[offerIndex] ?? OFFERS[0]!;
+
+    const clearNodeState = (id: string) => {
+      root.querySelector(`[data-hl-node='${id}']`)?.classList.remove("is-working", "is-live");
+    };
+
+    const setWorking = (id: string, detail: string) => {
+      clearNodeState(id);
+      root.querySelector(`[data-hl-node='${id}']`)?.classList.add("is-working");
+      const d = root.querySelector(`[data-hl-detail='${id}']`);
+      if (d) d.textContent = detail;
+    };
+
+    const setLive = (id: string, detail: string) => {
+      clearNodeState(id);
+      root.querySelector(`[data-hl-node='${id}']`)?.classList.add("is-live");
+      const d = root.querySelector(`[data-hl-detail='${id}']`);
+      if (d) d.textContent = detail;
     };
 
     const resetBoard = () => {
-      STEPS.forEach((s) => {
-        root.querySelector(`[data-hl-node='${s.id}']`)?.classList.remove("is-live");
+      BEATS.forEach((s) => {
+        clearNodeState(s.id);
         const d = root.querySelector(`[data-hl-detail='${s.id}']`);
         if (d) d.textContent = "Waiting";
       });
       if (stepEl) stepEl.textContent = "Ready";
       if (countEl) countEl.textContent = `${completedCount} of 300`;
+      if (addrEl) addrEl.textContent = currentOffer().address;
       if (result) result.hidden = true;
       if (tryBtn) tryBtn.hidden = true;
       if (replayBtn) replayBtn.hidden = true;
       if (hint) hint.hidden = true;
       tryBtn?.classList.remove("is-pulse");
-      applyOffer(offerIndex);
+    };
+
+    const paintFinal = () => {
+      const offer = currentOffer();
+      BEATS.forEach((s) => setLive(s.id, offer[s.valueKey]));
+      if (addrEl) addrEl.textContent = offer.address;
+      if (priceEl) priceEl.textContent = offer.offer;
+      if (result) result.hidden = false;
+      completedCount = Math.max(completedCount, 1);
+      if (countEl) countEl.textContent = `${completedCount} of 300`;
     };
 
     const finish = () => {
@@ -152,23 +265,6 @@ import DemoFrame from "./DemoFrame.astro";
       frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
     };
 
-    const paintFinal = () => {
-      STEPS.forEach((s) => {
-        root.querySelector(`[data-hl-node='${s.id}']`)?.classList.add("is-live");
-        const d = root.querySelector(`[data-hl-detail='${s.id}']`);
-        if (d) {
-          if (s.id === "offer") {
-            d.textContent = OFFERS[offerIndex]?.price ?? s.detail;
-          } else {
-            d.textContent = s.detail;
-          }
-        }
-      });
-      if (result) result.hidden = false;
-      completedCount = Math.max(completedCount, 1);
-      if (countEl) countEl.textContent = `${completedCount} of 300`;
-    };
-
     const run = async () => {
       const my = ++token;
       running = true;
@@ -177,30 +273,35 @@ import DemoFrame from "./DemoFrame.astro";
       if (replayBtn) replayBtn.hidden = true;
       if (hint) hint.hidden = true;
 
-      for (const step of STEPS) {
+      const offer = currentOffer();
+      if (addrEl) addrEl.textContent = offer.address;
+
+      for (const beat of BEATS) {
         if (my !== token) return;
-        root.querySelector(`[data-hl-node='${step.id}']`)?.classList.add("is-live");
-        const d = root.querySelector(`[data-hl-detail='${step.id}']`);
-        if (d) {
-          if (step.id === "offer") {
-            d.textContent = OFFERS[offerIndex]?.price ?? step.detail;
-          } else {
-            d.textContent = step.detail;
-          }
+
+        if (stepEl) stepEl.textContent = beat.progressLabel;
+        setWorking(beat.id, beat.progressDetail);
+        await sleep(beat.progressMs);
+        if (my !== token) return;
+
+        const value = offer[beat.valueKey];
+        setLive(beat.id, value);
+        if (stepEl) stepEl.textContent = beat.resolvedLabel;
+
+        if (beat.id === "offer") {
+          if (priceEl) priceEl.textContent = offer.offer;
+          if (result) result.hidden = false;
         }
-        if (stepEl) stepEl.textContent = step.label;
-        if (step.id === "offer" && result) {
-          result.hidden = false;
-          applyOffer(offerIndex);
-        }
-        if (step.id === "email") {
+
+        if (beat.id === "email") {
           completedCount = Math.max(completedCount, 1);
           if (countEl) countEl.textContent = `${completedCount} of 300`;
         }
-        await sleep(STEP_MS);
+
+        await sleep(beat.resolveMs);
+        if (my !== token) return;
       }
 
-      if (my !== token) return;
       finish();
     };
 
@@ -292,9 +393,16 @@ import DemoFrame from "./DemoFrame.astro";
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
+  .hl__node.is-working {
+    border-color: color-mix(in srgb, var(--hl-copper) 70%, var(--hairline-color));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hl-copper) 30%, transparent);
+    animation: hl-working 1.4s ease-in-out infinite;
+  }
+
   .hl__node.is-live {
     border-color: var(--hl-copper);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hl-copper) 45%, transparent);
+    animation: none;
   }
 
   .hl__node-name {
@@ -308,6 +416,10 @@ import DemoFrame from "./DemoFrame.astro";
     font-size: var(--t-body-sm);
     color: var(--fg-secondary);
     line-height: 1.35;
+  }
+
+  .hl__node.is-working .hl__node-detail {
+    color: var(--hl-copper);
   }
 
   .hl__result {
@@ -363,6 +475,18 @@ import DemoFrame from "./DemoFrame.astro";
     animation: hl-pulse 1.6s ease-out infinite;
   }
 
+  @keyframes hl-working {
+    0%,
+    100% {
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hl-copper) 20%, transparent);
+      opacity: 1;
+    }
+    50% {
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hl-copper) 55%, transparent);
+      opacity: 0.88;
+    }
+  }
+
   @keyframes hl-pulse {
     0%,
     100% {
@@ -386,7 +510,7 @@ import DemoFrame from "./DemoFrame.astro";
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hl__node,
+    .hl__node.is-working,
     .hl__btn--pulse.is-pulse {
       transition: none;
       animation: none;
