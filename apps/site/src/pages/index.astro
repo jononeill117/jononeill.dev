@@ -14,6 +14,7 @@ const allEntries = await getCollection("work");
 
 const EXPERIENCE_ORDER = [
   "zoom-drain",
+  "ecclesio",
   "livable",
   "stoa",
   "homelight",
@@ -32,9 +33,6 @@ const rendered = await Promise.all(
     ...(await render(entry)),
   })),
 );
-
-const ecclesio = allEntries.find((e) => e.id === "ecclesio");
-const ecclesioRendered = ecclesio ? await render(ecclesio) : null;
 
 const COMPANY_INDEX = experienceEntries.map((entry) => ({
   id: entry.id,
@@ -127,51 +125,6 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
           ))
         }
       </ol>
-
-      <p class="portfolio-tease">
-        <a href="#ecclesio">Portfolio</a>
-        {" "}
-        - Ecclesio, church software I build on the side.
-      </p>
-
-      {
-        ecclesio && ecclesioRendered && (
-          <article class="role role--side" id="ecclesio">
-            <Eyebrow>
-              {ecclesio.data.kind === "project" ? "Side project" : ecclesio.data.role} ·{" "}
-              {ecclesio.data.dates}
-            </Eyebrow>
-            <h3 class="role__title">
-              <a class="role__company" href="#ecclesio">
-                {ecclesio.data.title}
-              </a>
-            </h3>
-            <p class="role__demo-kicker">
-              Check out what I built at {ecclesio.data.title}.
-            </p>
-            <RoleDemo id="ecclesio" />
-            <p class="role__lede">{ecclesio.data.lede}</p>
-            <p class="role__outcome">{ecclesio.data.outcome}</p>
-            {
-              ecclesio.data.marketingUrl && (
-                <p class="role__site">
-                  Also the marketing site:{" "}
-                  <a
-                    href={ecclesio.data.marketingUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {ecclesio.data.marketingUrl.replace(/^https?:\/\//, "")}
-                  </a>
-                </p>
-              )
-            }
-            <div class="role__study prose">
-              <ecclesioRendered.Content />
-            </div>
-          </article>
-        )
-      }
     </div>
   </Band>
 

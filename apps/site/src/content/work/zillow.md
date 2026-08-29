@@ -5,7 +5,7 @@ role: Business Analyst
 dates: Sep 2019 to Mar 2021
 outcome: About ten a day. About 3,000 in the period.
 kind: product
-order: 4
+order: 6
 visualCaption: daily model volume, September 2019 through March 2021
 ---
 

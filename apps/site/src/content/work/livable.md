@@ -5,7 +5,7 @@ role: Head of Product
 dates: Sep 2023 to Jul 2024
 outcome: 2,000 units in the first four months. CSAT and retention up 35%.
 kind: product
-order: 1
+order: 3
 visualCaption: units on the platform, launch through month four
 ---
 

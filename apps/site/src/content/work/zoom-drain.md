@@ -5,7 +5,7 @@ role: Director of Operations
 dates: 2023 to Present
 outcome: Booking time down 3 hours · Speed to lead up 300% · Weekly revenue up 10-15% · Office labor down ~30%
 kind: operations
-order: 5
+order: 1
 visualCaption: average booking time before and after the intake pipeline
 marketingUrl: https://zoomdrainphoenix.com
 ---

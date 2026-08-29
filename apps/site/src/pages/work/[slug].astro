@@ -2,7 +2,7 @@
 import RedirectPage from "../../components/RedirectPage.astro";
 
 export async function getStaticPaths() {
-  const slugs = ["zoom-drain", "livable", "stoa", "homelight", "zillow", "ecclesio"];
+  const slugs = ["zoom-drain", "ecclesio", "livable", "stoa", "homelight", "zillow"];
   return slugs.map((slug) => ({
     params: { slug },
     props: { slug },

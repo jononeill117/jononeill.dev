@@ -5,7 +5,7 @@ role: Side project
 dates: Dec 2025 to Present
 outcome: Zero to beta in four months · Dashboard 2s → ~50ms · Isolated databases · Tokenized payments
 kind: project
-order: 6
+order: 2
 visualCaption: dashboard load time, first build against the current one
 marketingUrl: https://ecclesiosoftware.com
 ---

@@ -5,7 +5,7 @@ role: Product Owner, Acquisitions
 dates: Mar 2021 to May 2022
 outcome: An $800M annual book. 300 automated offers a month.
 kind: product
-order: 3
+order: 5
 visualCaption: the automated offer path, from listing intake to offer sent
 ---
 

@@ -5,7 +5,7 @@ role: Senior Product Manager, SaaS and Data Integrations
 dates: May 2022 to Jul 2023
 outcome: $1B underwritten, $300M purchased. Cycle time down 85%.
 kind: product
-order: 2
+order: 4
 visualCaption: the underwriting queue after consolidation, twenty-two vendor feeds down to six
 ---
 
