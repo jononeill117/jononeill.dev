@@ -1,9 +1,8 @@
 ---
 /**
- * Mailbox link. Address is visible. Recruiters should not hunt for it.
+ * Mailbox link. Initial HTML shows "Show email" with no address and no
+ * mailto. Click assembles the mailbox in the browser.
  */
-import { SITE } from "./site";
-
 interface Props {
   class?: string;
 }
@@ -11,9 +10,17 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<a class:list={["reveal-email", className]} href={`mailto:${SITE.email}`}>
-  {SITE.email}
+<a
+  class:list={["reveal-email", className]}
+  href="#show-email"
+  data-email-reveal
+>
+  Show email
 </a>
+
+<script>
+  import "./reveal-email";
+</script>
 
 <style>
   .reveal-email {

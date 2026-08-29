@@ -24,16 +24,15 @@ Rules that hold everywhere:
    homepage hero, `/about/`, `/contact/`, and nowhere else. Change the path in
    one place: `apps/site/src/components/site.ts`.
 2. **Show email control.** `/contact/` and `/privacy/` carry
-   `<a href="mailto:..." data-email-reveal>Show email</a>`. Right now the href is
-   a plain mailto, so it works with no JavaScript. When the reveal script lands,
-   hook `[data-email-reveal]`. The label string is **Show email**. If a revealed
-   state needs a second label, use **Copy email**.
-3. **Shared chrome still prints the address.** `SiteNav` renders it as the
-   trailing route and `SiteFooter` renders it under "Direct". Both live in
-   `packages/ui`, so they were left alone. They are the last two visible
-   printings of the gmail on the site. `SiteNav` already accepts
-   `showEmail={false}`; `SiteFooter` would need the reveal control.
-   JSON-LD keeps the real address on purpose.
+   `<a href="#show-email" data-email-reveal>Show email</a>`. No mailto href and
+   no mailbox in the link text until click. `reveal-email.ts` assembles
+   `EMAIL_USER` + `EMAIL_HOST` on click. The label string is **Show email**.
+   If a revealed state needs a second label, use **Copy email**.
+3. **Shared chrome must not print the mailbox.** `SiteNav` already accepts
+   `showEmail={false}`; keep it off. `SiteFooter` / `PrivacyBody` mailto props
+   are unused by this site and must stay unused. `personSchema()` must not emit
+   an `email` field. Phone lives only on the resume PDF. Do not add a `tel:`
+   link.
 4. **Hero mono rows.** The homepage hero stacks three `.page-meta` rows: the
    proof strip, the stat strip, and the action row. They are three separate
    registers reading as one block. Differentiate them if you want, but keep the
@@ -69,7 +68,7 @@ Rules that hold everywhere:
 | `practice` | `Product management. Zero to one SaaS, pricing and underwriting platforms, data and machine learning, and the go to market that has to follow.` |
 | `categories` | `Product` / `Pricing and underwriting` / `Data and ML` / `Go to market` |
 | `locality` | `Phoenix, Arizona` / `United States` |
-| `phone` | `928.499.8446` |
+| `phone` | Phone lives only on the resume PDF. Do not print it in HTML, JS, JSON-LD, or this file. |
 | `linkedin` | `https://www.linkedin.com/in/jon-oneill-020196` |
 
 Footer contact route, passed from `BaseLayout.astro`:
@@ -287,12 +286,11 @@ then three bullets.
 > number, and the go to market sit inside one job. Phoenix, AZ, and glad to work
 > remote. Email is the fastest way to reach me.
 
-Four lines, in this order:
+Three lines, in this order. Phone lives only on the resume PDF. Do not add a `tel:` link.
 
 | Label | Target |
 | --- | --- |
-| `Show email` | `mailto:` the gmail, `data-email-reveal` |
-| `928.499.8446` | `tel:+19284998446` |
+| `Show email` | Assemble the mailbox on click from `EMAIL_USER` + `EMAIL_HOST`. No mailto href and no address in the link text until click. |
 | `linkedin.com/in/jon-oneill-020196` | the LinkedIn URL |
 | `Resume, PDF` | `SITE.resume` |
 

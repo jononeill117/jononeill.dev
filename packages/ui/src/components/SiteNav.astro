@@ -183,42 +183,9 @@ const {
 
 <script is:inline>
   /*
-    Surface detection.
-
-    Decides which [data-surface] element the nav's own midline currently falls
-    inside and copies that surface onto the nav. Everything else is CSS.
-
-    ---------------------------------------------------------------------------
-    NO requestAnimationFrame IN THE SCROLL PATH, AND THIS WAS LEARNED THE SAME
-    WAY EVERYTHING ELSE IN CLAUDE.md WAS.
-
-    The first version of this script did the layout reads inside one rAF per
-    scroll burst, which is the textbook shape. It was then measured in a tab
-    that was not the frontmost tab: the nav sat on the dark band still painted
-    in ink, exactly the defect this component exists to fix, because rAF does
-    not run at all when the tab is not being painted. That is the same failure
-    recorded in section 5 about tweens stalling at opacity 0. A correctness
-    mechanism must not be scheduled on a callback the browser is free to skip.
-
-    So the split is: MEASURE rarely, APPLY cheaply.
-
-      measure()  reads layout once and caches every band's top and bottom in
-                 DOCUMENT coordinates. Runs on init, on resize, once the fonts
-                 have settled, on load, and whenever a ResizeObserver says the
-                 page changed height.
-      apply()    runs on every scroll event and touches no layout at all. It
-                 compares two numbers per band against window.scrollY. There is
-                 nothing in it to throttle, so nothing has to be deferred, so
-                 there is no frame to miss.
-
-    That also makes it cheap in the way INP cares about, which is a pass or
-    fail item in section 7: the scroll listener is passive and does arithmetic
-    on a handful of numbers, never a forced synchronous layout.
-    ---------------------------------------------------------------------------
-
-    Lenis scrolls the real window, so native scroll events still fire and this
-    needs no Lenis specific wiring. It must never call window.scrollTo: Lenis
-    owns scroll position, per CLAUDE.md section 5.
+    Surface detection. Measure band geometry rarely. Apply on scroll with
+    arithmetic only. Do not use rAF (skipped in background tabs). Do not
+    call window.scrollTo.
   */
   (function () {
     var nav = document.getElementById("site-nav");
