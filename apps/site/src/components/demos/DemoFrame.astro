@@ -118,9 +118,24 @@ const {
       setMode("try");
       root.dispatchEvent(new CustomEvent("demo-play", { bubbles: true, detail: { reduced: true } }));
       root.dispatchEvent(new CustomEvent("demo-complete", { bubbles: true, detail: { reduced: true } }));
-    } else {
-      setMode("cover");
+      return;
     }
+
+    setMode("cover");
+
+    // Auto-play once when ~55% of the board is on screen. Manual play still works.
+    let autoPlayed = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const hit = entries.some((e) => e.isIntersecting && e.intersectionRatio >= 0.55);
+        if (!hit || autoPlayed || mode !== "cover") return;
+        autoPlayed = true;
+        io.disconnect();
+        startWalkthrough();
+      },
+      { threshold: [0, 0.55, 0.75, 1] },
+    );
+    io.observe(root);
   }
 
   document.querySelectorAll("[data-demo-frame]").forEach((el) => wireDemoFrame(el as HTMLElement));
