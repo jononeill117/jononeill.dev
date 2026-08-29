@@ -20,8 +20,6 @@ export const SITE = {
   description:
     "Seven years across product, operations, and analytics. Zillow, HomeLight, Stoa, Livable, Zoom Drain. Phoenix, AZ.",
 
-  email: "jon.oneill.m@gmail.com",
-
   locality: ["Phoenix, Arizona", "United States"],
 
   practice:
@@ -38,7 +36,7 @@ export const SITE = {
   linkedin: "https://www.linkedin.com/in/jon-oneill-020196",
 } as const;
 
-/** Split mailbox parts kept for any remaining client-side assembly. */
+/** Split mailbox parts. Assembled on click. Never emit the joined address in HTML. */
 export const EMAIL_USER = "jon.oneill.m";
 export const EMAIL_HOST = "gmail.com";
 
@@ -58,7 +56,6 @@ export function personSchema() {
     url: `${SITE.origin}/`,
     jobTitle: SITE.jobTitle,
     description: SITE.description,
-    email: SITE.email,
     address: {
       "@type": "PostalAddress",
       addressLocality: SITE.postal.locality,
