@@ -1,0 +1,11 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+# pnpm blocks postinstall scripts by default. All three of these need theirs:
+#   esbuild  downloads its platform binary. Vite and Astro will not build without it.
+#   workerd  the Cloudflare runtime binary. wrangler dev cannot start without it.
+#   sharp    Astro's image pipeline.
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true

@@ -1,0 +1,146 @@
+/* ============================================================================
+   TAILWIND 4 BRIDGE
+   Maps the shared tokens into Tailwind utilities. Import this INSTEAD of
+   importing tailwindcss directly in an app that uses Tailwind.
+
+   Optional Tailwind bridge. apps/site does NOT import this; it authors CSS against tokens.css.
+
+   ---------------------------------------------------------------------------
+   THE @theme inline RULE. Corrected 2026-08-10 after measurement.
+   An earlier version of this comment had it exactly backwards and told the
+   next agent the wrong thing. What follows was tested in both directions.
+
+     @theme          emits `--color-fg: var(--fg)` as a real declaration on
+                     :root. Custom properties substitute at computed-value
+                     time, so it resolves ONCE at :root and inherits down as
+                     an already-computed value. A descendant that overrides
+                     --fg does NOT change it. Measured: --fg-secondary
+                     scoped to rgb(4,5,6), text-fg-secondary still painted
+                     #57554f.
+
+     @theme inline   does not emit the variable at all. It substitutes the
+                     reference straight into the utility, so the utility
+                     reads `color: var(--fg)` and --fg resolves ON THE
+                     ELEMENT. A scoped override works. Measured: --t-h1
+                     scoped to 11px, text-h1 rendered 11px.
+
+   This site inverts surfaces per band: canvas, --c-band, and copper. That
+   is section-scoped overriding, which means INLINE IS REQUIRED. Every
+   mapping in this file references another custom property, so every block
+   here is inline.
+
+   Use non-inline only for a LITERAL value that must be readable as
+   `var(--color-x)` from hand-written CSS. Nothing here qualifies, because
+   authored CSS reads the tokens directly by their own names.
+
+   Consequence to know: with inline, `--color-*` is NOT emitted to :root.
+   Do not reach for `var(--color-fg)` in authored CSS. Use `var(--fg)`.
+   ---------------------------------------------------------------------------
+
+   NAMING. The left side is the Tailwind namespace, the right side is the
+   token file. They must never share a name. `--color-fg: var(--color-fg)`
+   is a self reference that resolves only by cascade accident. That is why
+   the semantic tier in tokens.css carries no `--color-*` prefix.
+   ========================================================================= */
+
+@import "tailwindcss";
+@import "./tokens.css";
+
+@theme inline {
+
+  /* --- Colour ----------------------------------------------------------
+     INLINE. Required for section-scoped surface inversion. Do not change
+     this block to non-inline; that is what breaks Band and SiteFooter.  */
+
+  --color-canvas:        var(--c-canvas);
+  --color-ink:           var(--c-ink);
+  --color-band:          var(--c-band);
+  --color-copper:        var(--c-copper);
+
+  --color-fg:            var(--fg);
+  --color-fg-secondary:  var(--fg-secondary);
+  --color-fg-muted:      var(--fg-muted);
+  --color-hairline:      var(--hairline-color);
+  --color-ghost:         var(--ghost-color);
+  --color-accent:        var(--accent);
+  --color-accent-fg:     var(--accent-fg);
+
+  --color-surface-inverted:     var(--surface-inverted);
+  --color-fg-on-inverted:       var(--fg-on-inverted);
+  --color-fg-muted-on-inverted: var(--fg-muted-on-inverted);
+  --color-hairline-on-inverted: var(--hairline-on-inverted);
+
+  --color-surface-accent:       var(--surface-accent);
+  --color-fg-on-accent:         var(--fg-on-accent);
+  --color-fg-muted-on-accent:   var(--fg-muted-on-accent);
+  --color-hairline-on-accent:   var(--hairline-on-accent);
+
+  --color-n-100: var(--c-n-100);
+  --color-n-200: var(--c-n-200);
+  --color-n-400: var(--c-n-400);
+  --color-n-600: var(--c-n-600);
+  --color-n-800: var(--c-n-800);
+
+  /* Because the four semantic foreground tokens above are now inline, a
+     component that inverts a surface sets --fg, --fg-secondary,
+     --fg-muted and --hairline-color at its own scope and every text-*
+     utility inside follows. The Phase 1B workaround that redeclared
+     --color-* inside Band and SiteFooter is no longer needed and should
+     be removed, so bridge logic lives in one file rather than three.   */
+
+
+  /* --- Type ------------------------------------------------------------ */
+
+  --font-sans: var(--f-sans);
+  --font-mono: var(--f-mono);
+
+  --text-mono-xs:   var(--t-mono-xs);
+  --text-mono-sm:   var(--t-mono-sm);
+  --text-mono-md:   var(--t-mono-md);
+  --text-body-sm:   var(--t-body-sm);
+  --text-body:      var(--t-body);
+  --text-body-lg:   var(--t-body-lg);
+  --text-h4:        var(--t-h4);
+  --text-h3:        var(--t-h3);
+  --text-h2:        var(--t-h2);
+  --text-h1:        var(--t-h1);
+  --text-display:   var(--t-display);
+  --text-display-2: var(--t-display-2);
+
+  --leading-tight-x: var(--lh-tight);
+  --leading-snug-x:  var(--lh-snug);
+  --leading-heading: var(--lh-heading);
+  --leading-body:    var(--lh-body);
+
+  --tracking-display: var(--ls-display);
+  --tracking-heading: var(--ls-heading);
+  --tracking-mono:    var(--ls-mono);
+
+
+  /* --- Space ----------------------------------------------------------- */
+
+  --spacing-section:       var(--s-section);
+  --spacing-section-tight: var(--s-section-tight);
+  --spacing-gutter:        var(--gutter);
+  --spacing-gutter-wide:   var(--gutter-wide);
+
+
+  /* --- Radius. Two values only, by ruling. ----------------------------- */
+
+  --radius-none: var(--radius-0);
+  --radius-xs:   var(--radius-1);
+
+
+  /* --- Motion ---------------------------------------------------------- */
+
+  --ease-out-x:    var(--ease-out);
+  --ease-in-out-x: var(--ease-in-out);
+  --ease-spring:   var(--ease-spring);
+  --ease-snap:     var(--ease-snap);
+  --ease-cine:     var(--ease-cine);
+
+  --animate-duration-instant: var(--dur-instant);
+  --animate-duration-quick:   var(--dur-quick);
+  --animate-duration-base:    var(--dur-base);
+  --animate-duration-slow:    var(--dur-slow);
+}

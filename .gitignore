@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.DS_Store
+*.log
+.dev.vars
+.env
+.env.*
+!.env.example
+
+# Font binaries are synced from packages/ui/fonts by scripts/sync-fonts.mjs.
+# One source of truth. Do not commit the copies.
+apps/*/public/fonts/

@@ -1,0 +1,51 @@
+---
+/**
+ * Minimal privacy page. Required by the shared footer privacy link.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE } from "../components/site";
+---
+
+<BaseLayout title={`Privacy. ${SITE.name}.`} canonicalPath="/privacy/">
+  <article class="privacy">
+    <div class="privacy__inner">
+      <h1>Privacy</h1>
+      <p>
+        This site is a static personal resume surface. It does not run a
+        contact form, does not set advertising cookies, and does not sell
+        personal data.
+      </p>
+      <p>
+        If you email {SITE.email}, that message is handled as ordinary
+        correspondence. Hosting and CDN logs may retain standard request
+        metadata for a limited time.
+      </p>
+      <p>
+        Questions: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .privacy {
+    padding-block: var(--s-section);
+  }
+
+  .privacy__inner {
+    width: min(100%, var(--measure));
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  h1 {
+    font-size: var(--t-h1-tight);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-heading);
+  }
+
+  p {
+    margin-block-start: var(--s-6);
+    color: var(--fg-secondary);
+  }
+</style>

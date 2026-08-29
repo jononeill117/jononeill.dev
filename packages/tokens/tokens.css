@@ -1,0 +1,307 @@
+/* ============================================================================
+   JONONEILL.DEV DESIGN TOKENS
+   Single source of truth for the personal site. Plain CSS custom properties,
+   no build step, no pipeline.
+
+   Palette locked for this repo:
+     canvas  #0B0A09  near-black page ground
+     ink     #F2EBE1  warm off-white body and headline
+     copper  #B87333  accent. One moment per section.
+   No indigo. No #864AEC. No purple brand hue.
+
+   CONSUMED TWO WAYS:
+     apps/site  ->  @import this file, use var(--...) directly in authored CSS
+     Tailwind    ->  @import this file, then map via @theme in tailwind-theme.css
+
+   DO NOT define a colour, a size, a duration or an easing anywhere else.
+   If a value is needed twice, it belongs here.
+
+   TIERS
+     1. PRIMITIVE   raw values. Never referenced directly by a component.
+     2. SEMANTIC    intent. This is what components reference.
+     3. COMPONENT   narrow, named per element. Added only when earned.
+
+   Rule: components read SEMANTIC. Semantic reads PRIMITIVE. Skipping a tier
+   is how drift starts.
+   ========================================================================= */
+
+
+/* ============================================================================
+   1. PRIMITIVE
+   ========================================================================= */
+
+:root {
+
+  /* --- Colour ------------------------------------------------------------
+     Dark editorial ground. Warm ink. Copper accent.                       */
+
+  --c-canvas:          #0B0A09;   /* page ground                           */
+  --c-ink:             #F2EBE1;   /* body and headline ink                 */
+  --c-band:            #F2EBE1;   /* inverted surface (light on dark)      */
+  --c-copper:          #B87333;   /* brand accent. One moment per section. */
+
+  /* Neutral ramp, warm, derived for the dark canvas.
+     These are the only greys. Do not invent a sixth.                      */
+  --c-n-100:           #1F1D1B;   /* hairlines on canvas                   */
+  --c-n-200:           #2E2B28;   /* faint rule, dead marker               */
+  --c-n-400:           #8A837A;   /* mono labels, eyebrows                 */
+  --c-n-600:           #B8AFA3;   /* secondary prose                       */
+  --c-n-800:           #E0D8CC;   /* near ink                              */
+
+  /* On inverted (light) band.
+     CONTRAST, measured against --c-band #F2EBE1:
+       --c-band-fg        #0B0A09   dark ink on light band
+       --c-band-n-500     #57554F   secondary on light
+       --c-band-n-400     #8B8983   muted / large text                     */
+  --c-band-fg:         #0B0A09;
+  --c-band-n-500:      #57554F;
+  --c-band-n-400:      #8B8983;
+  --c-band-n-200:      #C9C7C2;
+  --c-band-hairline:   #E0D8CC;
+
+  /* Copper variants. Tints only, no gradients.
+     Text ON copper uses the warm off-white ink, never dark ink.           */
+  --c-copper-fg:       #F2EBE1;   /* text ON copper. Always.               */
+  --c-copper-dim:      #E0C09A;   /* de-emphasised text on copper          */
+  --c-copper-hair:     #9A5F28;   /* hairline on copper                    */
+
+
+  /* --- Type --------------------------------------------------------------
+     Instrument Sans is the typeface. Monospace carries eyebrows, labels,
+     figure captions, and anything that should read as instrumentation
+     rather than as prose.                                                 */
+
+  --f-sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system,
+            "Segoe UI", Helvetica, Arial, sans-serif;
+  --f-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas,
+            "Liberation Mono", monospace;
+
+  /* Fluid scale. Min is 380px viewport, max is 1512px.                    */
+
+  --t-mono-xs:   0.6875rem;                                  /* 11px       */
+  --t-mono-sm:   0.75rem;                                    /* 12px       */
+  --t-mono-md:   0.8125rem;                                  /* 13px       */
+
+  --t-body-sm:   clamp(0.875rem, 0.84rem + 0.15vw,  0.9375rem);
+  --t-body:      clamp(1rem,     0.95rem + 0.22vw,  1.125rem);
+  --t-body-lg:   clamp(1.125rem, 1.03rem + 0.42vw,  1.375rem);
+
+  --t-h4:        clamp(1.375rem, 1.2rem  + 0.75vw,  1.875rem);
+  --t-h3:        clamp(1.75rem,  1.42rem + 1.4vw,   2.75rem);
+  --t-h2:        clamp(2.5rem,   1.85rem + 2.8vw,   4.5rem);
+  --t-h1-tight:  clamp(2.875rem, 1.95rem + 3.5vw,   5.25rem);
+  --t-h1:        clamp(3.25rem,  2.1rem  + 4.9vw,   7rem);
+  --t-display:   clamp(4rem,     1.9rem  + 9vw,     11rem);
+  --t-display-2: clamp(5rem,     1.2rem  + 16vw,    19rem);
+
+  --lh-tight:    0.92;
+  --lh-snug:     1.05;
+  --lh-heading:  1.12;
+  --lh-body:     1.55;
+  --lh-mono:     1.35;
+
+  --ls-display: -0.035em;
+  --ls-heading: -0.022em;
+  --ls-body:     0em;
+  --ls-mono:     0.08em;
+
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+
+  /* --- Space -------------------------------------------------------------
+     Base 4px. Section-scale steps are fluid.                              */
+
+  --s-1:   0.25rem;
+  --s-2:   0.5rem;
+  --s-3:   0.75rem;
+  --s-4:   1rem;
+  --s-6:   1.5rem;
+  --s-8:   2rem;
+  --s-12:  3rem;
+  --s-16:  4rem;
+  --s-24:  6rem;
+  --s-32:  8rem;
+  --s-48:  12rem;
+  --s-64:  16rem;
+
+  --s-section:      clamp(5rem, 3rem + 9vw, 11rem);
+  --s-section-tight: clamp(3rem, 2rem + 5vw, 6rem);
+
+
+  /* --- Layout ------------------------------------------------------------ */
+
+  --gutter:        clamp(1.25rem, 0.6rem + 3.2vw, 5rem);
+  --gutter-wide:   clamp(2rem,    0.8rem + 6vw,   9rem);
+  --gutter-bleed:  0rem;
+
+  --measure:       68ch;
+  --measure-tight: 48ch;
+  --max-w:         1512px;
+
+  --hairline:      1px;
+  --rule:          var(--hairline) solid var(--c-n-100);
+  --rule-band:     var(--hairline) solid var(--c-band-hairline);
+
+  --radius-0:  0px;
+  --radius-1:  2px;
+
+
+  /* --- Motion ------------------------------------------------------------
+     TWO FAMILIES, and the split is load bearing.
+
+     UI family   snappy, short, spring, may overshoot.
+                 Buttons, reveals, tabs, accordions, hovers, nav.
+
+     CINE family long, eased, scrubbed.
+                 Pinned scenes, scrubbed timelines.
+
+     Using a UI duration on a cinematic ruins the pacing. Using a CINE
+     easing on a button makes the site feel slow. Pick the family first.  */
+
+  /* UI */
+  --dur-instant:  90ms;
+  --dur-quick:   160ms;
+  --dur-base:    240ms;
+  --dur-slow:    380ms;
+
+  --ease-out:        cubic-bezier(0.22, 1,    0.36, 1);
+  --ease-in-out:     cubic-bezier(0.65, 0,    0.35, 1);
+  --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-snap:       cubic-bezier(0.16, 1,    0.3,  1);
+
+  --gsap-ease-out:    "power3.out";
+  --gsap-ease-in-out: "power2.inOut";
+  --gsap-ease-spring: "back.out(1.7)";
+  --gsap-ease-snap:   "expo.out";
+
+  /* CINE */
+  --dur-cine-beat:   900ms;
+  --dur-cine-phase: 1600ms;
+  --ease-cine:       cubic-bezier(0.4, 0, 0.2, 1);
+  --gsap-ease-cine:  "power2.inOut";
+  --scrub-tight:     0.4;
+  --scrub-loose:     0.9;
+
+  --scene-len-short:  140vh;
+  --scene-len-base:   220vh;
+  --scene-len-long:   320vh;
+  --scene-buffer:      12vh;
+
+  --trigger-start:     "top 80%";
+  --trigger-start-pin: "top top";
+  --trigger-end:       "bottom 20%";
+
+  --stagger-tight:  40ms;
+  --stagger-base:   70ms;
+  --stagger-loose: 120ms;
+
+
+  /* --- Z ---------------------------------------------------------------- */
+  --z-base:    0;
+  --z-raised:  10;
+  --z-pinned:  20;
+  --z-nav:     50;
+  --z-overlay: 90;
+}
+
+
+/* ============================================================================
+   2. SEMANTIC
+   Components reference THESE. Re-theming happens by overriding this tier.
+   ========================================================================= */
+
+:root {
+  /* NAMING. The semantic tier deliberately does NOT use a `--color-*`
+     prefix. Tailwind 4 owns the `--color-*` namespace inside @theme.       */
+
+  --bg:              var(--c-canvas);
+  --fg:              var(--c-ink);
+  --fg-secondary:    var(--c-n-600);
+  --fg-muted:        var(--c-n-400);
+  --hairline-color:  var(--c-n-100);
+  --accent:          var(--c-copper);
+  --accent-fg:       var(--c-copper-fg);
+
+  --ghost-color:       var(--c-n-200);
+  --ghost-on-inverted: var(--c-band-n-200);
+  --ghost-on-accent:   var(--c-copper-hair);
+
+  --surface-inverted:      var(--c-band);
+  --fg-on-inverted:        var(--c-band-fg);
+  --fg-secondary-on-inverted: var(--c-band-n-500);
+  --fg-muted-on-inverted:  var(--c-band-n-400);
+  --hairline-on-inverted:  var(--c-band-hairline);
+
+  --surface-accent:      var(--c-copper);
+  --fg-on-accent:        var(--c-copper-fg);
+  --fg-muted-on-accent:  var(--c-copper-dim);
+  --hairline-on-accent:  var(--c-copper-hair);
+
+  /* Marker grammar. Filled holds. Hollow breaks. Struck is a dead run.
+     Terminals are SQUARES. There is no dot token.                         */
+  --marker-hold:   var(--c-ink);
+  --marker-break:  transparent;
+  --marker-stroke: var(--c-ink);
+  --marker-dead:   var(--c-n-200);
+  --marker-size:   8px;
+
+  --font-heading: var(--f-sans);
+  --font-body:    var(--f-sans);
+  --font-label:   var(--f-mono);
+
+  --motion-ui-duration: var(--dur-base);
+  --motion-ui-ease:     var(--ease-out);
+  --motion-cine-ease:   var(--ease-cine);
+}
+
+
+/* ============================================================================
+   3. COMPONENT
+   Added only when a value is genuinely element specific. Keep this short.
+   ========================================================================= */
+
+:root {
+  --nav-height:      64px;
+  --nav-fg:          var(--fg);
+  /* Any section on an accent or inverted surface must set --nav-fg locally. */
+
+  --eyebrow-size:    var(--t-mono-sm);
+  --eyebrow-track:   var(--ls-mono);
+
+  --figure-caption:  var(--t-mono-xs);
+
+  --focus-ring:      2px solid var(--c-copper);
+  --focus-offset:    2px;
+}
+
+
+/* ============================================================================
+   REDUCED MOTION
+   WCAG 2.2.2 is Level A. Anything that plays without user action must stop
+   here. This block handles CSS. GSAP is handled separately via gsap.matchMedia
+   in packages/motion. BOTH are required. Neither covers the other.
+   ========================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 1ms;
+    --dur-quick:   1ms;
+    --dur-base:    1ms;
+    --dur-slow:    1ms;
+    --dur-cine-beat:  1ms;
+    --dur-cine-phase: 1ms;
+    --stagger-tight: 0ms;
+    --stagger-base:  0ms;
+    --stagger-loose: 0ms;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

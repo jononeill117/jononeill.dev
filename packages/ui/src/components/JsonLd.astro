@@ -1,0 +1,72 @@
+---
+/**
+ * JSON-LD.
+ *
+ * One place structured data is emitted, on both sites, so gate 2 can be
+ * enforced mechanically instead of by remembering.
+ *
+ * ---------------------------------------------------------------------------
+ * GATE 2 IS ENFORCED HERE, AT BUILD TIME.
+ *
+ * CLAUDE.md gate 2: no published response window, anywhere, on either site,
+ * "in copy, FAQ, JSON-LD, or meta". Amendment A leaves it deferred. The old
+ * Bucket B shipped "You will hear back within one business day" in its contact
+ * confirmation, which is exactly the sentence the gate exists to stop.
+ *
+ * Structured data is the easiest place for that to slip back in, because a
+ * schema.org contactPoint has an hoursAvailable field that looks like the
+ * right thing to fill in. So this component reads the serialised graph before
+ * it emits it and THROWS if it matches a response-window pattern. A build that
+ * violates the gate fails; it does not warn and it does not ship.
+ *
+ * If a future ruling lifts the gate, delete the guard in one place and say so
+ * in the commit. Do not work around it per call site.
+ * ---------------------------------------------------------------------------
+ */
+interface Props {
+  /** One schema.org node, or several. Several are emitted as an @graph. */
+  schema: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { schema } = Astro.props;
+
+const FORBIDDEN: Array<[RegExp, string]> = [
+  [/\bhoursAvailable\b/i, "schema.org hoursAvailable publishes a response window"],
+  [/\bresponse\s*time\b/i, "response time"],
+  [/\bturnaround\s*time\b/i, "turnaround time"],
+  [/\bsame[\s-]+(business[\s-]+)?day\b/i, "same business day"],
+  [
+    /\b(with|w)?in\s+(a|one|two|three|24|48|72|\d+)[\s-]*(business[\s-]+)?(hour|day)/i,
+    "within N hours or days",
+  ],
+  [/\b(reply|respond|response|hear\s+back)\b[^.]{0,40}\bwithin\b/i, "reply within"],
+];
+
+const payload = Array.isArray(schema)
+  ? { "@context": "https://schema.org", "@graph": schema }
+  : schema;
+
+const serialised = JSON.stringify(payload);
+
+for (const [pattern, label] of FORBIDDEN) {
+  if (pattern.test(serialised)) {
+    throw new Error(
+      [
+        "GATE 2 VIOLATION in JSON-LD: " + label + ".",
+        "CLAUDE.md gate 2 forbids a published response window anywhere,",
+        "including structured data. Remove it rather than rewording it.",
+        "Offending payload: " + serialised,
+      ].join("\n"),
+    );
+  }
+}
+
+/*
+  A literal </script> inside a JSON string closes the tag early and turns the
+  rest of the document into markup. Escaping the opening angle bracket is
+  enough and leaves the JSON valid, because < is a legal escape.
+*/
+const safe = serialised.replace(/</g, "\\u003c");
+---
+
+<script type="application/ld+json" is:inline set:html={safe} />

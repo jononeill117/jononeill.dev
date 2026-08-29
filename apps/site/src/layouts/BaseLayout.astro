@@ -1,0 +1,155 @@
+---
+/**
+ * Base layout for jononeill.dev.
+ */
+import "../styles/global.css";
+import SiteNav from "@jononeill/ui/SiteNav.astro";
+import SiteFooter from "@jononeill/ui/SiteFooter.astro";
+import JsonLd from "@jononeill/ui/JsonLd.astro";
+import { SITE, personSchema, webSiteSchema } from "../components/site";
+
+type NavSurface = "canvas" | "inverted" | "accent";
+
+interface Props {
+  title: string;
+  description?: string;
+  canonicalPath?: string;
+  noindex?: boolean;
+  chrome?: boolean;
+  navSurface?: NavSurface;
+  schema?: Record<string, unknown>[];
+}
+
+const {
+  title,
+  description = SITE.description,
+  canonicalPath,
+  noindex = false,
+  chrome = true,
+  navSurface = "canvas",
+  schema = [],
+} = Astro.props;
+
+const rawPath = canonicalPath ?? Astro.url.pathname;
+const path = rawPath.endsWith("/") ? rawPath : `${rawPath}/`;
+const canonical = new URL(path, SITE.origin).href;
+
+const graph = [personSchema(), webSiteSchema(), ...schema];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {
+      noindex ? (
+        <meta name="robots" content="noindex, follow" />
+      ) : (
+        <link rel="canonical" href={canonical} />
+      )
+    }
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {!noindex && <meta property="og:url" content={canonical} />}
+    <meta name="twitter:card" content="summary" />
+
+    <link
+      rel="preload"
+      href="/fonts/instrument-sans-latin-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <JsonLd schema={graph} />
+  </head>
+  <body>
+    {
+      chrome && (
+        <a class="skip-link" href="#main">
+          Skip to content
+        </a>
+      )
+    }
+
+    {
+      chrome && (
+        <SiteNav
+          wordmark={SITE.wordmark}
+          wordmarkSuffix={SITE.wordmarkSuffix}
+          email={SITE.email}
+          initialSurface={navSurface}
+          links={[
+            { label: "Work", href: "#work" },
+            { label: "Contact", href: "#contact" },
+          ]}
+        />
+      )
+    }
+
+    <div id="main" tabindex="-1">
+      <slot />
+    </div>
+
+    {
+      chrome && (
+        <SiteFooter
+          email={SITE.email}
+          wordmark={SITE.wordmark}
+          entity={SITE.name}
+          locality={[...SITE.locality]}
+          practice={SITE.practice}
+          categories={[...SITE.categories]}
+          singleRoute={{
+            lead: "Email",
+            name: "Jon",
+            subject: "Hello from jononeill.dev",
+            sub: "Product, operations, and analytics",
+          }}
+        />
+      )
+    }
+
+    <style is:global>
+      @layer base {
+        html {
+          scroll-padding-block-start: var(--nav-height);
+        }
+
+        #main:focus {
+          outline: none;
+        }
+      }
+    </style>
+
+    <style>
+      .skip-link {
+        position: fixed;
+        inset-block-start: 0;
+        inset-inline-start: 0;
+        z-index: var(--z-overlay);
+        padding: var(--s-3) var(--s-4);
+        background-color: var(--bg);
+        color: var(--fg);
+        font-family: var(--font-label);
+        font-size: var(--t-mono-sm);
+        letter-spacing: var(--ls-mono);
+        text-transform: uppercase;
+        text-decoration: none;
+        border-block-end: var(--hairline) solid var(--fg);
+        transform: translateY(-120%);
+        transition: transform var(--dur-quick) var(--ease-snap);
+      }
+
+      .skip-link:focus-visible {
+        transform: translateY(0);
+      }
+    </style>
+  </body>
+</html>

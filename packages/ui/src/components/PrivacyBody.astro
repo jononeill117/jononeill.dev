@@ -1,0 +1,333 @@
+---
+/**
+ * PRIVACY POLICY BODY. SHARED BY BOTH APPS.
+ *
+ * /privacy is a DEPLOY GATE (CLAUDE.md gate 8): the footer links to it from
+ * every page and it currently 404s. This is the page that closes it.
+ *
+ * WHY IT IS SHARED. The two sites are the same practice on two hostnames and
+ * they handle data identically: static assets, no forms, no cookies, one
+ * mailbox. Two hand written policies would drift, and a privacy policy that
+ * contradicts itself across a referral path is worse than a plain one. Only
+ * the hostname, the address and the controller line differ, so those are
+ * props.
+ *
+ * EVERY CLAIM ON THIS PAGE IS TRUE OF THE BUILD AS SHIPPED, and each one is
+ * checkable rather than reassuring:
+ *   - No form exists on either site. Contact is mailto, ruled 2026-08-09.
+ *   - No script of ours sets a cookie. There is no consent banner because
+ *     there is nothing to consent to.
+ *   - Cloudflare Web Analytics is enabled in the Cloudflare dashboard and
+ *     injected at the edge. It is cookieless and does not fingerprint.
+ *   - Instrument Sans is self hosted, so no font CDN sees a visitor request.
+ *     That is a real privacy property of the build, not a boast.
+ *   - The old D1 site-tracking table stopped receiving writes when the worker
+ *     was retired. Historical rows are retained, which is why retention is
+ *     stated rather than claimed to be zero.
+ *
+ * NO RESPONSE WINDOW APPEARS HERE. Gate 2 covers copy as well as structured
+ * data, and "we will get back to you within X" is the exact sentence it bans.
+ * There is no sentence on this page about how fast anything is answered.
+ *
+ * NO EM DASHES AND NO EN DASHES. Checked.
+ */
+interface Props {
+  /** Hostname as a visitor reads it, e.g. "clairvos.com". */
+  domain: string;
+  /** Legal controller, e.g. "Clairvos LLC". */
+  entity: string;
+  /** Controller address lines. */
+  address: string[];
+  /** The mailbox this site routes to. */
+  email: string;
+  /** Machine readable effective date, e.g. "2026-08-10". */
+  effective: string;
+}
+
+const { domain, entity, address, email, effective } = Astro.props;
+
+const effectiveLabel = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+}).format(new Date(`${effective}T00:00:00Z`));
+---
+
+<article class="doc">
+  <header class="doc-head">
+    <p class="eyebrow">Privacy</p>
+    <h1 class="doc-title">What this site knows about you.</h1>
+    <p class="doc-lede">
+      Very little, and this page says exactly what. It applies to <strong>{domain}</strong>
+      and to email sent to the address below.
+    </p>
+    <p class="doc-date">
+      Effective <time datetime={effective}>{effectiveLabel}</time>
+    </p>
+  </header>
+
+  <section class="sec">
+    <h2 class="sec-title">The short version</h2>
+    <div class="sec-body">
+      <p>
+        This is a set of static files. There is no account to create, no form to
+        submit, no comment box, and no login. Nothing on either site asks for a
+        name, an address or a payment detail, so nothing collects one.
+      </p>
+      <p>
+        No cookie is set by this site. There is no consent banner because there
+        is nothing to consent to.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-title">Measurement</h2>
+    <div class="sec-body">
+      <p>
+        Visits are counted with Cloudflare Web Analytics. It is cookieless, it
+        does not fingerprint the browser, and it does not follow anyone between
+        sites. What it reports is aggregate: which pages were viewed, which
+        site a visitor arrived from, roughly where in the world the request came
+        from, and what class of device it came from.
+      </p>
+      <p>
+        None of that identifies a person, none of it is sold, and none of it
+        feeds an advertising network.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-title">Hosting and server records</h2>
+    <div class="sec-body">
+      <p>
+        The site is served by Cloudflare. Like any web server, Cloudflare
+        processes the technical details a request has to carry in order to be
+        answered at all: the IP address it came from, the browser it announced
+        itself as, the address requested, and the time. Cloudflare acts as a
+        processor here and uses that data to deliver the page and to block
+        abuse. Retention is set by Cloudflare, not by this site.
+      </p>
+      <p>
+        Fonts are self hosted, so no font provider ever sees a request from
+        anyone reading this. There are no embedded videos, no social widgets,
+        no advertising pixels and no third party scripts.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-title">Email</h2>
+    <div class="sec-body">
+      <p>
+        The two contact routes in the footer open your own mail client with a
+        subject already filled in. Nothing is sent anywhere until you press send
+        in your own software.
+      </p>
+      <p>
+        A message sent to <a class="link" href={`mailto:${email}`}>{email}</a> is
+        stored in the mailbox it arrives in. The address, the message and
+        anything attached to it are kept in order to reply and to keep an
+        ordinary business record of the conversation. They are not added to a
+        mailing list, not shared with a third party for marketing, and not sold.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-title">Historical records</h2>
+    <div class="sec-body">
+      <p>
+        An earlier version of the engineering site logged referral information
+        and contact form submissions to a database. That code has been retired
+        and no longer receives anything. The rows it already wrote are retained
+        rather than deleted, because deleting a record of a conversation someone
+        started is not an improvement. They can be removed on request.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-title">Your rights</h2>
+    <div class="sec-body">
+      <p>
+        Depending on where you live you may have a legal right to ask for a copy
+        of the personal data held about you, to have it corrected, or to have it
+        deleted. Ask by email and it will be handled.
+      </p>
+      <p>
+        Since this site holds nothing beyond what is described above, in practice
+        that means the contents of a mailbox and, if it applies to you, the
+        historical rows in the paragraph above.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-title">Changes</h2>
+    <div class="sec-body">
+      <p>
+        This page carries an effective date at the top. If what the site does
+        with data changes, that date changes with it. There is no archive of
+        earlier versions; the current text is the current practice.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-title">Who to contact</h2>
+    <div class="sec-body">
+      <p class="controller">
+        {entity}<br />
+        {address.map((line) => [line, <br />])}
+        <a class="link" href={`mailto:${email}`}>{email}</a>
+      </p>
+      <p>
+        {entity} is the data controller for {domain}.
+      </p>
+    </div>
+  </section>
+</article>
+
+<style>
+  /*
+    FIELD MANUAL REGISTER, A-D5. Numbered sections in mono down the left,
+    prose on the right, hairlines between. The numbering is a CSS counter so
+    it cannot drift out of sync with the sections, and a section inserted in
+    the middle renumbers itself.
+
+    No boxes, no cards, no rounded anything. A legal page is where the house
+    style is easiest to abandon and is exactly where abandoning it shows.
+  */
+
+  .doc {
+    counter-reset: sec;
+    max-width: var(--max-w);
+  }
+
+  .doc-head {
+    max-width: var(--measure);
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-family: var(--font-label);
+    font-size: var(--eyebrow-size);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--eyebrow-track);
+    text-transform: uppercase;
+    font-weight: var(--fw-medium);
+    color: var(--fg-secondary);
+  }
+
+  .doc-title {
+    margin-block-start: var(--s-4);
+    font-size: var(--t-h1);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-display);
+    font-weight: var(--fw-bold);
+  }
+
+  .doc-lede {
+    margin-block-start: var(--s-8);
+    font-size: var(--t-body-lg);
+    line-height: var(--lh-body);
+    color: var(--fg-secondary);
+  }
+
+  .doc-lede strong {
+    font-weight: var(--fw-semibold);
+    color: var(--fg);
+  }
+
+  .doc-date {
+    margin-block-start: var(--s-6);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--fg-secondary);
+  }
+
+  .sec {
+    counter-increment: sec;
+    display: grid;
+    grid-template-columns: minmax(0, 18rem) minmax(0, var(--measure));
+    gap: var(--gutter-wide);
+    padding-block: var(--s-12);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+
+  .sec:first-of-type {
+    margin-block-start: var(--s-24);
+  }
+
+  .sec-title {
+    margin: 0;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    font-weight: var(--fw-bold);
+    color: var(--fg);
+  }
+
+  /* Mechanical numbering. FIG. 01 register, set at the size A-D5 asks for
+     rather than at the size that feels tasteful.
+
+     DELIBERATELY NOT INDIGO. Eight numbered sections would be eight indigo
+     marks down one page, and "bold, purple and lines" is named in the grammar
+     notes as the failure mode of a page whose only material is running text.
+     There is zero indigo on this page. The rule is at most one moment per
+     section, not at least one. */
+  .sec-title::before {
+    content: counter(sec, decimal-leading-zero);
+    display: block;
+    margin-block-end: var(--s-3);
+    font-size: var(--t-h4);
+    letter-spacing: var(--ls-heading);
+    font-weight: var(--fw-bold);
+    color: var(--fg);
+  }
+
+  .sec-body > p + p {
+    margin-block-start: var(--s-6);
+  }
+
+  .sec-body p {
+    color: var(--fg-secondary);
+  }
+
+  .controller {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    line-height: var(--lh-body);
+    letter-spacing: var(--ls-mono);
+    color: var(--fg);
+  }
+
+  .link {
+    color: inherit;
+    text-decoration: none;
+    border-block-end: var(--hairline) solid var(--hairline-color);
+    padding-block-end: var(--s-1);
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+
+  .link:hover,
+  .link:focus-visible {
+    border-block-end-color: var(--fg);
+  }
+
+  @media (max-width: 52rem) {
+    .sec {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s-6);
+      padding-block: var(--s-8);
+    }
+  }
+</style>

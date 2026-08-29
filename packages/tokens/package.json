@@ -1,0 +1,12 @@
+{
+  "name": "@jononeill/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Single source of truth for colour, type, space, motion. Plain CSS, no build step, no pipeline.",
+  "exports": {
+    "./tokens.css": "./tokens.css",
+    "./tailwind-theme.css": "./tailwind-theme.css"
+  },
+  "files": ["tokens.css", "tailwind-theme.css"]
+}

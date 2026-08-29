@@ -1,0 +1,140 @@
+---
+/**
+ * BAND. A full width surface.
+ *
+ * Two jobs, and the second one is the reason it exists rather than each
+ * section rolling its own background.
+ *
+ * 1. It re-points the SEMANTIC tier for everything inside it. tokens.css says
+ *    "re-theming happens by overriding this tier", so an inverted band sets
+ *    --fg, --fg-secondary, --hairline-color and --bg to the on-inverted pair
+ *    that already exists. Nothing nested has to know which surface it landed
+ *    on. On Bucket B this reaches Tailwind too, because the colour half of
+ *    tailwind-theme.css is deliberately NON inline, so text-fg inside an
+ *    inverted band resolves to the inverted foreground at runtime.
+ *
+ * 2. It publishes data-surface, which is what SiteNav's surface script reads
+ *    to decide the nav's own foreground. A band that forgets the attribute is
+ *    invisible to the nav and the nav will keep the previous surface's ink.
+ *    That is the exact failure that shipped on the old site, so the attribute
+ *    is emitted by this component and is not optional.
+ *
+ * No literal value appears in this file.
+ */
+export type Surface = "canvas" | "inverted" | "accent";
+
+interface Props {
+  surface?: Surface;
+  /** Rendered element. A band is usually a section, sometimes a div. */
+  as?: "section" | "div" | "header" | "footer";
+  class?: string;
+  [key: string]: unknown;
+}
+
+/*
+  REST IS SPREAD, AND IT HAS TO BE. Astro carries a parent's scoped-style
+  marker (data-astro-cid-*) as a prop on the component invocation, so a
+  component that destructures a fixed prop list and drops the rest silently
+  loses it. The visible symptom is that a class passed from a parent lands on
+  the element and none of the parent's rules match it. Found by measuring the
+  rendered band, not by reading the markup: the probe bands came back 67px
+  tall instead of 70vh.
+*/
+const { surface = "canvas", as: Tag = "section", class: className, ...rest } =
+  Astro.props;
+---
+
+<Tag
+  class:list={["band", `band--${surface}`, className]}
+  data-surface={surface}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<style>
+  .band {
+    background-color: var(--bg);
+    color: var(--fg);
+  }
+
+  .band--inverted {
+    --bg: var(--surface-inverted);
+    --fg: var(--fg-on-inverted);
+    /* The band has no separate secondary and muted. Both point at the same
+       on-inverted token, because inventing a sixth grey is a ruling
+       violation and the ramp does not carry an on-band secondary. */
+    --fg-secondary: var(--fg-on-inverted);
+    --fg-muted: var(--fg-muted-on-inverted);
+    --hairline-color: var(--hairline-on-inverted);
+    --ghost-color: var(--ghost-on-inverted);
+  }
+
+  .band--accent {
+    --bg: var(--surface-accent);
+    --fg: var(--fg-on-accent);
+    --fg-secondary: var(--fg-on-accent);
+    --fg-muted: var(--fg-muted-on-accent);
+    --hairline-color: var(--hairline-on-accent);
+    --ghost-color: var(--ghost-on-accent);
+  }
+
+  /*
+    ---------------------------------------------------------------------------
+    MARKER TOKENS FOLLOW THE SURFACE. ADDED 2026-08-10.
+
+    tokens.css sets --marker-hold and --marker-stroke per THEME, and a band
+    inverts the ground WITHIN a theme, so the two disagreed and a marker on a
+    band was drawn in the page's ink on the band's ground. Invisible in both
+    directions, which is why reading the code did not catch it: in light,
+    --marker-hold is --c-ink on a --c-band ground; in dark it is --c-band-fg on
+    a --c-canvas ground. Dark on dark, then light on light.
+
+    Nothing had shipped it yet only because the two showcases each carry a local
+    copy of these two lines, which is the workaround, not the fix. The estate
+    map is the first component to put markers straight onto a Band, and it
+    should not have to know that.
+
+    --fg is already the correct on-surface ink two rules up, so pointing the
+    markers at it means a marker cannot disagree with the text beside it. This
+    defines no colour: both sides are semantic tokens that already exist.
+    ---------------------------------------------------------------------------
+  */
+  .band--inverted,
+  .band--accent {
+    --marker-hold: var(--fg);
+    --marker-stroke: var(--fg);
+  }
+
+  /*
+    ---------------------------------------------------------------------------
+    THE TAILWIND HALF USED TO LIVE HERE AND IT IS GONE. Removed 2026-08-11.
+
+    This block re-declared `--color-fg` and three siblings at the band's own
+    scope, because `@theme` emitted them at `:root` and a custom property is
+    substituted where it is DECLARED, so re-pointing `--fg` on a descendant
+    moved the semantic tier and left the Tailwind tier behind. Measured inside
+    an inverted band at the time: `--fg` was #F5F5F5 and `--color-fg` was still
+    #1a1916, so a `text-fg` paragraph rendered dark ink on the dark band, and on
+    the accent band it rendered #1a1916 on #5E28C4, which is the nav defect
+    reappearing on ordinary body copy.
+
+    tailwind-theme.css now uses `@theme inline` throughout, which is the real
+    fix and which that file documents with the measurements. Inline does not
+    emit `--color-*` at all; it substitutes the reference straight into the
+    utility, so `text-fg` resolves `var(--fg)` ON THE ELEMENT and a scoped
+    override works without any help from here.
+
+    That makes the four lines dead: they declared variables nothing reads.
+    Verified before removal, no authored CSS on either site reads `var(--color-
+    *)`, and tailwind-theme.css says outright not to. Dead code in the one file
+    every surface passes through is worse than absent, because the next agent
+    reads it as load bearing and copies the pattern.
+
+    The comment above them was worse than the code. It asserted that the colour
+    half of tailwind-theme.css is "deliberately NON inline", which is the exact
+    opposite of what that file now does. This project has already lost a day to
+    a comment about `@theme inline` that was backwards.
+    ---------------------------------------------------------------------------
+  */
+</style>

@@ -1,0 +1,57 @@
+---
+/**
+ * FAQPage STRUCTURED DATA. BUCKET A.
+ *
+ * Emits a schema.org FAQPage from the same question and answer pairs the page
+ * renders in HTML. Google requires the two to match; structured data that says
+ * something the page does not say is a manual-action risk, so this component
+ * takes the rendered pairs as input rather than a second copy of the copy.
+ *
+ * It routes through JsonLd, which means the gate 2 response-window guard runs
+ * over the FAQ answers too. An FAQ is the single most likely place for
+ * "how quickly do you reply" to reappear, so that is the point.
+ *
+ * NOT WIRED TO ANYTHING YET. The FAQ section itself is Phase 2 composition and
+ * its content is Phase 1A's `faq` collection. When that lands, the FAQ section
+ * passes its own items straight into this component. Nothing is stubbed and no
+ * placeholder question exists, because a fabricated FAQ entry in structured
+ * data is worse than no structured data.
+ */
+import JsonLd from "./JsonLd.astro";
+
+export interface FaqItem {
+  question: string;
+  /** Plain text or simple inline HTML. Both are legal in acceptedAnswer.text. */
+  answer: string;
+}
+
+interface Props {
+  items: FaqItem[];
+  /** Absolute URL of the page the FAQ is rendered on. */
+  url: string;
+}
+
+const { items, url } = Astro.props;
+
+if (!items.length) {
+  throw new Error(
+    "FaqJsonLd was rendered with no items. An empty FAQPage node is invalid structured data. Do not render this component until the FAQ has content.",
+  );
+}
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": `${url}#faq`,
+  mainEntity: items.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+};
+---
+
+<JsonLd schema={schema} />
