@@ -1,0 +1,323 @@
+- generic [active] [ref=f1e1]:
+  - link "Skip to content" [ref=f1e2] [cursor=pointer]:
+    - /url: "#main"
+  - navigation "Primary" [ref=f1e3]:
+    - link "jononeill .dev" [ref=f1e4] [cursor=pointer]:
+      - /url: /
+    - list [ref=f1e5]:
+      - listitem [ref=f1e6]:
+        - link "Experience" [ref=f1e7] [cursor=pointer]:
+          - /url: "#experience"
+      - listitem [ref=f1e8]:
+        - link "Portfolio" [ref=f1e9] [cursor=pointer]:
+          - /url: "#ecclesio"
+      - listitem [ref=f1e10]:
+        - link "About" [ref=f1e11] [cursor=pointer]:
+          - /url: "#about"
+      - listitem [ref=f1e12]:
+        - link "Resume" [ref=f1e13] [cursor=pointer]:
+          - /url: "#resume"
+      - listitem [ref=f1e14]:
+        - link "Contact" [ref=f1e15] [cursor=pointer]:
+          - /url: "#contact"
+  - generic [ref=f1e16]:
+    - banner [ref=f1e17]:
+      - generic [ref=f1e18]:
+        - paragraph [ref=f1e19]: Product leader
+        - heading "Jon O'Neill" [level=1] [ref=f1e20]
+        - paragraph [ref=f1e21]: "Product professional with seven years across product management, operations, strategy, and analytics. I work at the point where product and operations meet: turn a manual process into a system, then use what that system produces to make better calls."
+        - paragraph [ref=f1e22]: Zillow · HomeLight · Stoa · Livable · Zoom Drain
+        - list [ref=f1e23]:
+          - listitem [ref=f1e24]:
+            - generic [ref=f1e25]: $1B
+            - generic [ref=f1e26]: underwritten
+          - listitem [ref=f1e27]:
+            - generic [ref=f1e28]: $800M
+            - generic [ref=f1e29]: annual book
+          - listitem [ref=f1e30]:
+            - generic [ref=f1e31]: 2,000
+            - generic [ref=f1e32]: units in four months
+          - listitem [ref=f1e33]:
+            - generic [ref=f1e34]: 85%
+            - generic [ref=f1e35]: cycle-time reduction
+        - paragraph [ref=f1e36]:
+          - link "Experience" [ref=f1e37] [cursor=pointer]:
+            - /url: "#experience"
+          - text: ·
+          - link "Portfolio" [ref=f1e38] [cursor=pointer]:
+            - /url: "#ecclesio"
+          - text: ·
+          - link "Resume" [ref=f1e39] [cursor=pointer]:
+            - /url: "#resume"
+          - text: ·
+          - link "Contact" [ref=f1e40] [cursor=pointer]:
+            - /url: "#contact"
+          - text: ·
+          - link "LinkedIn" [ref=f1e41] [cursor=pointer]:
+            - /url: https://www.linkedin.com/in/jon-oneill-020196
+    - generic [ref=f1e43]:
+      - paragraph [ref=f1e44]: Experience
+      - heading "Product and operations, reverse chronological." [level=2] [ref=f1e45]
+      - paragraph [ref=f1e46]: Four product seats and one operating seat. Click a company to jump to that role.
+      - navigation "Companies" [ref=f1e47]:
+        - list [ref=f1e48]:
+          - listitem [ref=f1e49]:
+            - link "Zoom Drain Phoenix" [ref=f1e50] [cursor=pointer]:
+              - /url: "#zoom-drain"
+            - text: ·
+          - listitem [ref=f1e51]:
+            - link "Livable" [ref=f1e52] [cursor=pointer]:
+              - /url: "#livable"
+            - text: ·
+          - listitem [ref=f1e53]:
+            - link "Stoa" [ref=f1e54] [cursor=pointer]:
+              - /url: "#stoa"
+            - text: ·
+          - listitem [ref=f1e55]:
+            - link "HomeLight" [ref=f1e56] [cursor=pointer]:
+              - /url: "#homelight"
+            - text: ·
+          - listitem [ref=f1e57]:
+            - link "Zillow" [ref=f1e58] [cursor=pointer]:
+              - /url: "#zillow"
+      - list [ref=f1e59]:
+        - listitem [ref=f1e60]:
+          - paragraph [ref=f1e61]: Director of Operations · 2023 to Present
+          - heading [level=3] [ref=f1e62]:
+            - link "Zoom Drain Phoenix" [ref=f1e63] [cursor=pointer]:
+              - /url: "#zoom-drain"
+          - paragraph [ref=f1e64]: I run the operating system behind a live service business. Dispatch, intake, vendors, the office team, and the number at the bottom. The job is automation and pricing discipline pointed at a P&L, not a title on a truck.
+          - paragraph [ref=f1e65]: Booking time down 3 hours · Speed to lead up 300% · Weekly revenue up 10-15% · Office labor down ~30%
+          - generic [ref=f1e66]:
+            - paragraph [ref=f1e67]:
+              - strong [ref=f1e68]: Problem.
+              - text: Jobs were dying in the gap between the vendor portal, the inbox, and the board. Intake was a person. Estimating was a person. The calendar was setting the price.
+            - paragraph [ref=f1e69]:
+              - strong [ref=f1e70]: What I owned.
+              - text: "Day to day operations: dispatch, job intake, vendor relationships, field teams, and the office team I hired and trained. The P&L all of it lands on."
+            - paragraph [ref=f1e71]:
+              - strong [ref=f1e72]: What shipped.
+              - text: "Intake rebuilt as an automated pipeline across the vendor work-order portal, the CSM, and VOIP. Scheduling and booking automated so the office is not the bottleneck. SOPs for inventory and estimating, so a new hire can quote without a month of shadowing. Marketing spend pointed at our own booking and revenue data. Commercial work the company was not set up to quote: sewer laterals, multi-crew renovation jobs."
+            - paragraph [ref=f1e73]:
+              - strong [ref=f1e74]: Who I worked with.
+              - text: The office team, which I hired and trained. Field technicians. National vendors on the intake side. Gary on CSM review and Steve in the office when a job needed a human in the loop.
+            - paragraph [ref=f1e75]:
+              - strong [ref=f1e76]: Result.
+              - text: Average booking time down three hours. Speed to lead up 300%. Weekly revenue up 10 to 15%. Office labor down about 30%, close to $40k a year. $711k annual run rate, January through July 2026 annualized.
+            - paragraph [ref=f1e77]: This is the seat that changed how I write a roadmap. When you own the number at the bottom, you stop shipping work that only looks good in a review.
+            - figure "See the operating system in action" [ref=f1e78]:
+              - paragraph [ref=f1e79]:
+                - generic [ref=f1e80]: System
+                - generic [ref=f1e81]: Vendor intake → automation → dispatch
+              - paragraph [ref=f1e82]: Watch a work order move from the vendor portal to a tech on a truck.
+              - button "Play the walkthrough" [ref=f1e85] [cursor=pointer]
+        - listitem [ref=f1e92]:
+          - paragraph [ref=f1e93]: Head of Product · Sep 2023 to Jul 2024
+          - heading [level=3] [ref=f1e94]:
+            - link "Livable" [ref=f1e95] [cursor=pointer]:
+              - /url: "#livable"
+          - paragraph [ref=f1e96]: A zero to one SaaS. I hired the team, shipped the product, and took it to the board every month.
+          - paragraph [ref=f1e97]: 2,000 units in the first four months. CSAT and retention up 35%.
+          - generic [ref=f1e98]:
+            - paragraph [ref=f1e99]:
+              - strong [ref=f1e100]: Problem.
+              - text: "Livable had reach and no product of its own to sell into it. The brief was zero to one: build something new, get it live, and get real units onto it fast, with a channel behind it that would keep feeding it after launch."
+            - paragraph [ref=f1e101]:
+              - strong [ref=f1e102]: What I owned.
+              - text: The product, from the first requirements doc to the roadmap the board saw every month. I also owned the team, because there wasn't one yet. I hired the product managers, the designers, and the business analysts who built it with me.
+            - paragraph [ref=f1e103]:
+              - strong [ref=f1e104]: What shipped.
+              - text: A SaaS product from nothing to live and taking accounts. An enterprise integration that put it in front of an 8M-unit base on an evergreen basis rather than as a one-time push. A roadmap built out of what users said in interviews and support tickets instead of out of the loudest internal request.
+            - paragraph [ref=f1e105]:
+              - strong [ref=f1e106]: Who I worked with.
+              - text: "Engineering, design, sales, and support on the inside. Enterprise property management on the outside. The board monthly, which is a useful discipline: you cannot bring a story to a board four times, so you bring the number."
+            - paragraph [ref=f1e107]:
+              - strong [ref=f1e108]: Result.
+              - text: 2,000 units in the first four months. CSAT and retention up 35% once the feedback-driven roadmap started landing.
+            - figure "Interactive walkthrough" [ref=f1e109]:
+              - paragraph [ref=f1e110]:
+                - generic [ref=f1e111]: System
+                - generic [ref=f1e112]: Billing → allocation → payment
+              - paragraph [ref=f1e113]: Watch a utility bill get split across units, then paid. Then toggle landlord / resident.
+              - button "Play the walkthrough" [ref=f1e116] [cursor=pointer]
+        - listitem [ref=f1e123]:
+          - paragraph [ref=f1e124]: Senior Product Manager, SaaS and Data Integrations · May 2022 to Jul 2023
+          - heading [level=3] [ref=f1e125]:
+            - link "Stoa" [ref=f1e126] [cursor=pointer]:
+              - /url: "#stoa"
+          - paragraph [ref=f1e127]: Owned Portico, the underwriting platform forty analysts worked in, and rebuilt what it cost the company to say yes to a house.
+          - paragraph [ref=f1e128]: $1B underwritten, $300M purchased. Cycle time down 85%.
+          - generic [ref=f1e129]:
+            - paragraph [ref=f1e130]:
+              - strong [ref=f1e131]: Problem.
+              - text: Underwriting a house took too long and took too many people. Forty analysts worked across twenty-two vendor feeds to decide what to pay, and at that speed the calendar was setting the price instead of the model.
+            - paragraph [ref=f1e132]:
+              - strong [ref=f1e133]: What I owned.
+              - text: Portico, the platform those forty analysts underwrote in. The data integrations feeding it and the automation sitting on top of it.
+            - paragraph [ref=f1e134]:
+              - strong [ref=f1e135]: What shipped.
+              - text: One queue in place of a pile of tools. Vendor consolidation from twenty-two down to six, which cut both the bill and the number of ways a feed could break. Machine learning and automation on the steps that were only ever going to repeat, absorbing up to $4M in labor.
+            - paragraph [ref=f1e136]:
+              - strong [ref=f1e137]: Who I worked with.
+              - text: Forty analysts as my users, daily, which is the best product feedback loop I have had. Engineering and data on the build. Vendors on the way out.
+            - paragraph [ref=f1e138]:
+              - strong [ref=f1e139]: Result.
+              - text: $1B underwritten and $300M purchased through the platform. Cycle time down 85%. Integration time down 40% and data accuracy up 25%.
+            - figure "Interactive walkthrough" [ref=f1e140]:
+              - paragraph [ref=f1e141]:
+                - generic [ref=f1e142]: System
+                - generic [ref=f1e143]: Data → underwriting → decision
+              - paragraph [ref=f1e144]: Open a Portico file. This is the queue 40 analysts worked.
+              - button "Play the walkthrough" [ref=f1e147] [cursor=pointer]
+        - listitem [ref=f1e154]:
+          - paragraph [ref=f1e155]: Product Owner, Acquisitions · Mar 2021 to May 2022
+          - heading [level=3] [ref=f1e156]:
+            - link "HomeLight" [ref=f1e157] [cursor=pointer]:
+              - /url: "#homelight"
+          - paragraph [ref=f1e158]: The underwriting model behind Cash Close, and the automation that let it make offers without a person in the loop.
+          - paragraph [ref=f1e159]: An $800M annual book. 300 automated offers a month.
+          - generic [ref=f1e160]:
+            - paragraph [ref=f1e161]:
+              - strong [ref=f1e162]: Problem.
+              - text: Cash Close promised a seller a cash offer quickly. Every offer needed a defensible number behind it, and one analyst pricing one house at a time does not get you to an $800M annual book.
+            - paragraph [ref=f1e163]:
+              - strong [ref=f1e164]: What I owned.
+              - text: The underwriting model for Cash Close and the offer automation that ran on top of it.
+            - paragraph [ref=f1e165]:
+              - strong [ref=f1e166]: What shipped.
+              - text: A model that priced the offer and a pipeline that sent it without waiting on an analyst. The model carried the book; the automation carried the volume.
+            - paragraph [ref=f1e167]:
+              - strong [ref=f1e168]: Who I worked with.
+              - text: Acquisitions on the inputs and on what a seller would actually accept. Engineering and data science on the model and the production path.
+            - paragraph [ref=f1e169]:
+              - strong [ref=f1e170]: Result.
+              - text: An $800M annual book underwritten on the model. 300 automated offers a month.
+            - figure "Interactive walkthrough" [ref=f1e171]:
+              - paragraph [ref=f1e172]:
+                - generic [ref=f1e173]: System
+                - generic [ref=f1e174]: Lead → model → offer
+              - paragraph [ref=f1e175]: Watch one lead become an automated offer.
+              - button "Play the walkthrough" [ref=f1e178] [cursor=pointer]
+        - listitem [ref=f1e185]:
+          - paragraph [ref=f1e186]: Business Analyst · Sep 2019 to Mar 2021
+          - heading [level=3] [ref=f1e187]:
+            - link "Zillow" [ref=f1e188] [cursor=pointer]:
+              - /url: "#zillow"
+          - paragraph [ref=f1e189]: First enterprise product seat. Underwriting and AI models in production, running every day on inventory the company was buying.
+          - paragraph [ref=f1e190]: About ten a day. About 3,000 in the period.
+          - generic [ref=f1e191]:
+            - paragraph [ref=f1e192]:
+              - strong [ref=f1e193]: Problem.
+              - text: Zillow was buying at volume and each of those decisions came out of a model. A model that runs every day is a product, and it needed somebody on the product side of it, sitting between the people running it and the people shipping it.
+            - paragraph [ref=f1e194]:
+              - strong [ref=f1e195]: What I owned.
+              - text: My first enterprise product seat. Underwriting and AI models, day to day, in production rather than in a notebook.
+            - paragraph [ref=f1e196]:
+              - strong [ref=f1e197]: What shipped.
+              - text: "Models that ran on live inventory at a pace the team could hold, every working day, for eighteen months. This is where I learned the thing I have used at every job since: a model has users, it has a latency budget, and when it is wrong somebody has to answer for it."
+            - paragraph [ref=f1e198]:
+              - strong [ref=f1e199]: Who I worked with.
+              - text: Analysts and data scientists on the models. Engineering on the production path. The acquisitions team, who were the people living with the output.
+            - paragraph [ref=f1e200]:
+              - strong [ref=f1e201]: Result.
+              - text: About ten a day. About 3,000 in the period.
+            - figure "Interactive walkthrough" [ref=f1e202]:
+              - paragraph [ref=f1e203]:
+                - generic [ref=f1e204]: System
+                - generic [ref=f1e205]: Data → model → acquisition
+              - paragraph [ref=f1e206]: "Watch a pricing queue: model estimate vs human."
+              - button "Play the walkthrough" [ref=f1e209] [cursor=pointer]
+      - paragraph [ref=f1e216]:
+        - link "Portfolio" [ref=f1e217] [cursor=pointer]:
+          - /url: "#ecclesio"
+        - text: "- Ecclesio, church software I build on the side."
+      - article [ref=f1e218]:
+        - paragraph [ref=f1e219]: Side project · Dec 2025 to Present
+        - heading [level=3] [ref=f1e220]:
+          - link "Ecclesio" [ref=f1e221] [cursor=pointer]:
+            - /url: "#ecclesio"
+        - paragraph [ref=f1e222]: A side project I build because I like building products. Invite-only, and it stays a side project.
+        - paragraph [ref=f1e223]: Zero to beta in four months · Dashboard 2s → ~50ms · Isolated databases · Tokenized payments
+        - generic [ref=f1e224]:
+          - paragraph [ref=f1e225]:
+            - strong [ref=f1e226]: Problem.
+            - text: I wanted to know whether I could still take a product from nothing to beta without a company behind me. Church software was the excuse. It is a side project and it stays one.
+          - paragraph [ref=f1e227]:
+            - strong [ref=f1e228]: What I owned.
+            - text: All of it. I directed a contract engineering team through the first build, then took over as the only person maintaining it.
+          - paragraph [ref=f1e229]:
+            - strong [ref=f1e230]: What shipped.
+            - text: Zero to beta in four months. A per-church isolated database, so no church's records share a table with another church's. Tokenized payments, so the app never holds a card number. A dashboard that loads in about 50ms where the first build took two seconds. Churches join by invitation only, so there is no public directory to browse.
+          - paragraph [ref=f1e231]:
+            - strong [ref=f1e232]: Who I worked with.
+            - text: A contract engineering team on the first build. After that, me, plus the church staff running the beta.
+          - paragraph [ref=f1e233]:
+            - strong [ref=f1e234]: Result.
+            - text: Zero to beta in four months. Dashboard load down from two seconds to about 50ms.
+          - figure "Interactive walkthrough" [ref=f1e235]:
+            - paragraph [ref=f1e236]:
+              - generic [ref=f1e237]: System
+              - generic [ref=f1e238]: Users → application → data → action
+            - paragraph [ref=f1e239]: Open the church dashboard we shipped to beta.
+            - button "Play the walkthrough" [ref=f1e242] [cursor=pointer]
+    - generic [ref=f1e250]:
+      - paragraph [ref=f1e251]: About
+      - heading "Models, then platforms, then a P&L." [level=2] [ref=f1e252]
+      - paragraph [ref=f1e253]: I am a product leader. I like the problems where the answer is a number.
+      - generic [ref=f1e254]:
+        - paragraph [ref=f1e255]: "I started at Zillow in 2019, my first enterprise product seat, on underwriting and AI models that ran every day on inventory the company was buying. That is where I learned a model is a product: it has users, it has a latency budget, and when it is wrong somebody answers for it."
+        - paragraph [ref=f1e256]: "HomeLight was the same lesson at higher stakes: the underwriting model behind Cash Close and the automation that sent 300 offers a month against an $800M book. Stoa was the platform version. Portico, forty analysts, cycle time down 85%, twenty-two vendor feeds down to six."
+        - paragraph [ref=f1e257]: "Livable was the one I had been building toward. Head of Product on a zero to one SaaS: hire the team, ship the product, take it to the board monthly, 2,000 units in four months."
+        - paragraph [ref=f1e258]: Then I applied product and systems thinking to a live operating business at Zoom Drain Phoenix. Dispatch, intake, an office I hired, a P&L I had to live with. It taught me what my old roadmaps cost the people downstream.
+        - paragraph [ref=f1e259]: Open to startups and to established companies that move with a sense of urgency. Phoenix, AZ, and glad to work remote.
+      - paragraph [ref=f1e260]:
+        - link "Experience" [ref=f1e261] [cursor=pointer]:
+          - /url: "#experience"
+        - text: ·
+        - link "Portfolio" [ref=f1e262] [cursor=pointer]:
+          - /url: "#ecclesio"
+        - text: ·
+        - link "Resume" [ref=f1e263] [cursor=pointer]:
+          - /url: "#resume"
+        - text: ·
+        - link "Contact" [ref=f1e264] [cursor=pointer]:
+          - /url: "#contact"
+    - generic [ref=f1e266]:
+      - paragraph [ref=f1e267]: Contact
+      - heading "Open to product roles" [level=2] [ref=f1e268]
+      - paragraph [ref=f1e269]: Open to startups and to established companies that move with a sense of urgency. Phoenix, AZ, and glad to work remote. Email is the fastest way to reach me.
+      - list [ref=f1e270]:
+        - listitem [ref=f1e271]:
+          - link "jon.oneill.m@gmail.com" [ref=f1e272] [cursor=pointer]:
+            - /url: mailto:jon.oneill.m@gmail.com
+        - listitem [ref=f1e273]:
+          - link "linkedin.com/in/jon-oneill-020196" [ref=f1e274] [cursor=pointer]:
+            - /url: https://www.linkedin.com/in/jon-oneill-020196
+        - listitem [ref=f1e275]:
+          - link "Resume, PDF" [ref=f1e276] [cursor=pointer]:
+            - /url: "#resume"
+  - contentinfo [ref=f1e277]:
+    - heading "Footer" [level=2] [ref=f1e278]
+    - generic [ref=f1e279]:
+      - generic [ref=f1e280]:
+        - link "Contact" [ref=f1e281] [cursor=pointer]:
+          - /url: "#contact"
+        - link "Resume" [ref=f1e282] [cursor=pointer]:
+          - /url: "#resume"
+      - generic [ref=f1e283]:
+        - generic [ref=f1e284]:
+          - heading "Location" [level=3] [ref=f1e285]
+          - paragraph [ref=f1e286]: Phoenix, ArizonaUnited States
+        - generic [ref=f1e287]:
+          - heading "Focus" [level=3] [ref=f1e288]
+          - paragraph [ref=f1e289]: Product management. Zero to one SaaS, pricing and underwriting platforms, data and machine learning, and the go to market that has to follow.
+    - paragraph [ref=f1e290]:
+      - generic [ref=f1e291]: Product
+      - generic [ref=f1e292]: Pricing and underwriting
+      - generic [ref=f1e293]: Data and ML
+      - generic [ref=f1e294]: Go to market
+    - generic [ref=f1e295]:
+      - generic [ref=f1e296]: © Jon O'Neill 2026
+      - link "Privacy policy" [ref=f1e297] [cursor=pointer]:
+        - /url: /privacy/
+    - generic [ref=f1e298]: jononeill
