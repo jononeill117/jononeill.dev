@@ -1545,12 +1545,12 @@ import DemoFrame from "./DemoFrame.astro";
 
     .sp__workspace {
       grid-template-columns: 1fr;
-      grid-template-rows: 1fr minmax(5.5rem, 22%);
+      grid-template-rows: 1fr;
     }
 
     .sp__details {
       border-right: 0;
-      border-bottom: 1px solid var(--sp-line);
+      border-bottom: 0;
       order: 1;
       overflow: hidden;
       padding: 0.4rem 0.5rem 0.45rem;
@@ -1558,18 +1558,6 @@ import DemoFrame from "./DemoFrame.astro";
     }
 
     .sp__map {
-      order: 2;
-      min-height: 0;
-    }
-
-    .sp__map-chrome,
-    .sp__map-foot {
-      padding: 0.2rem 0.35rem;
-    }
-
-    .sp__map-modes .sp__map-mode:nth-child(n + 3),
-    .sp__layers .sp__layer:nth-child(n + 3),
-    .sp__view-images {
       display: none;
     }
 

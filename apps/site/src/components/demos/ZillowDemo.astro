@@ -823,6 +823,18 @@ LIMIT 5;</pre>
       box-shadow: 0 1px 2px color-mix(in srgb, #000 3%, transparent);
     }
 
+    /* Pending rows stay one-line so five fit without clipping. */
+    .zl__row:not(.is-active):not(.is-working):not(.is-live):not(.is-accepted) {
+      grid-template-areas: "addr status";
+      padding: 0.4rem 0.55rem;
+    }
+
+    .zl__row:not(.is-active):not(.is-working):not(.is-live):not(.is-accepted) .zl__model,
+    .zl__row:not(.is-active):not(.is-working):not(.is-live):not(.is-accepted) .zl__human,
+    .zl__row:not(.is-active):not(.is-working):not(.is-live):not(.is-accepted) .zl__delta {
+      display: none;
+    }
+
     .zl__rows > li:last-child .zl__row {
       border-block-end: 1px solid var(--zl-line);
     }

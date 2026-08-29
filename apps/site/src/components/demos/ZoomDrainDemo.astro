@@ -817,25 +817,40 @@ import DemoFrame from "./DemoFrame.astro";
 
   @media (max-width: 40rem) {
     .zd__body {
-      grid-template-columns: 1fr;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
       overflow: hidden;
+      gap: 0;
     }
 
-    .zd__col--intake,
+    .zd__col--intake {
+      grid-column: 1;
+      grid-row: 1;
+      border: 0;
+      border-right: 1px solid var(--zd-border);
+      border-bottom: 1px solid var(--zd-border);
+      padding: 0.55rem 0.65rem;
+    }
+
     .zd__col--outcome {
+      grid-column: 2;
+      grid-row: 1;
       border: 0;
       border-bottom: 1px solid var(--zd-border);
-      padding: 0.75rem 0.85rem;
+      padding: 0.55rem 0.65rem;
     }
 
     .zd__col--pipeline {
-      border-bottom: 1px solid var(--zd-border);
-      padding: 0.85rem 0.75rem;
+      grid-column: 1 / -1;
+      grid-row: 2;
+      border: 0;
+      padding: 0.55rem 0.65rem 0.7rem;
     }
 
     .zd__col-label--muted {
-      margin-bottom: 0.65rem;
-      font-size: 0.52rem;
+      margin-bottom: 0.45rem;
+      font-size: 0.5rem;
     }
 
     .zd__sub {
@@ -843,18 +858,22 @@ import DemoFrame from "./DemoFrame.astro";
     }
 
     .zd__pipeline {
-      flex-wrap: wrap;
-      justify-content: center;
-      row-gap: 0.5rem;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      gap: 0.25rem;
     }
 
     .zd__node {
-      min-width: 3.5rem;
-      flex: 1 1 40%;
+      min-width: 0;
+      flex: 1 1 0;
     }
 
     .zd__node-label {
-      font-size: 0.55rem;
+      font-size: 0.5rem;
+    }
+
+    .zd__node-cap {
+      font-size: 0.45rem;
     }
 
     .zd__seg {
@@ -866,7 +885,22 @@ import DemoFrame from "./DemoFrame.astro";
     }
 
     .zd__action {
-      margin-top: 0.5rem;
+      margin-top: 0.35rem;
+      font-size: 0.55rem;
+      padding: 0.35rem 0.5rem;
+    }
+
+    .zd__stat-label {
+      font-size: 0.45rem;
+    }
+
+    .zd__stat-before,
+    .zd__stat-after {
+      font-size: 0.85rem;
+    }
+
+    .zd__done-mark {
+      font-size: 0.48rem;
     }
   }
 
