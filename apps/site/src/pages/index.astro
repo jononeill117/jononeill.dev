@@ -100,7 +100,9 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
                   {entry.data.title}
                 </a>
               </h3>
-              <p class="role__demo-kicker">Check out what I built at this company.</p>
+              <p class="role__demo-kicker">
+                Check out what I built at {entry.data.title}.
+              </p>
               <RoleDemo id={entry.id} />
               <p class="role__lede">{entry.data.lede}</p>
               <p class="role__outcome">{entry.data.outcome}</p>
@@ -130,7 +132,9 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
                 {ecclesio.data.title}
               </a>
             </h3>
-            <p class="role__demo-kicker">Check out what I built.</p>
+            <p class="role__demo-kicker">
+              Check out what I built at {ecclesio.data.title}.
+            </p>
             <RoleDemo id="ecclesio" />
             <p class="role__lede">{ecclesio.data.lede}</p>
             <p class="role__outcome">{ecclesio.data.outcome}</p>
