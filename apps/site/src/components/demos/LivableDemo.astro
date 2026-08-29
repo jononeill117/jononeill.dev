@@ -84,10 +84,10 @@ import DemoFrame from "./DemoFrame.astro";
             <tr><th>Unit</th><th>Status</th><th>Share</th></tr>
           </thead>
           <tbody>
-            <tr data-lv-row="04"><td>04</td><td data-lv-status="04">Pending</td><td>$312.00</td></tr>
-            <tr data-lv-row="09"><td>09</td><td data-lv-status="09">Open</td><td>$128.40</td></tr>
-            <tr data-lv-row="12" class="is-focus"><td>12</td><td data-lv-status="12">Open</td><td>$47.20</td></tr>
-            <tr data-lv-row="18"><td>18</td><td data-lv-status="18">Pending</td><td>$0.00</td></tr>
+            <tr data-lv-row="04"><td>04</td><td data-lv-status="04">Pending</td><td data-lv-share-amt="04">-</td></tr>
+            <tr data-lv-row="09"><td>09</td><td data-lv-status="09">Open</td><td data-lv-share-amt="09">-</td></tr>
+            <tr data-lv-row="12" class="is-focus"><td>12</td><td data-lv-status="12">Open</td><td data-lv-share-amt="12">-</td></tr>
+            <tr data-lv-row="18"><td>18</td><td data-lv-status="18">Pending</td><td data-lv-share-amt="18">-</td></tr>
           </tbody>
         </table>
       </div>
@@ -121,12 +121,28 @@ import DemoFrame from "./DemoFrame.astro";
     total: "$1,770.50",
     unit12: "$47.20",
     recoveredAfterPay: "$47.20",
+    recoveredCents: 4720,
   } as const;
 
   const SHARE_UNITS = ["04", "09", "12", "18", "21"] as const;
 
+  const SHARE_AMOUNTS: Record<string, string> = {
+    "04": "$312.00",
+    "09": "$128.40",
+    "12": "$47.20",
+    "18": "$0.00",
+  };
+
   function sleep(ms: number) {
     return new Promise((r) => setTimeout(r, ms));
+  }
+
+  function formatCents(cents: number) {
+    const dollars = cents / 100;
+    return `$${dollars.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   }
 
   function wireLivable(root: HTMLElement) {
@@ -159,6 +175,7 @@ import DemoFrame from "./DemoFrame.astro";
     let running = false;
     let token = 0;
     let paid = false;
+    let recoveredCents = 0;
 
     const setStep = (text: string) => {
       if (stepEl) stepEl.textContent = text;
@@ -185,18 +202,35 @@ import DemoFrame from "./DemoFrame.astro";
       payBtn?.classList.remove("is-pulse");
     };
 
+    const clearWorkingLive = (...els: Array<HTMLElement | null | undefined>) => {
+      els.forEach((el) => el?.classList.remove("is-working", "is-live"));
+    };
+
     const resetExtract = () => {
       if (electricEl) electricEl.textContent = "-";
       if (waterEl) waterEl.textContent = "-";
       if (totalEl) totalEl.textContent = "-";
-      root.querySelectorAll("[data-lv-line]").forEach((el) => el.classList.remove("is-live"));
+      root.querySelectorAll("[data-lv-line]").forEach((el) => {
+        el.classList.remove("is-live", "is-working");
+      });
     };
 
     const resetShares = () => {
       SHARE_UNITS.forEach((id) => {
-        root.querySelector(`[data-lv-share='${id}']`)?.classList.remove("is-live", "is-highlight");
+        root
+          .querySelector(`[data-lv-share='${id}']`)
+          ?.classList.remove("is-live", "is-highlight", "is-working");
       });
-      alloc?.classList.remove("is-live");
+      Object.keys(SHARE_AMOUNTS).forEach((id) => {
+        const cell = root.querySelector<HTMLElement>(`[data-lv-share-amt='${id}']`);
+        if (cell) cell.textContent = "-";
+      });
+      clearWorkingLive(alloc);
+    };
+
+    const setRecovered = (cents: number) => {
+      recoveredCents = cents;
+      if (recoveredEl) recoveredEl.textContent = formatCents(cents);
     };
 
     const resetBoard = () => {
@@ -204,13 +238,13 @@ import DemoFrame from "./DemoFrame.astro";
       setView("landlord");
       setTabsEnabled(false);
       clearPulse();
-      pdf?.classList.remove("is-live", "is-upload");
-      extract?.classList.remove("is-live");
+      clearWorkingLive(pdf, extract, alloc);
+      pdf?.classList.remove("is-upload");
       resetExtract();
       resetShares();
       unit12Row?.classList.remove("is-highlight");
       if (unit12Status) unit12Status.textContent = "Open";
-      if (recoveredEl) recoveredEl.textContent = "$0.00";
+      setRecovered(0);
       recoveredEl?.classList.remove("is-tick");
       if (residentAmt) residentAmt.textContent = BILL.unit12;
       if (residentNote) {
@@ -223,22 +257,36 @@ import DemoFrame from "./DemoFrame.astro";
       }
       if (paidEl) paidEl.hidden = true;
       if (tryBar) tryBar.hidden = true;
-      if (hint) hint.hidden = true;
+      if (hint) {
+        hint.hidden = true;
+        hint.textContent = "Toggle views. Pay once from the open unit.";
+      }
       paid = false;
     };
 
     const paintExtracted = () => {
+      clearWorkingLive(extract);
       extract?.classList.add("is-live");
       if (electricEl) electricEl.textContent = BILL.electric;
       if (waterEl) waterEl.textContent = BILL.water;
       if (totalEl) totalEl.textContent = BILL.total;
-      root.querySelectorAll("[data-lv-line]").forEach((el) => el.classList.add("is-live"));
+      root.querySelectorAll("[data-lv-line]").forEach((el) => {
+        el.classList.remove("is-working");
+        el.classList.add("is-live");
+      });
     };
 
     const paintAllocation = () => {
+      clearWorkingLive(alloc);
       alloc?.classList.add("is-live");
       SHARE_UNITS.forEach((id) => {
-        root.querySelector(`[data-lv-share='${id}']`)?.classList.add("is-live");
+        const bar = root.querySelector(`[data-lv-share='${id}']`);
+        bar?.classList.remove("is-working");
+        bar?.classList.add("is-live");
+      });
+      Object.entries(SHARE_AMOUNTS).forEach(([id, amt]) => {
+        const cell = root.querySelector<HTMLElement>(`[data-lv-share-amt='${id}']`);
+        if (cell) cell.textContent = amt;
       });
     };
 
@@ -247,10 +295,10 @@ import DemoFrame from "./DemoFrame.astro";
       unit12Row?.classList.add("is-highlight");
     };
 
-    const paintPaid = () => {
+    const paintPaidSnap = () => {
       paid = true;
       if (unit12Status) unit12Status.textContent = "Settled";
-      if (recoveredEl) recoveredEl.textContent = BILL.recoveredAfterPay;
+      setRecovered(BILL.recoveredCents);
       recoveredEl?.classList.add("is-tick");
       if (payBtn) {
         payBtn.disabled = true;
@@ -259,6 +307,45 @@ import DemoFrame from "./DemoFrame.astro";
       }
       if (paidEl) paidEl.hidden = false;
       if (residentNote) residentNote.textContent = "Payment recorded for Unit 12.";
+    };
+
+    const tickRecovered = async (targetCents: number, durationMs: number, my: number) => {
+      if (!recoveredEl) {
+        setRecovered(targetCents);
+        return;
+      }
+      recoveredEl.classList.remove("is-tick");
+      const from = recoveredCents;
+      const start = performance.now();
+      while (true) {
+        if (my !== token) return;
+        const t = Math.min(1, (performance.now() - start) / durationMs);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const cents = Math.round(from + (targetCents - from) * eased);
+        setRecovered(cents);
+        if (t >= 1) break;
+        await sleep(32);
+      }
+      setRecovered(targetCents);
+      recoveredEl.classList.add("is-tick");
+    };
+
+    const applyPaid = async (my: number, animate: boolean) => {
+      paid = true;
+      if (unit12Status) unit12Status.textContent = "Settled";
+      if (payBtn) {
+        payBtn.disabled = true;
+        payBtn.hidden = true;
+        payBtn.classList.remove("is-pulse");
+      }
+      if (paidEl) paidEl.hidden = false;
+      if (residentNote) residentNote.textContent = "Payment recorded for Unit 12.";
+      if (animate) {
+        await tickRecovered(BILL.recoveredCents, 900, my);
+      } else {
+        setRecovered(BILL.recoveredCents);
+        recoveredEl?.classList.add("is-tick");
+      }
     };
 
     const showTry = () => {
@@ -292,7 +379,7 @@ import DemoFrame from "./DemoFrame.astro";
         payBtn.disabled = false;
         payBtn.hidden = false;
       }
-      paintPaid();
+      paintPaidSnap();
       setView("landlord");
       finish();
     };
@@ -302,67 +389,118 @@ import DemoFrame from "./DemoFrame.astro";
       running = true;
       resetBoard();
 
-      // 1. Landlord receives utility bill PDF
-      setStep("Bill received");
+      // 1. Bill arrives
+      setStep("Receiving bill…");
+      pdf?.classList.add("is-working");
+      await sleep(1100);
+      if (my !== token) return;
+      pdf?.classList.remove("is-working");
       pdf?.classList.add("is-live");
-      await sleep(1200);
+      setStep("Bill received");
+      await sleep(500);
       if (my !== token) return;
 
       // 2. Upload
-      setStep("Uploading");
-      pdf?.classList.add("is-upload");
+      setStep("Uploading PDF…");
+      pdf?.classList.remove("is-live");
+      pdf?.classList.add("is-working", "is-upload");
+      await sleep(1000);
+      if (my !== token) return;
+      pdf?.classList.remove("is-working");
+      pdf?.classList.add("is-live");
+      setStep("Uploaded");
+      await sleep(400);
+      if (my !== token) return;
+
+      // 3. Extract line items with calculating states
+      setStep("Extracting line items…");
+      extract?.classList.add("is-working");
+      if (electricEl) electricEl.textContent = "…";
+      if (waterEl) waterEl.textContent = "…";
+      if (totalEl) totalEl.textContent = "…";
+      root.querySelectorAll("[data-lv-line]").forEach((el) => el.classList.add("is-working"));
       await sleep(900);
       if (my !== token) return;
 
-      // 3. Extract Electric / Water / Total
-      setStep("Extracting line items");
-      extract?.classList.add("is-live");
-      if (electricEl) electricEl.textContent = BILL.electric;
+      root.querySelector("[data-lv-line='electric']")?.classList.remove("is-working");
       root.querySelector("[data-lv-line='electric']")?.classList.add("is-live");
-      await sleep(700);
+      if (electricEl) electricEl.textContent = BILL.electric;
+      setStep("Electric locked");
+      await sleep(650);
       if (my !== token) return;
-      if (waterEl) waterEl.textContent = BILL.water;
+
+      root.querySelector("[data-lv-line='water']")?.classList.remove("is-working");
       root.querySelector("[data-lv-line='water']")?.classList.add("is-live");
+      if (waterEl) waterEl.textContent = BILL.water;
+      setStep("Water locked");
+      await sleep(650);
+      if (my !== token) return;
+
+      root.querySelector("[data-lv-line='total']")?.classList.remove("is-working");
+      root.querySelector("[data-lv-line='total']")?.classList.add("is-live");
+      if (totalEl) totalEl.textContent = BILL.total;
+      extract?.classList.remove("is-working");
+      extract?.classList.add("is-live");
+      setStep("Total locked");
       await sleep(700);
       if (my !== token) return;
-      if (totalEl) totalEl.textContent = BILL.total;
-      root.querySelector("[data-lv-line='total']")?.classList.add("is-live");
+
+      // 4. Allocation engine
+      setStep("Allocating across units…");
+      alloc?.classList.add("is-working");
+      SHARE_UNITS.forEach((id) => {
+        root.querySelector(`[data-lv-share='${id}']`)?.classList.add("is-working");
+      });
+      Object.keys(SHARE_AMOUNTS).forEach((id) => {
+        const cell = root.querySelector<HTMLElement>(`[data-lv-share-amt='${id}']`);
+        if (cell) cell.textContent = "…";
+      });
       await sleep(800);
       if (my !== token) return;
 
-      // 4. Allocation engine paints unit shares
-      setStep("Allocating across units");
-      alloc?.classList.add("is-live");
       for (const id of SHARE_UNITS) {
         if (my !== token) return;
-        root.querySelector(`[data-lv-share='${id}']`)?.classList.add("is-live");
+        const bar = root.querySelector(`[data-lv-share='${id}']`);
+        bar?.classList.remove("is-working");
+        bar?.classList.add("is-live");
+        const amt = SHARE_AMOUNTS[id];
+        if (amt) {
+          const cell = root.querySelector<HTMLElement>(`[data-lv-share-amt='${id}']`);
+          if (cell) cell.textContent = amt;
+        }
         await sleep(280);
       }
-      await sleep(600);
+      if (my !== token) return;
+      alloc?.classList.remove("is-working");
+      alloc?.classList.add("is-live");
+      setStep("Shares allocated");
+      await sleep(500);
       if (my !== token) return;
 
-      // 5. Unit 12 tenant bill highlights
+      // 5. Unit 12 highlight
       setStep("Unit 12 share");
       paintUnit12();
-      await sleep(1100);
+      await sleep(900);
       if (my !== token) return;
 
-      // 6. Toggle to Resident: bill + Pay
+      // 6. Resident view + Pay
       setStep("Resident view");
       setView("resident");
       if (payBtn) {
         payBtn.disabled = false;
         payBtn.classList.add("is-pulse");
       }
-      await sleep(1300);
+      await sleep(1100);
       if (my !== token) return;
 
-      // 7. Pay → recovered total ticks up
-      setStep("Payment posted");
+      // 7. Pay, then recovered ticks up on landlord board
+      setStep("Posting payment…");
       payBtn?.classList.remove("is-pulse");
-      paintPaid();
       setView("landlord");
-      await sleep(1200);
+      await applyPaid(my, true);
+      if (my !== token) return;
+      setStep("Payment posted");
+      await sleep(700);
       if (my !== token) return;
 
       finish();
@@ -394,10 +532,19 @@ import DemoFrame from "./DemoFrame.astro";
 
     payBtn?.addEventListener("click", () => {
       if (running || paid || payBtn.disabled) return;
-      paintPaid();
-      setView("landlord");
-      clearPulse();
-      if (hint) hint.textContent = "Unit 12 settled. Toggle landlord / resident, or Replay.";
+      const my = ++token;
+      void (async () => {
+        setView("landlord");
+        clearPulse();
+        setStep("Posting payment…");
+        await applyPaid(my, true);
+        if (my !== token) return;
+        setStep("Try it");
+        if (hint) {
+          hint.hidden = false;
+          hint.textContent = "Unit 12 settled. Toggle landlord / resident, or Replay.";
+        }
+      })();
     });
 
     replayBtn?.addEventListener("click", () => {
@@ -416,7 +563,7 @@ import DemoFrame from "./DemoFrame.astro";
   .lv {
     --lv-canvas: #0b0a09;
     --lv-ink: #f2ebe1;
-    --lv-copper: #b87333;
+    --lv-copper: var(--accent, #b87333);
     --lv-muted: color-mix(in srgb, var(--lv-ink) 42%, transparent);
     --lv-line: color-mix(in srgb, var(--lv-ink) 14%, transparent);
     --lv-panel: color-mix(in srgb, var(--lv-ink) 6%, transparent);
@@ -524,12 +671,22 @@ import DemoFrame from "./DemoFrame.astro";
     opacity: 0.35;
     transition:
       opacity var(--dur-base, 240ms) var(--ease-out, ease-out),
-      border-color var(--dur-base, 240ms) var(--ease-out, ease-out);
+      border-color var(--dur-base, 240ms) var(--ease-out, ease-out),
+      box-shadow var(--dur-base, 240ms) var(--ease-out, ease-out);
+  }
+
+  .lv__pdf.is-working {
+    opacity: 1;
+    border-color: color-mix(in srgb, var(--lv-copper) 70%, var(--lv-line));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lv-copper) 30%, transparent);
+    animation: lv-working 1.4s ease-in-out infinite;
   }
 
   .lv__pdf.is-live {
     opacity: 1;
     border-color: color-mix(in srgb, var(--lv-copper) 45%, var(--lv-line));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lv-copper) 45%, transparent);
+    animation: none;
   }
 
   .lv__pdf.is-upload {
@@ -569,11 +726,24 @@ import DemoFrame from "./DemoFrame.astro";
     border: var(--hairline) solid var(--lv-line);
     background: var(--lv-panel);
     opacity: 0.4;
-    transition: opacity var(--dur-base, 240ms) var(--ease-out, ease-out);
+    transition:
+      opacity var(--dur-base, 240ms) var(--ease-out, ease-out),
+      border-color var(--dur-base, 240ms) var(--ease-out, ease-out),
+      box-shadow var(--dur-base, 240ms) var(--ease-out, ease-out);
+  }
+
+  .lv__extract.is-working {
+    opacity: 1;
+    border-color: color-mix(in srgb, var(--lv-copper) 70%, var(--lv-line));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lv-copper) 30%, transparent);
+    animation: lv-working 1.4s ease-in-out infinite;
   }
 
   .lv__extract.is-live {
     opacity: 1;
+    border-color: color-mix(in srgb, var(--lv-copper) 45%, var(--lv-line));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lv-copper) 45%, transparent);
+    animation: none;
   }
 
   .lv__extract-title,
@@ -604,6 +774,11 @@ import DemoFrame from "./DemoFrame.astro";
       color var(--dur-quick, 160ms) ease;
   }
 
+  .lv__line.is-working {
+    opacity: 1;
+    color: var(--lv-copper);
+  }
+
   .lv__line.is-live {
     opacity: 1;
     color: var(--lv-ink);
@@ -628,11 +803,19 @@ import DemoFrame from "./DemoFrame.astro";
 
   .lv__alloc {
     opacity: 0.4;
-    transition: opacity var(--dur-base, 240ms) var(--ease-out, ease-out);
+    transition:
+      opacity var(--dur-base, 240ms) var(--ease-out, ease-out),
+      outline-color var(--dur-base, 240ms) var(--ease-out, ease-out);
+  }
+
+  .lv__alloc.is-working {
+    opacity: 1;
+    animation: lv-working 1.4s ease-in-out infinite;
   }
 
   .lv__alloc.is-live {
     opacity: 1;
+    animation: none;
   }
 
   .lv__shares {
@@ -666,8 +849,15 @@ import DemoFrame from "./DemoFrame.astro";
     color: var(--lv-muted);
   }
 
+  .lv__share.is-working {
+    opacity: 0.7;
+    border-color: color-mix(in srgb, var(--lv-copper) 55%, var(--lv-line));
+    animation: lv-working 1.4s ease-in-out infinite;
+  }
+
   .lv__share.is-live {
     opacity: 1;
+    animation: none;
   }
 
   .lv__share.is-highlight {
@@ -702,6 +892,10 @@ import DemoFrame from "./DemoFrame.astro";
     letter-spacing: var(--ls-mono);
     text-transform: uppercase;
     color: var(--lv-muted);
+  }
+
+  .lv__table td[data-lv-share-amt] {
+    font-variant-numeric: tabular-nums;
   }
 
   .lv__table tr.is-highlight td {
@@ -825,6 +1019,18 @@ import DemoFrame from "./DemoFrame.astro";
     cursor: pointer;
   }
 
+  @keyframes lv-working {
+    0%,
+    100% {
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lv-copper) 20%, transparent);
+      opacity: 1;
+    }
+    50% {
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lv-copper) 55%, transparent);
+      opacity: 0.88;
+    }
+  }
+
   @keyframes lv-control-pulse {
     0%,
     100% {
@@ -853,6 +1059,10 @@ import DemoFrame from "./DemoFrame.astro";
     .lv__line,
     .lv__alloc,
     .lv__share,
+    .lv__pdf.is-working,
+    .lv__extract.is-working,
+    .lv__alloc.is-working,
+    .lv__share.is-working,
     .lv__tab.is-pulse,
     .lv__pay.is-pulse {
       transition: none;
