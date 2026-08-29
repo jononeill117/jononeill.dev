@@ -1,0 +1,202 @@
+---
+import DemoFrame from "./DemoFrame.astro";
+---
+
+<DemoFrame class="stoa-demo">
+  <div class="sp" data-sp>
+    <header class="sp__head">
+      <span class="sp__product">Portico</span>
+      <span class="sp__eval">Evaluation #4418</span>
+    </header>
+    <p class="sp__addr">1847 Longcityname Blvd, Unit 3B</p>
+    <div class="sp__scores">
+      <button type="button" class="sp__score" data-sp-score="condition">
+        <span>Condition</span><strong data-sp-val="condition">92</strong>
+      </button>
+      <button type="button" class="sp__score" data-sp-score="market">
+        <span>Market</span><strong data-sp-val="market">77</strong>
+      </button>
+      <button type="button" class="sp__score" data-sp-score="title">
+        <span>Title</span><strong data-sp-val="title">90</strong>
+      </button>
+    </div>
+    <p class="sp__valuation">Valuation <strong>$392,547</strong></p>
+    <table class="sp__table">
+      <thead>
+        <tr><th>Field</th><th>Source</th><th>Final Data</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Sq ft</td><td>1,840</td>
+          <td><button type="button" class="sp__cell" data-sp-nudge="sqft">1,840</button></td>
+        </tr>
+        <tr>
+          <td>Roof age</td><td>12 yr</td>
+          <td><button type="button" class="sp__cell" data-sp-nudge="roof">14 yr</button></td>
+        </tr>
+        <tr>
+          <td>Contingency</td><td>$8,200</td>
+          <td><button type="button" class="sp__cell sp__cell--hot" data-sp-nudge="contingency">$9,400</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="sp__hint">Click Final Data or Contingency to nudge a score.</p>
+  </div>
+</DemoFrame>
+
+<script>
+  function wireStoa(root: HTMLElement) {
+    if (root.hasAttribute("data-sp-wired")) return;
+    root.setAttribute("data-sp-wired", "true");
+
+    const vals = {
+      condition: root.querySelector("[data-sp-val='condition']"),
+      market: root.querySelector("[data-sp-val='market']"),
+      title: root.querySelector("[data-sp-val='title']"),
+    };
+
+    root.querySelectorAll<HTMLButtonElement>("[data-sp-nudge]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-sp-nudge");
+        if (key === "contingency") {
+          vals.market!.textContent = String(Number(vals.market!.textContent) - 2);
+          vals.condition!.textContent = String(Number(vals.condition!.textContent) - 1);
+        } else if (key === "sqft") {
+          vals.market!.textContent = String(Number(vals.market!.textContent) + 1);
+        } else {
+          vals.condition!.textContent = String(Number(vals.condition!.textContent) + 1);
+        }
+        btn.classList.add("is-pulse");
+        setTimeout(() => btn.classList.remove("is-pulse"), 300);
+      });
+    });
+  }
+
+  document.querySelectorAll("[data-sp]").forEach((el) => wireStoa(el as HTMLElement));
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll("[data-sp]").forEach((el) => wireStoa(el as HTMLElement));
+  });
+</script>
+
+<style>
+  .sp {
+    height: 100%;
+    padding: var(--s-4);
+    display: grid;
+    grid-template-rows: auto auto auto auto 1fr auto;
+    gap: var(--s-3);
+    background: linear-gradient(180deg, #2a1f3d 0%, #1a1428 100%);
+    color: #ece8f4;
+  }
+
+  .sp__head {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: #c4b5fd;
+  }
+
+  .sp__addr {
+    margin: 0;
+    font-size: var(--t-body-sm);
+    color: #d8d0e8;
+  }
+
+  .sp__scores {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-2);
+  }
+
+  .sp__score {
+    padding: var(--s-2);
+    border: var(--hairline) solid #5b4d7a;
+    background: #342a4a;
+    color: inherit;
+    text-align: center;
+    cursor: default;
+    font: inherit;
+  }
+
+  .sp__score span {
+    display: block;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: #a89bc4;
+  }
+
+  .sp__score strong {
+    display: block;
+    margin-block-start: var(--s-1);
+    font-size: var(--t-h4);
+    color: #e9d5ff;
+  }
+
+  .sp__valuation {
+    margin: 0;
+    font-size: var(--t-body-sm);
+  }
+
+  .sp__valuation strong {
+    color: #c4b5fd;
+    font-size: var(--t-body-lg);
+  }
+
+  .sp__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--t-mono-sm);
+    align-self: start;
+  }
+
+  .sp__table th,
+  .sp__table td {
+    padding: var(--s-2);
+    text-align: left;
+    border-block-end: var(--hairline) solid #4a3d66;
+  }
+
+  .sp__table th {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: #a89bc4;
+  }
+
+  .sp__cell {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #e9d5ff;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .sp__cell--hot {
+    color: #f0abfc;
+  }
+
+  .sp__cell.is-pulse {
+    animation: sp-pulse 0.3s ease;
+  }
+
+  @keyframes sp-pulse {
+    50% { color: #fff; }
+  }
+
+  .sp__hint {
+    margin: 0;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    color: #8b7aa8;
+  }
+</style>

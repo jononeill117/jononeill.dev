@@ -1,0 +1,191 @@
+---
+import DemoFrame from "./DemoFrame.astro";
+---
+
+<DemoFrame class="livable-demo">
+  <div class="lv" data-lv>
+    <header class="lv__head">
+      <h4 class="lv__title">Oak Court</h4>
+      <span class="lv__units">24 units</span>
+    </header>
+    <div class="lv__toggle" role="tablist">
+      <button type="button" class="lv__tab is-active" data-lv-tab="landlord" role="tab">
+        Landlord
+      </button>
+      <button type="button" class="lv__tab" data-lv-tab="resident" role="tab">
+        Resident
+      </button>
+    </div>
+    <div class="lv__panel" data-lv-panel="landlord">
+      <p class="lv__recovered">$4,280 recovered</p>
+      <div class="lv__bars" aria-hidden="true">
+        <div class="lv__bar" style="--h: 72%"></div>
+        <div class="lv__bar" style="--h: 55%"></div>
+        <div class="lv__bar" style="--h: 88%"></div>
+        <div class="lv__bar" style="--h: 41%"></div>
+        <div class="lv__bar" style="--h: 63%"></div>
+      </div>
+      <table class="lv__table">
+        <thead>
+          <tr><th>Unit</th><th>Status</th><th>Recovered</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>04</td><td>Settled</td><td>$312.00</td></tr>
+          <tr><td>09</td><td>Open</td><td>$128.40</td></tr>
+          <tr><td>12</td><td>Settled</td><td>$47.20</td></tr>
+          <tr><td>18</td><td>Pending</td><td>$0.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="lv__panel" data-lv-panel="resident" hidden>
+      <p class="lv__resident-line">Unit 12</p>
+      <p class="lv__resident-amt">$47.20</p>
+      <p class="lv__resident-note">Utility share for Oct billing cycle.</p>
+    </div>
+  </div>
+</DemoFrame>
+
+<script>
+  function wireLivable(root: HTMLElement) {
+    if (root.hasAttribute("data-lv-wired")) return;
+    root.setAttribute("data-lv-wired", "true");
+
+    const tabs = root.querySelectorAll<HTMLButtonElement>("[data-lv-tab]");
+    const panels = root.querySelectorAll<HTMLElement>("[data-lv-panel]");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const id = tab.getAttribute("data-lv-tab");
+        tabs.forEach((t) => t.classList.toggle("is-active", t === tab));
+        panels.forEach((p) => {
+          p.hidden = p.getAttribute("data-lv-panel") !== id;
+        });
+      });
+    });
+  }
+
+  document.querySelectorAll("[data-lv]").forEach((el) => wireLivable(el as HTMLElement));
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll("[data-lv]").forEach((el) => wireLivable(el as HTMLElement));
+  });
+</script>
+
+<style>
+  .lv {
+    height: 100%;
+    padding: var(--s-4);
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: var(--s-4);
+    background: #f7f4ef;
+    color: #1a1916;
+  }
+
+  .lv__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .lv__title {
+    margin: 0;
+    font-size: var(--t-body-lg);
+    font-weight: var(--fw-semibold);
+  }
+
+  .lv__units {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: #57554f;
+  }
+
+  .lv__toggle {
+    display: flex;
+    gap: var(--s-2);
+  }
+
+  .lv__tab {
+    flex: 1;
+    padding: var(--s-2) var(--s-3);
+    border: var(--hairline) solid #c9c7c2;
+    background: #fff;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .lv__tab.is-active {
+    background: #2d6a4f;
+    border-color: #2d6a4f;
+    color: #fff;
+  }
+
+  .lv__recovered {
+    margin: 0;
+    font-size: var(--t-h4);
+    font-weight: var(--fw-semibold);
+    color: #2d6a4f;
+  }
+
+  .lv__bars {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--s-2);
+    height: 4.5rem;
+    margin-block: var(--s-4);
+  }
+
+  .lv__bar {
+    flex: 1;
+    height: var(--h);
+    background: #40916c;
+    border-radius: 2px 2px 0 0;
+    opacity: 0.85;
+  }
+
+  .lv__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--t-mono-sm);
+  }
+
+  .lv__table th,
+  .lv__table td {
+    padding: var(--s-2);
+    text-align: left;
+    border-block-end: var(--hairline) solid #e0d8cc;
+  }
+
+  .lv__table th {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: #57554f;
+  }
+
+  .lv__resident-line {
+    margin: 0;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+  }
+
+  .lv__resident-amt {
+    margin: var(--s-4) 0 0;
+    font-size: var(--t-h3);
+    font-weight: var(--fw-semibold);
+    color: #2d6a4f;
+  }
+
+  .lv__resident-note {
+    margin: var(--s-3) 0 0;
+    color: #57554f;
+    font-size: var(--t-body-sm);
+  }
+</style>

@@ -1,0 +1,179 @@
+---
+import DemoFrame from "./DemoFrame.astro";
+---
+
+<DemoFrame class="homelight-demo">
+  <div class="hl" data-hl>
+    <header class="hl__head">
+      <span>Cash Close</span>
+      <span class="hl__count" data-hl-count>0 of 300 offers</span>
+    </header>
+    <ol class="hl__steps">
+      <li data-hl-step="lead">Lead</li>
+      <li data-hl-step="avm">AVM</li>
+      <li data-hl-step="tax">Tax</li>
+      <li data-hl-step="mls">MLS</li>
+      <li data-hl-step="rehab">Rehab</li>
+      <li data-hl-step="offer">Offer</li>
+    </ol>
+    <div class="hl__result" data-hl-result hidden>
+      <p class="hl__price">$412,000</p>
+      <p class="hl__pct">86% of list</p>
+      <p class="hl__addr">918 Maple Ave</p>
+    </div>
+    <div class="hl__actions">
+      <button type="button" class="hl__btn hl__btn--primary" data-hl-run>Run offer</button>
+      <button type="button" class="hl__btn" data-hl-replay hidden>Replay</button>
+    </div>
+  </div>
+</DemoFrame>
+
+<script>
+  function wireHomeLight(root: HTMLElement) {
+    const frame = root.closest(".demo-frame");
+    if (!frame || root.hasAttribute("data-hl-wired")) return;
+    root.setAttribute("data-hl-wired", "true");
+
+    const steps = ["lead", "avm", "tax", "mls", "rehab", "offer"];
+    const runBtn = root.querySelector<HTMLButtonElement>("[data-hl-run]");
+    const replayBtn = root.querySelector<HTMLButtonElement>("[data-hl-replay]");
+    const result = root.querySelector<HTMLElement>("[data-hl-result]");
+    const count = root.querySelector("[data-hl-count]");
+
+    const reset = () => {
+      steps.forEach((s) =>
+        root.querySelector(`[data-hl-step='${s}']`)?.classList.remove("is-done"),
+      );
+      result!.hidden = true;
+      count!.textContent = "0 of 300 offers";
+      runBtn!.hidden = false;
+      replayBtn!.hidden = true;
+    };
+
+    const run = async () => {
+      runBtn!.disabled = true;
+      for (const s of steps) {
+        root.querySelector(`[data-hl-step='${s}']`)?.classList.add("is-done");
+        await new Promise((r) => setTimeout(r, 380));
+      }
+      result!.hidden = false;
+      count!.textContent = "1 of 300 offers";
+      runBtn!.hidden = true;
+      replayBtn!.hidden = false;
+      runBtn!.disabled = false;
+    };
+
+    runBtn?.addEventListener("click", run);
+    replayBtn?.addEventListener("click", () => {
+      reset();
+      frame.dispatchEvent(new CustomEvent("demo-reset"));
+    });
+    frame.addEventListener("demo-play", reset);
+  }
+
+  document.querySelectorAll("[data-hl]").forEach((el) => wireHomeLight(el as HTMLElement));
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll("[data-hl]").forEach((el) => wireHomeLight(el as HTMLElement));
+  });
+</script>
+
+<style>
+  .hl {
+    height: 100%;
+    padding: var(--s-4);
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: var(--s-4);
+    background: #0f1419;
+    color: #e8edf2;
+  }
+
+  .hl__head {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: #7eb8da;
+  }
+
+  .hl__count {
+    color: #a8b8c4;
+  }
+
+  .hl__steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hl__steps li {
+    padding: var(--s-2) var(--s-3);
+    border: var(--hairline) solid #2a3540;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    opacity: 0.4;
+    transition: opacity 0.2s, border-color 0.2s;
+  }
+
+  .hl__steps li.is-done {
+    opacity: 1;
+    border-color: #3d8fd1;
+    color: #7eb8da;
+  }
+
+  .hl__result {
+    text-align: center;
+    align-self: center;
+  }
+
+  .hl__price {
+    margin: 0;
+    font-size: var(--t-h3);
+    font-weight: var(--fw-semibold);
+    color: #5cb85c;
+  }
+
+  .hl__pct {
+    margin: var(--s-2) 0 0;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-mono);
+    color: #a8b8c4;
+  }
+
+  .hl__addr {
+    margin: var(--s-4) 0 0;
+    font-size: var(--t-body-sm);
+  }
+
+  .hl__actions {
+    display: flex;
+    gap: var(--s-3);
+  }
+
+  .hl__btn {
+    flex: 1;
+    padding: var(--s-3);
+    border: var(--hairline) solid #2a3540;
+    background: transparent;
+    color: inherit;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .hl__btn--primary {
+    background: #3d8fd1;
+    border-color: #3d8fd1;
+    color: #0f1419;
+  }
+</style>

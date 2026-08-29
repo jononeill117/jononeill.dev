@@ -1,0 +1,294 @@
+---
+import DemoFrame from "./DemoFrame.astro";
+---
+
+<DemoFrame class="ecclesio-demo" aspect="16 / 10">
+  <div class="ec" data-ec>
+    <header class="ec__top">
+      <div>
+        <h4 class="ec__title">Church Analytics Dashboard</h4>
+        <p class="ec__sub">Welcome back. Community snapshot.</p>
+      </div>
+      <select class="ec__campus" aria-label="Campus">
+        <option>All Locations</option>
+        <option>North Campus</option>
+        <option>Downtown</option>
+        <option>West Ridge</option>
+      </select>
+    </header>
+
+    <div class="ec__grid">
+      <div class="ec__cards">
+        <div class="ec__card">
+          <span class="ec__card-label">Total Members</span>
+          <strong>2,847</strong>
+          <span class="ec__up">+12.5%</span>
+        </div>
+        <div class="ec__card">
+          <span class="ec__card-label">New This Month</span>
+          <strong>143</strong>
+          <span class="ec__up">+8.3%</span>
+        </div>
+        <div class="ec__card">
+          <span class="ec__card-label">Active Engagement</span>
+          <strong>87%</strong>
+          <span class="ec__up">+3.2%</span>
+        </div>
+        <div class="ec__card">
+          <span class="ec__card-label">First Time Guests</span>
+          <strong>89</strong>
+          <span class="ec__up">+15.7%</span>
+        </div>
+      </div>
+
+      <div class="ec__health">
+        <div class="ec__health-head">
+          <span>Church Health Score</span>
+          <strong class="ec__score">76%</strong>
+        </div>
+        <div class="ec__tabs" role="tablist">
+          <span>7D</span><span>2W</span><span class="is-active">1M</span><span>1Q</span><span>YTD</span>
+        </div>
+        <svg class="ec__chart" viewBox="0 0 300 100" aria-hidden="true">
+          <line x1="0" y1="25" x2="300" y2="25" class="ec__gridline" />
+          <line x1="0" y1="50" x2="300" y2="50" class="ec__gridline" />
+          <line x1="0" y1="75" x2="300" y2="75" class="ec__gridline" />
+          <polyline
+            class="ec__line ec__line--bench"
+            points="0,30 50,32 100,55 150,65 200,45 250,38 300,24"
+            fill="none"
+            stroke-dasharray="4 3"></polyline>
+          <polyline
+            class="ec__line ec__line--main"
+            points="0,28 50,30 100,62 150,70 200,48 250,35 300,24"
+            fill="none"></polyline>
+          <circle class="ec__dot" cx="300" cy="24" r="4"></circle>
+        </svg>
+        <div class="ec__alert">
+          <span>12 members need immediate follow-up</span>
+          <button type="button" class="ec__view" data-ec-view>View</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="ec__invite">Invite-only beta. No public directory.</p>
+  </div>
+</DemoFrame>
+
+<script>
+  function wireEcclesio(root: HTMLElement) {
+    if (root.hasAttribute("data-ec-wired")) return;
+    root.setAttribute("data-ec-wired", "true");
+
+    root.querySelector("[data-ec-view]")?.addEventListener("click", () => {
+      const alert = root.querySelector(".ec__alert");
+      alert?.classList.toggle("is-highlight");
+    });
+  }
+
+  document.querySelectorAll("[data-ec]").forEach((el) => wireEcclesio(el as HTMLElement));
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll("[data-ec]").forEach((el) => wireEcclesio(el as HTMLElement));
+  });
+</script>
+
+<style>
+  .ec {
+    --ec-pink: #e91e8c;
+    --ec-teal: #2dd4bf;
+    --ec-glass: color-mix(in srgb, #1a1228 72%, transparent);
+    height: 100%;
+    padding: var(--s-3);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: var(--s-3);
+    background: radial-gradient(ellipse at 30% 0%, #2a1545 0%, #0d0b14 55%);
+    color: #f0eaf8;
+    font-size: 0.7rem;
+  }
+
+  .ec__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--s-3);
+  }
+
+  .ec__title {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: var(--fw-semibold);
+    color: var(--ec-pink);
+  }
+
+  .ec__sub {
+    margin: var(--s-1) 0 0;
+    color: #a89bc4;
+    font-size: 0.65rem;
+  }
+
+  .ec__campus {
+    padding: var(--s-1) var(--s-2);
+    border: var(--hairline) solid #4a3d66;
+    border-radius: 4px;
+    background: var(--ec-glass);
+    color: inherit;
+    font-size: 0.6rem;
+  }
+
+  .ec__grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: var(--s-3);
+    min-height: 0;
+  }
+
+  @media (max-width: 28rem) {
+    .ec__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ec__cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-2);
+  }
+
+  .ec__card {
+    padding: var(--s-2);
+    border-radius: 6px;
+    background: var(--ec-glass);
+    border: var(--hairline) solid color-mix(in srgb, #fff 8%, transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  .ec__card-label {
+    display: block;
+    font-family: var(--font-label);
+    font-size: 0.55rem;
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: #9b8fb8;
+  }
+
+  .ec__card strong {
+    display: block;
+    margin-block: var(--s-1);
+    font-size: 0.95rem;
+  }
+
+  .ec__up {
+    font-size: 0.55rem;
+    color: var(--ec-teal);
+  }
+
+  .ec__health {
+    padding: var(--s-2);
+    border-radius: 6px;
+    background: var(--ec-glass);
+    border: var(--hairline) solid color-mix(in srgb, #fff 8%, transparent);
+    backdrop-filter: blur(8px);
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: var(--s-2);
+    min-height: 0;
+  }
+
+  .ec__health-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-label);
+    font-size: 0.55rem;
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: #c4b5fd;
+  }
+
+  .ec__score {
+    font-size: 1.1rem;
+    color: var(--ec-pink);
+    font-weight: var(--fw-semibold);
+  }
+
+  .ec__tabs {
+    display: flex;
+    gap: var(--s-2);
+    font-family: var(--font-label);
+    font-size: 0.5rem;
+    letter-spacing: var(--ls-mono);
+    color: #7a6d94;
+  }
+
+  .ec__tabs .is-active {
+    color: var(--ec-pink);
+    border-block-end: 2px solid var(--ec-pink);
+    padding-block-end: 1px;
+  }
+
+  .ec__chart {
+    width: 100%;
+    height: 100%;
+    min-height: 4rem;
+  }
+
+  .ec__gridline {
+    stroke: #3d3250;
+    stroke-width: 0.5;
+  }
+
+  .ec__line--main {
+    stroke: var(--ec-pink);
+    stroke-width: 2;
+  }
+
+  .ec__line--bench {
+    stroke: #6eb5ff;
+    stroke-width: 1.5;
+    opacity: 0.7;
+  }
+
+  .ec__dot {
+    fill: var(--ec-pink);
+  }
+
+  .ec__alert {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-2);
+    border-radius: 4px;
+    background: color-mix(in srgb, #fbbf24 18%, transparent);
+    border: var(--hairline) solid color-mix(in srgb, #fbbf24 40%, transparent);
+    font-size: 0.6rem;
+    transition: background 0.2s;
+  }
+
+  .ec__alert.is-highlight {
+    background: color-mix(in srgb, #fbbf24 32%, transparent);
+  }
+
+  .ec__view {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #fbbf24;
+    font-family: var(--font-label);
+    font-size: 0.55rem;
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .ec__invite {
+    margin: 0;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: #8b7aa8;
+    text-align: center;
+  }
+</style>

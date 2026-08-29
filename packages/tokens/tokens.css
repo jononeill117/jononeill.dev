@@ -264,8 +264,10 @@
    ========================================================================= */
 
 :root {
-  --nav-height:      64px;
-  --nav-fg:          var(--fg);
+  --nav-height:        64px;
+  --nav-height-mobile: 5.5rem;
+  --nav-stack-height:  var(--nav-height);
+  --nav-fg:            var(--fg);
   /* Any section on an accent or inverted surface must set --nav-fg locally. */
 
   --eyebrow-size:    var(--t-mono-sm);
