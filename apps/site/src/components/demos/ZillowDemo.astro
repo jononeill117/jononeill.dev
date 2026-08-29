@@ -117,7 +117,7 @@ LIMIT 5;</pre>
       model: "$445,200",
       human: "$441,800",
       delta: "-0.8%",
-      deltaNote: "Model vs human: -$3,400 (-0.8%)",
+      deltaNote: "Model vs human: $3,400 (0.8%)",
     },
     {
       address: "901 Willow St",
@@ -138,13 +138,34 @@ LIMIT 5;</pre>
       model: "$389,100",
       human: "$385,200",
       delta: "-1.0%",
-      deltaNote: "Model vs human: -$3,900 (-1.0%)",
+      deltaNote: "Model vs human: $3,900 (1.0%)",
     },
   ];
 
-  const STEP_MS = 1000;
   const WALK_INDEX = 0;
   const EMPTY = "-";
+  const CALC = "…";
+
+  /** Full walkthrough target: ≥10s */
+  const PENDING_MS = 1100;
+  const MODEL_PROGRESS_MS = 1800;
+  const MODEL_RESOLVE_MS = 700;
+  const HUMAN_PROGRESS_MS = 1800;
+  const HUMAN_RESOLVE_MS = 700;
+  const DELTA_PROGRESS_MS = 1400;
+  const DELTA_RESOLVE_MS = 700;
+  const ACCEPT_MS = 900;
+  const CHIP_MS = 900;
+
+  /** Faster beats for try-mode row resolve */
+  const TRY_PENDING_MS = 400;
+  const TRY_MODEL_PROGRESS_MS = 900;
+  const TRY_MODEL_RESOLVE_MS = 350;
+  const TRY_HUMAN_PROGRESS_MS = 900;
+  const TRY_HUMAN_RESOLVE_MS = 350;
+  const TRY_DELTA_PROGRESS_MS = 700;
+  const TRY_DELTA_RESOLVE_MS = 350;
+  const TRY_ACCEPT_MS = 400;
 
   function sleep(ms: number) {
     return new Promise((r) => setTimeout(r, ms));
@@ -167,7 +188,15 @@ LIMIT 5;</pre>
     let token = 0;
     let tryMode = false;
 
-    const rowEls = (index: number) => {
+    type RowEls = {
+      btn: HTMLElement;
+      model: Element | null;
+      human: Element | null;
+      delta: Element | null;
+      status: Element | null;
+    };
+
+    const rowEls = (index: number): RowEls | null => {
       const btn = root.querySelector<HTMLElement>(`[data-zl-row='${index}']`);
       if (!btn) return null;
       return {
@@ -179,19 +208,30 @@ LIMIT 5;</pre>
       };
     };
 
+    const clearRowState = (els: RowEls) => {
+      els.btn.classList.remove("is-working", "is-live", "is-accepted", "is-active");
+      els.model?.classList.remove("is-working", "is-live");
+      els.human?.classList.remove("is-working", "is-live");
+      els.delta?.classList.remove("is-working", "is-live");
+    };
+
     const clearSelection = () => {
       rowBtns.forEach((r) => r.classList.remove("is-active"));
+    };
+
+    const resetRowValues = (els: RowEls) => {
+      if (els.model) els.model.textContent = EMPTY;
+      if (els.human) els.human.textContent = EMPTY;
+      if (els.delta) els.delta.textContent = EMPTY;
+      if (els.status) els.status.textContent = "Pending";
+      clearRowState(els);
     };
 
     const resetBoard = () => {
       ROWS.forEach((_, i) => {
         const els = rowEls(i);
         if (!els) return;
-        if (els.model) els.model.textContent = EMPTY;
-        if (els.human) els.human.textContent = EMPTY;
-        if (els.delta) els.delta.textContent = EMPTY;
-        if (els.status) els.status.textContent = "Pending";
-        els.btn.classList.remove("is-live", "is-accepted", "is-active");
+        resetRowValues(els);
       });
       if (chipEl) chipEl.hidden = true;
       if (stepEl) stepEl.textContent = "Ready";
@@ -207,9 +247,19 @@ LIMIT 5;</pre>
       const data = ROWS[index];
       const els = rowEls(index);
       if (!data || !els) return;
-      if (els.model) els.model.textContent = data.model;
-      if (els.human) els.human.textContent = data.human;
-      if (els.delta) els.delta.textContent = data.delta;
+      clearRowState(els);
+      if (els.model) {
+        els.model.textContent = data.model;
+        els.model.classList.add("is-live");
+      }
+      if (els.human) {
+        els.human.textContent = data.human;
+        els.human.classList.add("is-live");
+      }
+      if (els.delta) {
+        els.delta.textContent = data.delta;
+        els.delta.classList.add("is-live");
+      }
       if (els.status) els.status.textContent = "Accepted";
       els.btn.classList.add("is-live", "is-accepted");
     };
@@ -219,7 +269,10 @@ LIMIT 5;</pre>
       tryMode = true;
       if (chipEl) chipEl.hidden = false;
       if (stepEl) stepEl.textContent = "Accepted";
-      if (detail) detail.textContent = ROWS[WALK_INDEX]?.deltaNote ?? "";
+      if (detail) {
+        detail.textContent = "Delta within tolerance · Accepted";
+      }
+      clearSelection();
       rowEls(WALK_INDEX)?.btn.classList.add("is-active");
       if (tryBtn) tryBtn.hidden = false;
       if (replayBtn) replayBtn.hidden = false;
@@ -228,69 +281,181 @@ LIMIT 5;</pre>
       frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
     };
 
+    type ResolveTiming = {
+      pendingMs: number;
+      modelProgressMs: number;
+      modelResolveMs: number;
+      humanProgressMs: number;
+      humanResolveMs: number;
+      deltaProgressMs: number;
+      deltaResolveMs: number;
+      acceptMs: number;
+    };
+
+    const resolveRow = async (
+      index: number,
+      my: number,
+      timing: ResolveTiming,
+      opts: { announce: boolean; activate: boolean },
+    ): Promise<boolean> => {
+      const data = ROWS[index];
+      const els = rowEls(index);
+      if (!data || !els) return false;
+
+      resetRowValues(els);
+      if (opts.activate) {
+        clearSelection();
+        els.btn.classList.add("is-active");
+      }
+      els.btn.classList.add("is-working");
+      if (els.status) els.status.textContent = "Pending";
+      if (opts.announce) {
+        if (stepEl) stepEl.textContent = "Pending";
+        if (detail) detail.textContent = `${data.address} waiting on model`;
+      }
+      await sleep(timing.pendingMs);
+      if (my !== token) return false;
+
+      // Model estimating
+      els.model?.classList.add("is-working");
+      if (els.model) els.model.textContent = CALC;
+      if (els.status) els.status.textContent = "Model";
+      if (opts.announce) {
+        if (stepEl) stepEl.textContent = "Model estimating…";
+        if (detail) detail.textContent = "Model estimating…";
+      } else if (detail) {
+        detail.textContent = "Model estimating…";
+      }
+      await sleep(timing.modelProgressMs);
+      if (my !== token) return false;
+
+      els.model?.classList.remove("is-working");
+      els.model?.classList.add("is-live");
+      if (els.model) els.model.textContent = data.model;
+      if (opts.announce && stepEl) stepEl.textContent = "Model locked";
+      if (detail) detail.textContent = `Model estimate ${data.model}`;
+      await sleep(timing.modelResolveMs);
+      if (my !== token) return false;
+
+      // Human / analyst reviewing
+      els.human?.classList.add("is-working");
+      if (els.human) els.human.textContent = CALC;
+      if (els.status) els.status.textContent = "Human";
+      if (opts.announce) {
+        if (stepEl) stepEl.textContent = "Analyst reviewing…";
+      }
+      if (detail) detail.textContent = "Analyst reviewing…";
+      await sleep(timing.humanProgressMs);
+      if (my !== token) return false;
+
+      els.human?.classList.remove("is-working");
+      els.human?.classList.add("is-live");
+      if (els.human) els.human.textContent = data.human;
+      if (opts.announce && stepEl) stepEl.textContent = "Human locked";
+      if (detail) detail.textContent = `Human estimate ${data.human}`;
+      await sleep(timing.humanResolveMs);
+      if (my !== token) return false;
+
+      // Delta
+      els.delta?.classList.add("is-working");
+      if (els.delta) els.delta.textContent = CALC;
+      if (els.status) els.status.textContent = "Delta";
+      if (opts.announce) {
+        if (stepEl) stepEl.textContent = "Comparing…";
+      }
+      if (detail) detail.textContent = "Comparing model vs human…";
+      await sleep(timing.deltaProgressMs);
+      if (my !== token) return false;
+
+      els.delta?.classList.remove("is-working");
+      els.delta?.classList.add("is-live");
+      if (els.delta) els.delta.textContent = data.delta;
+      if (opts.announce && stepEl) stepEl.textContent = `Delta ${data.delta}`;
+      if (detail) detail.textContent = data.deltaNote;
+      await sleep(timing.deltaResolveMs);
+      if (my !== token) return false;
+
+      // Accepted
+      els.btn.classList.remove("is-working");
+      els.btn.classList.add("is-live", "is-accepted");
+      if (els.status) els.status.textContent = "Accepted";
+      if (opts.announce && stepEl) stepEl.textContent = "Accepted";
+      if (detail) detail.textContent = "Delta within tolerance · Accepted";
+      await sleep(timing.acceptMs);
+      return my === token;
+    };
+
+    const walkTiming: ResolveTiming = {
+      pendingMs: PENDING_MS,
+      modelProgressMs: MODEL_PROGRESS_MS,
+      modelResolveMs: MODEL_RESOLVE_MS,
+      humanProgressMs: HUMAN_PROGRESS_MS,
+      humanResolveMs: HUMAN_RESOLVE_MS,
+      deltaProgressMs: DELTA_PROGRESS_MS,
+      deltaResolveMs: DELTA_RESOLVE_MS,
+      acceptMs: ACCEPT_MS,
+    };
+
+    const tryTiming: ResolveTiming = {
+      pendingMs: TRY_PENDING_MS,
+      modelProgressMs: TRY_MODEL_PROGRESS_MS,
+      modelResolveMs: TRY_MODEL_RESOLVE_MS,
+      humanProgressMs: TRY_HUMAN_PROGRESS_MS,
+      humanResolveMs: TRY_HUMAN_RESOLVE_MS,
+      deltaProgressMs: TRY_DELTA_PROGRESS_MS,
+      deltaResolveMs: TRY_DELTA_RESOLVE_MS,
+      acceptMs: TRY_ACCEPT_MS,
+    };
+
     const run = async () => {
       const my = ++token;
       running = true;
+      tryMode = false;
       resetBoard();
 
-      const data = ROWS[WALK_INDEX];
-      const els = rowEls(WALK_INDEX);
-      if (!data || !els) return;
-
-      els.btn.classList.add("is-live", "is-active");
-      if (els.status) els.status.textContent = "Pending";
-      if (stepEl) stepEl.textContent = "Pending";
-      if (detail) detail.textContent = `${data.address} waiting on model`;
-      await sleep(STEP_MS);
-      if (my !== token) return;
-
-      if (els.model) els.model.textContent = data.model;
-      if (els.status) els.status.textContent = "Model";
-      if (stepEl) stepEl.textContent = "Model paints";
-      if (detail) detail.textContent = `Model estimate ${data.model}`;
-      await sleep(STEP_MS);
-      if (my !== token) return;
-
-      if (els.human) els.human.textContent = data.human;
-      if (els.status) els.status.textContent = "Human";
-      if (stepEl) stepEl.textContent = "Human paints";
-      if (detail) detail.textContent = `Human estimate ${data.human}`;
-      await sleep(STEP_MS);
-      if (my !== token) return;
-
-      if (els.delta) els.delta.textContent = data.delta;
-      if (els.status) els.status.textContent = "Delta";
-      if (stepEl) stepEl.textContent = "Delta 1.2%";
-      if (detail) detail.textContent = data.deltaNote;
-      await sleep(STEP_MS);
-      if (my !== token) return;
-
-      if (els.status) els.status.textContent = "Accepted";
-      els.btn.classList.add("is-accepted");
-      if (stepEl) stepEl.textContent = "Accepted";
-      if (detail) detail.textContent = "Status accepted";
-      await sleep(STEP_MS);
-      if (my !== token) return;
+      const ok = await resolveRow(WALK_INDEX, my, walkTiming, {
+        announce: true,
+        activate: true,
+      });
+      if (!ok || my !== token) return;
 
       if (chipEl) chipEl.hidden = false;
       if (stepEl) stepEl.textContent = "Throughput";
       if (detail) detail.textContent = "Throughput ~10 / day";
-      await sleep(STEP_MS);
+      await sleep(CHIP_MS);
       if (my !== token) return;
 
-      ROWS.forEach((_, i) => {
-        if (i === WALK_INDEX) return;
-        paintRowFinal(i);
-      });
-
       finish();
+    };
+
+    const runTryRow = async (index: number) => {
+      const my = ++token;
+      running = true;
+      tryBtn?.classList.remove("is-pulse");
+      if (tryBtn) tryBtn.hidden = true;
+      if (replayBtn) replayBtn.hidden = true;
+      if (hint) hint.hidden = true;
+
+      const ok = await resolveRow(index, my, tryTiming, {
+        announce: true,
+        activate: true,
+      });
+      if (!ok || my !== token) return;
+
+      running = false;
+      tryMode = true;
+      if (chipEl) chipEl.hidden = false;
+      if (tryBtn) tryBtn.hidden = false;
+      if (replayBtn) replayBtn.hidden = false;
+      if (hint) hint.hidden = false;
+      tryBtn?.classList.add("is-pulse");
     };
 
     frame.addEventListener("demo-play", (e) => {
       const eventDetail = (e as CustomEvent).detail as { reduced?: boolean } | undefined;
       if (eventDetail?.reduced) {
         resetBoard();
-        ROWS.forEach((_, i) => paintRowFinal(i));
+        paintRowFinal(WALK_INDEX);
         if (chipEl) chipEl.hidden = false;
         finish();
         return;
@@ -303,25 +468,18 @@ LIMIT 5;</pre>
       btn.addEventListener("click", () => {
         if (!tryMode || running) return;
         const index = Number(btn.getAttribute("data-zl-row") ?? "0");
-        const data = ROWS[index];
-        if (!data) return;
-        clearSelection();
-        btn.classList.add("is-active");
-        if (detail) detail.textContent = data.deltaNote;
-        if (stepEl) stepEl.textContent = "Selected";
-        tryBtn?.classList.remove("is-pulse");
+        if (!ROWS[index]) return;
+        void runTryRow(index);
       });
     });
 
     tryBtn?.addEventListener("click", () => {
       if (!tryMode || running) return;
       const active = root.querySelector(".zl__row.is-active");
-      if (!active) {
-        rowBtns[0]?.click();
-      } else {
-        const next = (Number(active.getAttribute("data-zl-row") ?? "0") + 1) % ROWS.length;
-        rowBtns[next]?.click();
-      }
+      const next = active
+        ? (Number(active.getAttribute("data-zl-row") ?? "0") + 1) % ROWS.length
+        : 0;
+      void runTryRow(next);
     });
     replayBtn?.addEventListener("click", () => {
       frame.dispatchEvent(new CustomEvent("demo-request-replay", { bubbles: true }));
@@ -432,8 +590,15 @@ LIMIT 5;</pre>
     transition: background 0.25s ease, box-shadow 0.25s ease;
   }
 
+  .zl__row.is-working {
+    box-shadow: inset 2px 0 0 color-mix(in srgb, var(--zl-copper) 70%, transparent);
+    background: color-mix(in srgb, var(--zl-copper) 8%, transparent);
+    animation: zl-working 1.4s ease-in-out infinite;
+  }
+
   .zl__row.is-live {
     box-shadow: inset 2px 0 0 var(--zl-copper);
+    animation: none;
   }
 
   .zl__row.is-active {
@@ -460,6 +625,18 @@ LIMIT 5;</pre>
   .zl__model,
   .zl__human {
     color: color-mix(in srgb, var(--zl-ink) 72%, transparent);
+  }
+
+  .zl__model.is-working,
+  .zl__human.is-working,
+  .zl__delta.is-working {
+    color: var(--zl-copper);
+  }
+
+  .zl__model.is-live,
+  .zl__human.is-live,
+  .zl__delta.is-live {
+    color: var(--zl-ink);
   }
 
   .zl__delta {
@@ -538,6 +715,16 @@ LIMIT 5;</pre>
     animation: zl-pulse 1.6s ease-out infinite;
   }
 
+  @keyframes zl-working {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.88;
+    }
+  }
+
   @keyframes zl-pulse {
     0%,
     100% {
@@ -564,6 +751,7 @@ LIMIT 5;</pre>
 
   @media (prefers-reduced-motion: reduce) {
     .zl__row,
+    .zl__row.is-working,
     .zl__btn--pulse.is-pulse {
       transition: none;
       animation: none;
