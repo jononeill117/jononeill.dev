@@ -85,9 +85,6 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
                   {entry.data.title}
                 </a>
               </h3>
-              <p class="role__demo-kicker">
-                Check out what I built at {entry.data.title}.
-              </p>
               <RoleDemo id={entry.id} />
               <ul class="role__bullets">
                 {entry.data.bullets.map((bullet) => (
@@ -253,22 +250,15 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
     letter-spacing: var(--ls-heading);
   }
 
+  .role__title + :global(.demo-frame) {
+    margin-block-start: var(--s-6);
+  }
+
   .role__company {
     color: var(--accent);
     text-decoration: underline;
     text-decoration-thickness: var(--hairline);
     text-underline-offset: 0.2em;
-  }
-
-  .role__demo-kicker {
-    margin: var(--s-6) 0 0;
-    max-width: var(--measure);
-    font-size: var(--t-proof, var(--t-body));
-    color: var(--fg-secondary);
-  }
-
-  .role__demo-kicker + :global(.demo-frame) {
-    margin-block-start: var(--s-4);
   }
 
   .role__bullets {
