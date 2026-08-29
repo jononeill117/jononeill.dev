@@ -31,7 +31,17 @@ export const SITE = {
   },
 
   linkedin: "https://www.linkedin.com/in/jon-oneill-020196",
+
+  phone: "928.499.8446",
+  phoneHref: "tel:+19284998446",
 } as const;
+
+export const NAV_LINKS = [
+  { label: "Work", href: "/#work" },
+  { label: "Experience", href: "/experience/" },
+  { label: "About", href: "/about/" },
+  { label: "Contact", href: "/contact/" },
+] as const;
 
 export function personSchema() {
   return {
@@ -40,6 +50,7 @@ export function personSchema() {
     name: SITE.name,
     url: `${SITE.origin}/`,
     email: SITE.email,
+    telephone: SITE.phoneHref.replace("tel:", ""),
     description: SITE.description,
     address: {
       "@type": "PostalAddress",

@@ -1,0 +1,107 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Band from "@jononeill/ui/Band.astro";
+import Eyebrow from "@jononeill/ui/Eyebrow.astro";
+import { roles, projects } from "../data/roles";
+---
+
+<BaseLayout
+  title="Experience. Jon ONeill."
+  description="Paid roles in reverse chronological order. Product, operations, and analytics."
+  canonicalPath="/experience/"
+>
+  <Band surface="canvas" as="header" class="page-hero">
+    <div class="page-inner">
+      <Eyebrow>Experience</Eyebrow>
+      <h1 class="page-title">Paid roles</h1>
+      <p class="page-lede">
+        Reverse chronological. Enterprise product work starts at Zillow in 2019.
+      </p>
+    </div>
+  </Band>
+
+  <Band surface="canvas" as="section" class="page-section">
+    <div class="page-inner">
+      <ol class="role-list">
+        {
+          roles.map((role) => (
+            <li class="role">
+              {role.dates && <Eyebrow>{role.dates}</Eyebrow>}
+              <h2 class="role__title">{role.title}</h2>
+              <p class="role__org">{role.org}</p>
+              <p class="role__body">{role.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Band>
+
+  <Band surface="inverted" as="section" class="page-section">
+    <div class="page-inner">
+      <Eyebrow>Projects</Eyebrow>
+      <h2 class="page-section-title">Not a job</h2>
+      <ul class="project-list" role="list">
+        {
+          projects.map((project) => (
+            <li class="project">
+              <Eyebrow>{project.kind}</Eyebrow>
+              <h3 class="project__title">
+                <a href={project.href}>{project.name}</a>
+              </h3>
+              <p class="page-body">{project.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Band>
+</BaseLayout>
+
+<style>
+  .role-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-16);
+  }
+
+  .role__title {
+    margin-block-start: var(--s-3);
+    font-size: var(--t-h3);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--ls-heading);
+  }
+
+  .role__org {
+    margin-block-start: var(--s-2);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  .role__body {
+    margin-block-start: var(--s-4);
+    max-width: var(--measure);
+    color: var(--fg-secondary);
+  }
+
+  .project-list {
+    list-style: none;
+    margin: var(--s-8) 0 0;
+    padding: 0;
+  }
+
+  .project__title {
+    margin-block-start: var(--s-3);
+    font-size: var(--t-h3);
+    line-height: var(--lh-heading);
+  }
+
+  .project__title a {
+    text-decoration: none;
+  }
+</style>
