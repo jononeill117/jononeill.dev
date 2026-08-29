@@ -26,12 +26,30 @@ import DemoFrame from "./DemoFrame.astro";
     </div>
 
     <div class="sp__feeds" data-sp-feeds aria-label="Vendor feeds">
-      <span class="sp__feed" data-sp-feed="mls">MLS</span>
-      <span class="sp__feed" data-sp-feed="tax">Tax</span>
-      <span class="sp__feed" data-sp-feed="title">Title</span>
-      <span class="sp__feed" data-sp-feed="avm">AVM</span>
-      <span class="sp__feed" data-sp-feed="insp">Inspection</span>
-      <span class="sp__feed" data-sp-feed="comp">Comps</span>
+      <div class="sp__feed" data-sp-feed="mls" role="listitem">
+        <span class="sp__feed-name">MLS</span>
+        <span class="sp__feed-detail" data-sp-feed-detail="mls">Idle</span>
+      </div>
+      <div class="sp__feed" data-sp-feed="tax" role="listitem">
+        <span class="sp__feed-name">Tax</span>
+        <span class="sp__feed-detail" data-sp-feed-detail="tax">Idle</span>
+      </div>
+      <div class="sp__feed" data-sp-feed="title" role="listitem">
+        <span class="sp__feed-name">Title</span>
+        <span class="sp__feed-detail" data-sp-feed-detail="title">Idle</span>
+      </div>
+      <div class="sp__feed" data-sp-feed="avm" role="listitem">
+        <span class="sp__feed-name">AVM</span>
+        <span class="sp__feed-detail" data-sp-feed-detail="avm">Idle</span>
+      </div>
+      <div class="sp__feed" data-sp-feed="insp" role="listitem">
+        <span class="sp__feed-name">Inspection</span>
+        <span class="sp__feed-detail" data-sp-feed-detail="insp">Idle</span>
+      </div>
+      <div class="sp__feed" data-sp-feed="comp" role="listitem">
+        <span class="sp__feed-name">Comps</span>
+        <span class="sp__feed-detail" data-sp-feed-detail="comp">Idle</span>
+      </div>
     </div>
 
     <div class="sp__record" data-sp-record>
@@ -45,6 +63,11 @@ import DemoFrame from "./DemoFrame.astro";
       <li class="sp__flag" data-sp-flag="avm">Valuation variance 6%</li>
     </ul>
 
+    <div class="sp__valuation-lock" data-sp-valuation-lock hidden>
+      <span class="sp__valuation-lock-label">Valuation</span>
+      <strong class="sp__valuation-lock-num" data-sp-valuation-lock-num>Pending</strong>
+    </div>
+
     <div class="sp__review" data-sp-review hidden>
       <span class="sp__review-label" data-sp-review-label>Analyst review</span>
       <button type="button" class="sp__accept" data-sp-accept disabled>Accept</button>
@@ -52,8 +75,8 @@ import DemoFrame from "./DemoFrame.astro";
 
     <div class="sp__metrics" data-sp-metrics hidden>
       <span class="sp__chip">$1B underwritten</span>
-      <span class="sp__chip">cycle time −85%</span>
-      <span class="sp__chip">22 → 6 integrations</span>
+      <span class="sp__chip">cycle time 85% faster</span>
+      <span class="sp__chip">22 to 6 integrations</span>
     </div>
 
     <div class="sp__try" data-sp-try hidden>
@@ -84,7 +107,7 @@ import DemoFrame from "./DemoFrame.astro";
         </tbody>
       </table>
       <div class="sp__try-bar">
-        <p class="sp__valuation">
+        <p class="sp__valuation" data-sp-try-val>
           Valuation <strong data-sp-val>$392,547</strong>
         </p>
         <button type="button" class="sp__recalc" data-sp-recalc>Recalc</button>
@@ -96,11 +119,65 @@ import DemoFrame from "./DemoFrame.astro";
 </DemoFrame>
 
 <script>
-  const FEEDS = ["mls", "tax", "title", "avm", "insp", "comp"] as const;
+  type SpFeedBeat = {
+    id: string;
+    progressDetail: string;
+    resolvedDetail: string;
+    progressMs: number;
+    resolveMs: number;
+  };
+
+  const FEEDS: SpFeedBeat[] = [
+    {
+      id: "mls",
+      progressDetail: "Pulling MLS…",
+      resolvedDetail: "Done",
+      progressMs: 900,
+      resolveMs: 380,
+    },
+    {
+      id: "tax",
+      progressDetail: "Pulling tax…",
+      resolvedDetail: "Done",
+      progressMs: 900,
+      resolveMs: 380,
+    },
+    {
+      id: "title",
+      progressDetail: "Checking title…",
+      resolvedDetail: "Done",
+      progressMs: 900,
+      resolveMs: 380,
+    },
+    {
+      id: "avm",
+      progressDetail: "Running AVM…",
+      resolvedDetail: "Done",
+      progressMs: 1000,
+      resolveMs: 400,
+    },
+    {
+      id: "insp",
+      progressDetail: "Loading inspection…",
+      resolvedDetail: "Done",
+      progressMs: 900,
+      resolveMs: 380,
+    },
+    {
+      id: "comp",
+      progressDetail: "Matching comps…",
+      resolvedDetail: "Done",
+      progressMs: 900,
+      resolveMs: 380,
+    },
+  ];
 
   const ROOF_VALUES = ["14 yr", "16 yr", "11 yr"] as const;
   const CONTINGENCY_VALUES = ["$9,400", "$11,200", "$7,800"] as const;
   const VALUATIONS = ["$392,547", "$384,200", "$401,100"] as const;
+
+  const RECORD_FACTS =
+    "1847 Longcityname Blvd, Unit 3B · 1,840 sq ft · SFR · Phoenix MSA";
 
   function sleep(ms: number) {
     return new Promise((r) => setTimeout(r, ms));
@@ -117,13 +194,17 @@ import DemoFrame from "./DemoFrame.astro";
     const fileId = root.querySelector<HTMLElement>("[data-sp-file-id]");
     const fileAddr = root.querySelector<HTMLElement>("[data-sp-file-addr]");
     const fileStatus = root.querySelector<HTMLElement>("[data-sp-file-status]");
+    const recordEl = root.querySelector<HTMLElement>("[data-sp-record]");
     const recordBody = root.querySelector<HTMLElement>("[data-sp-record-body]");
     const flags = root.querySelector<HTMLElement>("[data-sp-flags]");
+    const valuationLock = root.querySelector<HTMLElement>("[data-sp-valuation-lock]");
+    const valuationLockNum = root.querySelector<HTMLElement>("[data-sp-valuation-lock-num]");
     const review = root.querySelector<HTMLElement>("[data-sp-review]");
     const reviewLabel = root.querySelector<HTMLElement>("[data-sp-review-label]");
     const acceptBtn = root.querySelector<HTMLButtonElement>("[data-sp-accept]");
     const metrics = root.querySelector<HTMLElement>("[data-sp-metrics]");
     const tryPanel = root.querySelector<HTMLElement>("[data-sp-try]");
+    const tryVal = root.querySelector<HTMLElement>("[data-sp-try-val]");
     const recalcBtn = root.querySelector<HTMLButtonElement>("[data-sp-recalc]");
     const replayBtn = root.querySelector<HTMLButtonElement>("[data-sp-replay]");
     const valEl = root.querySelector<HTMLElement>("[data-sp-val]");
@@ -136,38 +217,65 @@ import DemoFrame from "./DemoFrame.astro";
     let contingencyIdx = 0;
     let valuationIdx = 0;
     let dirty = false;
+    let recalcing = false;
 
     const setStep = (text: string) => {
       if (stepEl) stepEl.textContent = text;
     };
 
+    const clearFeedState = (id: string) => {
+      const el = root.querySelector(`[data-sp-feed='${id}']`);
+      el?.classList.remove("is-working", "is-done", "is-live");
+    };
+
+    const setFeedWorking = (id: string, detail: string) => {
+      clearFeedState(id);
+      root.querySelector(`[data-sp-feed='${id}']`)?.classList.add("is-working");
+      const d = root.querySelector(`[data-sp-feed-detail='${id}']`);
+      if (d) d.textContent = detail;
+    };
+
+    const setFeedDone = (id: string, detail: string) => {
+      clearFeedState(id);
+      root.querySelector(`[data-sp-feed='${id}']`)?.classList.add("is-done");
+      const d = root.querySelector(`[data-sp-feed-detail='${id}']`);
+      if (d) d.textContent = detail;
+    };
+
     const clearFeeds = () => {
-      FEEDS.forEach((id) => {
-        root.querySelector(`[data-sp-feed='${id}']`)?.classList.remove("is-live", "is-done");
+      FEEDS.forEach((f) => {
+        clearFeedState(f.id);
+        const d = root.querySelector(`[data-sp-feed-detail='${f.id}']`);
+        if (d) d.textContent = "Idle";
       });
     };
 
     const clearFlags = () => {
-      flags?.querySelectorAll(".sp__flag").forEach((el) => el.classList.remove("is-live"));
+      flags?.querySelectorAll(".sp__flag").forEach((el) => {
+        el.classList.remove("is-working", "is-live");
+      });
       if (flags) flags.hidden = true;
     };
 
     const resetBoard = () => {
       setStep("Queue idle");
       if (evalEl) evalEl.textContent = "Eval -";
+      fileEl?.classList.remove("is-live", "is-accepted", "is-working");
       fileEl?.classList.add("is-empty");
-      fileEl?.classList.remove("is-live", "is-accepted");
       if (fileId) fileId.textContent = "Waiting for file";
       if (fileAddr) fileAddr.textContent = "";
       if (fileStatus) fileStatus.textContent = "";
       clearFeeds();
+      recordEl?.classList.remove("is-working", "is-live");
       if (recordBody) {
         recordBody.textContent = "Feeds unresolved. No consolidated file yet.";
       }
-      root.querySelector("[data-sp-record]")?.classList.remove("is-live");
       clearFlags();
+      if (valuationLock) valuationLock.hidden = true;
+      valuationLock?.classList.remove("is-working", "is-live");
+      if (valuationLockNum) valuationLockNum.textContent = "Pending";
       if (review) review.hidden = true;
-      review?.classList.remove("is-live");
+      review?.classList.remove("is-live", "is-working");
       if (reviewLabel) reviewLabel.textContent = "Analyst review";
       if (acceptBtn) {
         acceptBtn.disabled = true;
@@ -176,8 +284,10 @@ import DemoFrame from "./DemoFrame.astro";
       }
       if (metrics) metrics.hidden = true;
       if (tryPanel) tryPanel.hidden = true;
+      tryVal?.classList.remove("is-working", "is-live");
       roofBtn?.classList.remove("is-pulse");
       dirty = false;
+      recalcing = false;
     };
 
     const showTry = () => {
@@ -187,10 +297,13 @@ import DemoFrame from "./DemoFrame.astro";
       if (roofBtn) roofBtn.textContent = ROOF_VALUES[0];
       if (contingencyBtn) contingencyBtn.textContent = CONTINGENCY_VALUES[0];
       if (valEl) valEl.textContent = VALUATIONS[0];
+      tryVal?.classList.remove("is-working");
+      tryVal?.classList.add("is-live");
       roofIdx = 0;
       contingencyIdx = 0;
       valuationIdx = 0;
       dirty = false;
+      recalcing = false;
     };
 
     const finish = () => {
@@ -201,26 +314,29 @@ import DemoFrame from "./DemoFrame.astro";
       frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
     };
 
-    const snapFinal = () => {
-      resetBoard();
+    const paintFinal = () => {
       setStep("Decision recorded");
       if (evalEl) evalEl.textContent = "#4418";
-      fileEl?.classList.remove("is-empty");
+      fileEl?.classList.remove("is-empty", "is-working");
       fileEl?.classList.add("is-live", "is-accepted");
       if (fileId) fileId.textContent = "#4418";
       if (fileAddr) fileAddr.textContent = "1847 Longcityname Blvd, Unit 3B";
       if (fileStatus) fileStatus.textContent = "Accepted";
-      FEEDS.forEach((id) => {
-        root.querySelector(`[data-sp-feed='${id}']`)?.classList.add("is-done");
-      });
-      root.querySelector("[data-sp-record]")?.classList.add("is-live");
-      if (recordBody) {
-        recordBody.textContent =
-          "1847 Longcityname Blvd, Unit 3B · 1,840 sq ft · SFR · Phoenix MSA";
-      }
+      FEEDS.forEach((f) => setFeedDone(f.id, f.resolvedDetail));
+      recordEl?.classList.remove("is-working");
+      recordEl?.classList.add("is-live");
+      if (recordBody) recordBody.textContent = RECORD_FACTS;
       if (flags) flags.hidden = false;
-      flags?.querySelectorAll(".sp__flag").forEach((el) => el.classList.add("is-live"));
+      flags?.querySelectorAll(".sp__flag").forEach((el) => {
+        el.classList.remove("is-working");
+        el.classList.add("is-live");
+      });
+      if (valuationLock) valuationLock.hidden = false;
+      valuationLock?.classList.remove("is-working");
+      valuationLock?.classList.add("is-live");
+      if (valuationLockNum) valuationLockNum.textContent = VALUATIONS[0]!;
       if (review) review.hidden = false;
+      review?.classList.remove("is-working");
       review?.classList.add("is-live");
       if (reviewLabel) reviewLabel.textContent = "Analyst accepted";
       if (acceptBtn) {
@@ -228,6 +344,11 @@ import DemoFrame from "./DemoFrame.astro";
         acceptBtn.classList.add("is-done");
         acceptBtn.textContent = "Accepted";
       }
+    };
+
+    const snapFinal = () => {
+      resetBoard();
+      paintFinal();
       finish();
     };
 
@@ -237,61 +358,99 @@ import DemoFrame from "./DemoFrame.astro";
       resetBoard();
 
       // 1. File lands in queue
-      setStep("File in queue");
-      if (evalEl) evalEl.textContent = "#4418";
+      setStep("File entering queue…");
       fileEl?.classList.remove("is-empty");
-      fileEl?.classList.add("is-live");
+      fileEl?.classList.add("is-working");
+      if (evalEl) evalEl.textContent = "#4418";
       if (fileId) fileId.textContent = "#4418";
       if (fileAddr) fileAddr.textContent = "1847 Longcityname Blvd, Unit 3B";
-      if (fileStatus) fileStatus.textContent = "New";
-      await sleep(2200);
+      if (fileStatus) fileStatus.textContent = "Inbound";
+      await sleep(1600);
       if (my !== token) return;
 
-      // 2. Six vendor feeds resolve
+      fileEl?.classList.remove("is-working");
+      fileEl?.classList.add("is-live");
+      if (fileStatus) fileStatus.textContent = "New";
+      setStep("File in queue");
+      await sleep(900);
+      if (my !== token) return;
+
+      // 2. Six vendor feeds: working → done, one by one
       setStep("Resolving vendor feeds");
       if (fileStatus) fileStatus.textContent = "Pulling data";
-      for (const id of FEEDS) {
+      for (const beat of FEEDS) {
         if (my !== token) return;
-        const el = root.querySelector(`[data-sp-feed='${id}']`);
-        el?.classList.add("is-live");
-        await sleep(280);
-        el?.classList.remove("is-live");
-        el?.classList.add("is-done");
+        setStep(beat.progressDetail);
+        setFeedWorking(beat.id, beat.progressDetail);
+        await sleep(beat.progressMs);
+        if (my !== token) return;
+        setFeedDone(beat.id, beat.resolvedDetail);
+        await sleep(beat.resolveMs);
+        if (my !== token) return;
       }
-      await sleep(400);
+      setStep("Vendor feeds resolved");
+      await sleep(500);
       if (my !== token) return;
 
-      // 3. Consolidate to one property record
-      setStep("Consolidating record");
+      // 3. Consolidate property record with visible facts
+      setStep("Consolidating record…");
       if (fileStatus) fileStatus.textContent = "Consolidating";
-      root.querySelector("[data-sp-record]")?.classList.add("is-live");
-      if (recordBody) {
-        recordBody.textContent =
-          "1847 Longcityname Blvd, Unit 3B · 1,840 sq ft · SFR · Phoenix MSA";
-      }
-      await sleep(2200);
+      recordEl?.classList.add("is-working");
+      if (recordBody) recordBody.textContent = "Merging feed facts…";
+      await sleep(1400);
       if (my !== token) return;
 
-      // 4. Automation flags
-      setStep("Automation flags");
+      recordEl?.classList.remove("is-working");
+      recordEl?.classList.add("is-live");
+      if (recordBody) recordBody.textContent = RECORD_FACTS;
+      setStep("Property record locked");
+      await sleep(1100);
+      if (my !== token) return;
+
+      // 4. Automation flags appear one by one
+      setStep("Raising automation flags…");
       if (fileStatus) fileStatus.textContent = "Flagged";
       if (flags) flags.hidden = false;
       const flagIds = ["roof", "title", "avm"] as const;
       for (const id of flagIds) {
         if (my !== token) return;
-        root.querySelector(`[data-sp-flag='${id}']`)?.classList.add("is-live");
-        await sleep(520);
+        const el = root.querySelector(`[data-sp-flag='${id}']`);
+        el?.classList.add("is-working");
+        await sleep(420);
+        if (my !== token) return;
+        el?.classList.remove("is-working");
+        el?.classList.add("is-live");
+        await sleep(380);
+        if (my !== token) return;
       }
+      setStep("Automation flags ready");
       await sleep(600);
       if (my !== token) return;
 
-      // 5. Analyst review → Accept
+      // 5. Valuation calculates, then locks
+      setStep("Calculating valuation…");
+      if (fileStatus) fileStatus.textContent = "Pricing";
+      if (valuationLock) valuationLock.hidden = false;
+      valuationLock?.classList.add("is-working");
+      if (valuationLockNum) valuationLockNum.textContent = "…";
+      await sleep(1600);
+      if (my !== token) return;
+
+      valuationLock?.classList.remove("is-working");
+      valuationLock?.classList.add("is-live");
+      if (valuationLockNum) valuationLockNum.textContent = VALUATIONS[0]!;
+      setStep("Valuation locked");
+      await sleep(900);
+      if (my !== token) return;
+
+      // 6. Accept / try panel
       setStep("Analyst review");
       if (review) review.hidden = false;
       review?.classList.add("is-live");
       if (acceptBtn) acceptBtn.disabled = false;
-      await sleep(1400);
+      await sleep(1200);
       if (my !== token) return;
+
       if (acceptBtn) {
         acceptBtn.classList.add("is-done");
         acceptBtn.textContent = "Accepted";
@@ -299,11 +458,10 @@ import DemoFrame from "./DemoFrame.astro";
       if (reviewLabel) reviewLabel.textContent = "Analyst accepted";
       fileEl?.classList.add("is-accepted");
       if (fileStatus) fileStatus.textContent = "Accepted";
-      await sleep(1200);
+      setStep("Decision recorded");
+      await sleep(1000);
       if (my !== token) return;
 
-      // 6. Metrics + try
-      setStep("Decision recorded");
       finish();
     };
 
@@ -320,7 +478,7 @@ import DemoFrame from "./DemoFrame.astro";
 
     root.querySelectorAll<HTMLButtonElement>("[data-sp-nudge]").forEach((btn) => {
       btn.addEventListener("click", () => {
-        if (running) return;
+        if (running || recalcing) return;
         const key = btn.getAttribute("data-sp-nudge");
         if (key === "roof") {
           roofIdx = (roofIdx + 1) % ROOF_VALUES.length;
@@ -336,19 +494,34 @@ import DemoFrame from "./DemoFrame.astro";
       });
     });
 
-    recalcBtn?.addEventListener("click", () => {
-      if (running || !dirty) return;
-      valuationIdx = (valuationIdx + 1) % VALUATIONS.length;
-      if (valEl) valEl.textContent = VALUATIONS[valuationIdx] ?? VALUATIONS[0]!;
-      valEl?.classList.add("is-nudge");
-      setTimeout(() => valEl?.classList.remove("is-nudge"), 320);
+    recalcBtn?.addEventListener("click", async () => {
+      if (running || !dirty || recalcing) return;
+      recalcing = true;
       dirty = false;
+      setStep("Recalculating valuation…");
+      tryVal?.classList.remove("is-live");
+      tryVal?.classList.add("is-working");
+      if (valEl) valEl.textContent = "…";
+      valuationLock?.classList.remove("is-live");
+      valuationLock?.classList.add("is-working");
+      if (valuationLockNum) valuationLockNum.textContent = "…";
       recalcBtn.classList.add("is-nudge");
+      await sleep(1100);
+      valuationIdx = (valuationIdx + 1) % VALUATIONS.length;
+      const next = VALUATIONS[valuationIdx] ?? VALUATIONS[0]!;
+      if (valEl) valEl.textContent = next;
+      if (valuationLockNum) valuationLockNum.textContent = next;
+      tryVal?.classList.remove("is-working");
+      tryVal?.classList.add("is-live");
+      valuationLock?.classList.remove("is-working");
+      valuationLock?.classList.add("is-live");
+      setStep("Valuation updated");
       setTimeout(() => recalcBtn.classList.remove("is-nudge"), 280);
+      recalcing = false;
     });
 
     replayBtn?.addEventListener("click", () => {
-      if (running) return;
+      if (running || recalcing) return;
       frame.dispatchEvent(new CustomEvent("demo-request-replay", { bubbles: true }));
     });
   }
@@ -371,7 +544,7 @@ import DemoFrame from "./DemoFrame.astro";
     height: 100%;
     padding: var(--s-4);
     display: grid;
-    grid-template-rows: auto auto auto auto auto auto 1fr;
+    grid-template-rows: auto auto auto auto auto auto auto auto 1fr;
     gap: var(--s-3);
     color: var(--sp-ink);
     background:
@@ -424,16 +597,26 @@ import DemoFrame from "./DemoFrame.astro";
     background: color-mix(in srgb, var(--sp-panel) 70%, transparent);
     transition:
       border-color var(--dur-base, 240ms) var(--ease-out, ease-out),
-      opacity var(--dur-base, 240ms) var(--ease-out, ease-out);
+      opacity var(--dur-base, 240ms) var(--ease-out, ease-out),
+      box-shadow var(--dur-base, 240ms) var(--ease-out, ease-out);
   }
 
   .sp__file.is-empty {
     opacity: 0.45;
   }
 
-  .sp__file.is-live {
+  .sp__file.is-working {
+    opacity: 1;
     border-color: color-mix(in srgb, var(--sp-copper) 55%, var(--sp-line));
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 28%, transparent);
+    animation: sp-working 1.4s ease-in-out infinite;
+  }
+
+  .sp__file.is-live {
+    opacity: 1;
+    border-color: color-mix(in srgb, var(--sp-copper) 55%, var(--sp-line));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 28%, transparent);
+    animation: none;
   }
 
   .sp__file.is-accepted {
@@ -468,6 +651,8 @@ import DemoFrame from "./DemoFrame.astro";
   }
 
   .sp__feed {
+    display: grid;
+    gap: var(--s-1);
     padding: var(--s-2);
     border: var(--hairline) solid var(--sp-line);
     text-align: center;
@@ -480,30 +665,61 @@ import DemoFrame from "./DemoFrame.astro";
     transition:
       opacity var(--dur-quick, 160ms) ease,
       border-color var(--dur-quick, 160ms) ease,
-      color var(--dur-quick, 160ms) ease;
+      color var(--dur-quick, 160ms) ease,
+      box-shadow var(--dur-quick, 160ms) ease;
   }
 
-  .sp__feed.is-live {
+  .sp__feed-name {
+    color: inherit;
+  }
+
+  .sp__feed-detail {
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: none;
+    color: inherit;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sp__feed.is-working {
     opacity: 1;
     color: var(--sp-copper);
     border-color: var(--sp-copper);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 30%, transparent);
+    animation: sp-working 1.4s ease-in-out infinite;
   }
 
   .sp__feed.is-done {
     opacity: 1;
     color: var(--sp-ink);
     border-color: color-mix(in srgb, var(--sp-copper) 40%, var(--sp-line));
+    animation: none;
+  }
+
+  .sp__feed.is-done .sp__feed-detail {
+    color: var(--sp-copper);
   }
 
   .sp__record {
     padding: var(--s-3);
     border-block-start: var(--hairline) solid var(--sp-line);
     opacity: 0.5;
-    transition: opacity var(--dur-base, 240ms) var(--ease-out, ease-out);
+    transition:
+      opacity var(--dur-base, 240ms) var(--ease-out, ease-out),
+      box-shadow var(--dur-base, 240ms) var(--ease-out, ease-out);
+  }
+
+  .sp__record.is-working {
+    opacity: 1;
+    animation: sp-working 1.4s ease-in-out infinite;
   }
 
   .sp__record.is-live {
     opacity: 1;
+    animation: none;
   }
 
   .sp__record-title {
@@ -520,6 +736,10 @@ import DemoFrame from "./DemoFrame.astro";
     font-size: var(--t-body-sm);
     color: var(--sp-secondary);
     line-height: 1.4;
+  }
+
+  .sp__record.is-working .sp__record-body {
+    color: var(--sp-copper);
   }
 
   .sp__record.is-live .sp__record-body {
@@ -550,10 +770,60 @@ import DemoFrame from "./DemoFrame.astro";
       color var(--dur-quick, 160ms) ease;
   }
 
+  .sp__flag.is-working {
+    opacity: 1;
+    color: var(--sp-copper);
+    border-color: color-mix(in srgb, var(--sp-copper) 50%, var(--sp-line));
+    animation: sp-working 1.4s ease-in-out infinite;
+  }
+
   .sp__flag.is-live {
     opacity: 1;
     color: var(--sp-copper);
     border-color: color-mix(in srgb, var(--sp-copper) 50%, var(--sp-line));
+    animation: none;
+  }
+
+  .sp__valuation-lock {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding: var(--s-3);
+    border: var(--hairline) solid var(--sp-line);
+    transition:
+      border-color var(--dur-base, 240ms) ease,
+      box-shadow var(--dur-base, 240ms) ease;
+  }
+
+  .sp__valuation-lock.is-working {
+    border-color: color-mix(in srgb, var(--sp-copper) 55%, var(--sp-line));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 28%, transparent);
+    animation: sp-working 1.4s ease-in-out infinite;
+  }
+
+  .sp__valuation-lock.is-live {
+    border-color: var(--sp-copper);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 40%, transparent);
+    animation: none;
+  }
+
+  .sp__valuation-lock-label {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--sp-muted);
+  }
+
+  .sp__valuation-lock-num {
+    font-size: var(--t-proof, var(--t-body));
+    color: var(--sp-ink);
+  }
+
+  .sp__valuation-lock.is-working .sp__valuation-lock-num {
+    color: var(--sp-copper);
   }
 
   .sp__review {
@@ -658,8 +928,7 @@ import DemoFrame from "./DemoFrame.astro";
   }
 
   .sp__cell.is-nudge,
-  .sp__recalc.is-nudge,
-  .sp__valuation strong.is-nudge {
+  .sp__recalc.is-nudge {
     color: var(--sp-ink);
   }
 
@@ -680,6 +949,15 @@ import DemoFrame from "./DemoFrame.astro";
   .sp__valuation strong {
     color: var(--sp-ink);
     font-size: var(--t-proof, var(--t-body));
+  }
+
+  .sp__valuation.is-working strong {
+    color: var(--sp-copper);
+    animation: sp-working 1.4s ease-in-out infinite;
+  }
+
+  .sp__valuation.is-live strong {
+    color: var(--sp-copper);
   }
 
   .sp__recalc,
@@ -706,6 +984,18 @@ import DemoFrame from "./DemoFrame.astro";
     font-size: var(--t-mono-xs);
     letter-spacing: var(--ls-mono);
     color: var(--sp-muted);
+  }
+
+  @keyframes sp-working {
+    0%,
+    100% {
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 20%, transparent);
+      opacity: 1;
+    }
+    50% {
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 55%, transparent);
+      opacity: 0.88;
+    }
   }
 
   @keyframes sp-control-pulse {
@@ -736,7 +1026,14 @@ import DemoFrame from "./DemoFrame.astro";
     .sp__feed,
     .sp__record,
     .sp__flag,
+    .sp__valuation-lock,
     .sp__review,
+    .sp__file.is-working,
+    .sp__feed.is-working,
+    .sp__record.is-working,
+    .sp__flag.is-working,
+    .sp__valuation-lock.is-working,
+    .sp__valuation.is-working strong,
     .sp__cell--pulse.is-pulse {
       transition: none;
       animation: none;
