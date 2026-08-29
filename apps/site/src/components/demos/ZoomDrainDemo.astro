@@ -42,7 +42,7 @@ import DemoFrame from "./DemoFrame.astro";
       </div>
     </div>
 
-    <div class="zd__stats">
+    <div class="zd__stats" data-zd-stats>
       <div class="zd__stat">
         <span class="zd__stat-label">Booking</span>
         <span class="zd__stat-val" data-zd-stat="booking">baseline</span>
@@ -68,45 +68,72 @@ import DemoFrame from "./DemoFrame.astro";
 </DemoFrame>
 
 <script>
-  type ZdStep = {
+  type ZdBeat = {
     id: string;
-    label: string;
-    detail: string;
+    progressLabel: string;
+    resolvedLabel: string;
+    progressDetail: string;
+    resolvedDetail: string;
     fuse: number;
+    progressMs: number;
+    resolveMs: number;
   };
 
-  const STEPS: ZdStep[] = [
+  const BEATS: ZdBeat[] = [
     {
       id: "portal",
-      label: "New work order",
-      detail: "WO-1842 · 918 Maple Ave · Priority",
+      progressLabel: "Receiving work order…",
+      resolvedLabel: "Work order in",
+      progressDetail: "Pulling WO-1842…",
+      resolvedDetail: "WO-1842 · 918 Maple Ave · sewer lateral",
       fuse: 0.18,
+      progressMs: 1600,
+      resolveMs: 700,
     },
     {
       id: "gmail",
-      label: "Inbox parsed",
-      detail: "Subject: New vendor work order received",
+      progressLabel: "Parsing intake…",
+      resolvedLabel: "Inbox parsed",
+      progressDetail: "Reading vendor email…",
+      resolvedDetail: "Subject: New vendor work order received",
       fuse: 0.36,
+      progressMs: 1600,
+      resolveMs: 700,
     },
     {
       id: "gary",
-      label: "Gary reviews",
-      detail: "Accept · customer, address, job type",
+      progressLabel: "Gary is reviewing…",
+      resolvedLabel: "Gary accepted",
+      progressDetail: "Checking customer, address, job type…",
+      resolvedDetail: "Accept · customer, address, job type",
       fuse: 0.54,
+      progressMs: 1800,
+      resolveMs: 800,
     },
     {
       id: "steve",
-      label: "Office board",
-      detail: "Steve queues dispatch · ETA window open",
+      progressLabel: "Steve is queuing…",
+      resolvedLabel: "On the board",
+      progressDetail: "Opening dispatch window…",
+      resolvedDetail: "Dispatch board · ETA window open",
       fuse: 0.72,
+      progressMs: 1600,
+      resolveMs: 700,
     },
     {
       id: "mike",
-      label: "Tech en route",
-      detail: "Mike assigned · ETA 42 min · Accept",
+      progressLabel: "Assigning tech…",
+      resolvedLabel: "Tech en route",
+      progressDetail: "Matching crew and ETA…",
+      resolvedDetail: "Mike · ETA 42 min · en route",
       fuse: 1,
+      progressMs: 1600,
+      resolveMs: 700,
     },
   ];
+
+  const STAT_PROGRESS_MS = 1200;
+  const STAT_RESOLVE_MS = 800;
 
   function sleep(ms: number) {
     return new Promise((r) => setTimeout(r, ms));
@@ -119,6 +146,7 @@ import DemoFrame from "./DemoFrame.astro";
 
     const stepEl = root.querySelector<HTMLElement>("[data-zd-step]");
     const fuse = root.querySelector<SVGPathElement>("[data-zd-fuse]");
+    const statsEl = root.querySelector<HTMLElement>("[data-zd-stats]");
     const tryBtn = root.querySelector<HTMLButtonElement>("[data-zd-try]");
     const replayBtn = root.querySelector<HTMLButtonElement>("[data-zd-replay]");
     const hint = root.querySelector<HTMLElement>("[data-zd-hint]");
@@ -131,13 +159,38 @@ import DemoFrame from "./DemoFrame.astro";
     let running = false;
     let token = 0;
 
+    const clearNodeState = (id: string) => {
+      const node = root.querySelector(`[data-zd-node='${id}']`);
+      node?.classList.remove("is-working", "is-live");
+    };
+
+    const setWorking = (id: string, detail: string) => {
+      clearNodeState(id);
+      const node = root.querySelector(`[data-zd-node='${id}']`);
+      node?.classList.add("is-working");
+      const d = root.querySelector(`[data-zd-detail='${id}']`);
+      if (d) d.textContent = detail;
+    };
+
+    const setLive = (id: string, detail: string) => {
+      clearNodeState(id);
+      const node = root.querySelector(`[data-zd-node='${id}']`);
+      node?.classList.add("is-live");
+      const d = root.querySelector(`[data-zd-detail='${id}']`);
+      if (d) d.textContent = detail;
+    };
+
     const resetBoard = () => {
-      STEPS.forEach((s) => {
-        root.querySelector(`[data-zd-node='${s.id}']`)?.classList.remove("is-live");
+      BEATS.forEach((s) => {
+        clearNodeState(s.id);
         const d = root.querySelector(`[data-zd-detail='${s.id}']`);
         if (d) d.textContent = "Waiting";
       });
-      if (fuse) fuse.style.strokeDashoffset = "1";
+      if (fuse) {
+        fuse.style.transitionDuration = "0ms";
+        fuse.style.strokeDashoffset = "1";
+      }
+      statsEl?.classList.remove("is-working", "is-live");
       if (stepEl) stepEl.textContent = "Ready";
       if (stats.booking) stats.booking.textContent = "baseline";
       if (stats.speed) stats.speed.textContent = "baseline";
@@ -148,11 +201,26 @@ import DemoFrame from "./DemoFrame.astro";
       tryBtn?.classList.remove("is-pulse");
     };
 
+    const paintFinal = () => {
+      BEATS.forEach((s) => setLive(s.id, s.resolvedDetail));
+      if (fuse) {
+        fuse.style.transitionDuration = "0ms";
+        fuse.style.strokeDashoffset = "0";
+      }
+      statsEl?.classList.remove("is-working");
+      statsEl?.classList.add("is-live");
+      if (stats.booking) stats.booking.textContent = "-3 hr";
+      if (stats.speed) stats.speed.textContent = "+300%";
+      if (stats.revenue) stats.revenue.textContent = "+10-15%";
+    };
+
     const finish = () => {
       running = false;
       if (stats.booking) stats.booking.textContent = "-3 hr";
       if (stats.speed) stats.speed.textContent = "+300%";
       if (stats.revenue) stats.revenue.textContent = "+10-15%";
+      statsEl?.classList.remove("is-working");
+      statsEl?.classList.add("is-live");
       if (stepEl) stepEl.textContent = "Appointment confirmed";
       if (tryBtn) tryBtn.hidden = false;
       if (replayBtn) replayBtn.hidden = false;
@@ -169,17 +237,41 @@ import DemoFrame from "./DemoFrame.astro";
       if (replayBtn) replayBtn.hidden = true;
       if (hint) hint.hidden = true;
 
-      for (const step of STEPS) {
+      for (const beat of BEATS) {
         if (my !== token) return;
-        if (fuse) fuse.style.strokeDashoffset = String(1 - step.fuse);
-        root.querySelector(`[data-zd-node='${step.id}']`)?.classList.add("is-live");
-        const d = root.querySelector(`[data-zd-detail='${step.id}']`);
-        if (d) d.textContent = step.detail;
-        if (stepEl) stepEl.textContent = step.label;
-        await sleep(1400);
+
+        if (fuse) {
+          fuse.style.transitionDuration = `${beat.progressMs}ms`;
+          fuse.style.strokeDashoffset = String(1 - beat.fuse);
+        }
+        if (stepEl) stepEl.textContent = beat.progressLabel;
+        setWorking(beat.id, beat.progressDetail);
+        await sleep(beat.progressMs);
+        if (my !== token) return;
+
+        setLive(beat.id, beat.resolvedDetail);
+        if (stepEl) stepEl.textContent = beat.resolvedLabel;
+        await sleep(beat.resolveMs);
+        if (my !== token) return;
       }
 
+      if (stepEl) stepEl.textContent = "Calculating outcomes…";
+      statsEl?.classList.add("is-working");
+      if (stats.booking) stats.booking.textContent = "…";
+      if (stats.speed) stats.speed.textContent = "…";
+      if (stats.revenue) stats.revenue.textContent = "…";
+      await sleep(STAT_PROGRESS_MS);
       if (my !== token) return;
+
+      statsEl?.classList.remove("is-working");
+      statsEl?.classList.add("is-live");
+      if (stats.booking) stats.booking.textContent = "-3 hr";
+      if (stats.speed) stats.speed.textContent = "+300%";
+      if (stats.revenue) stats.revenue.textContent = "+10-15%";
+      if (stepEl) stepEl.textContent = "Outcomes locked";
+      await sleep(STAT_RESOLVE_MS);
+      if (my !== token) return;
+
       finish();
     };
 
@@ -187,12 +279,7 @@ import DemoFrame from "./DemoFrame.astro";
       const detail = (e as CustomEvent).detail as { reduced?: boolean } | undefined;
       if (detail?.reduced) {
         resetBoard();
-        STEPS.forEach((s) => {
-          root.querySelector(`[data-zd-node='${s.id}']`)?.classList.add("is-live");
-          const d = root.querySelector(`[data-zd-detail='${s.id}']`);
-          if (d) d.textContent = s.detail;
-        });
-        if (fuse) fuse.style.strokeDashoffset = "0";
+        paintFinal();
         finish();
         return;
       }
@@ -284,9 +371,16 @@ import DemoFrame from "./DemoFrame.astro";
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
+  .zd__node.is-working {
+    border-color: color-mix(in srgb, var(--zd-copper) 70%, var(--hairline-color));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--zd-copper) 30%, transparent);
+    animation: zd-working 1.4s ease-in-out infinite;
+  }
+
   .zd__node.is-live {
     border-color: var(--zd-copper);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--zd-copper) 45%, transparent);
+    animation: none;
   }
 
   .zd__node-name {
@@ -302,10 +396,23 @@ import DemoFrame from "./DemoFrame.astro";
     line-height: 1.35;
   }
 
+  .zd__node.is-working .zd__node-detail {
+    color: var(--zd-copper);
+  }
+
   .zd__stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--s-2);
+  }
+
+  .zd__stats.is-working .zd__stat-val {
+    color: var(--zd-copper);
+    animation: zd-working 1.4s ease-in-out infinite;
+  }
+
+  .zd__stats.is-live .zd__stat-val {
+    color: var(--zd-copper);
   }
 
   .zd__stat {
@@ -359,6 +466,18 @@ import DemoFrame from "./DemoFrame.astro";
     animation: zd-pulse 1.6s ease-out infinite;
   }
 
+  @keyframes zd-working {
+    0%,
+    100% {
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--zd-copper) 20%, transparent);
+      opacity: 1;
+    }
+    50% {
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--zd-copper) 55%, transparent);
+      opacity: 0.88;
+    }
+  }
+
   @keyframes zd-pulse {
     0%,
     100% {
@@ -381,6 +500,8 @@ import DemoFrame from "./DemoFrame.astro";
 
   @media (prefers-reduced-motion: reduce) {
     .zd__fuse-live,
+    .zd__node.is-working,
+    .zd__stats.is-working .zd__stat-val,
     .zd__btn--pulse.is-pulse {
       transition: none;
       animation: none;
