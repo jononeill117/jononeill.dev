@@ -1,33 +1,35 @@
 # jononeill.dev
 
-Source for jononeill.dev, a hire-packet personal site. Dark editorial, not SaaS marketing.
+Source for jononeill.dev, the personal site of Jon O'Neill, product manager. Dark editorial, not SaaS marketing.
 
 **Status:** Pages are in the repo. Domain is not live. Atlas points jononeill.dev after the Worker exists.
 
 ## If you are a recruiter
 
-This repo is the public source for Jon ONeill's personal site. The site is not live on the domain yet. Use this file as the briefing, then run the site locally.
+This repo is the public source. The site is not live on the domain yet, so use this file as the briefing, then run the site locally.
 
-### What this is
+### Who Jon is
 
-A personal site for hiring managers and recruiters. It shows who Jon is, the locked design system, and the stack. It is not a product marketing site and it is not Clairvos.
+A product manager in Phoenix. Underwriting and AI models at Zillow, the acquisitions model behind Cash Close at HomeLight, the Portico underwriting platform at Stoa, and a zero to one SaaS at Livable that reached 2,000 units in four months. Currently Director of Operations at Zoom Drain Phoenix, running product discipline against a live P&L.
+
+| Org | Title | Dates |
+| --- | --- | --- |
+| Livable | Head of Product | Sep 2023 to Jul 2024 |
+| Zoom Drain Phoenix | Director of Operations | 2023 to Present |
+| Stoa | Senior Product Manager, SaaS and Data Integrations | May 2022 to Jul 2023 |
+| HomeLight | Product Owner, Acquisitions | Mar 2021 to May 2022 |
+| Zillow | Associate | Sep 2019 to Mar 2021 |
+
+Ecclesio (Dec 2025 to Present) is a side project, not a role.
+
+Phoenix, AZ. [LinkedIn](https://www.linkedin.com/in/jon-oneill-020196). Contact details are on `/contact/`.
 
 ### Status
 
 - Pages live in this repo
 - Design locked (tokens, motion, shared UI)
+- Copy locked in `COPY-LOCK.md`
 - Domain not live (jononeill.dev is not serving this site yet)
-
-### Who Jon is
-
-Jon works in product, operations, and analytics.
-
-- Zoom Drain Phoenix: Director of Operations
-- Livable: Head of Product
-- Earlier product and analytics work at HomeLight, Stoa, and Zillow
-- Ecclesio is a side project
-
-Phoenix, AZ. [LinkedIn](https://www.linkedin.com/in/jon-oneill-020196). [jon.oneill.m@gmail.com](mailto:jon.oneill.m@gmail.com).
 
 ### Files to open first
 
@@ -53,11 +55,15 @@ Then open [http://localhost:4371/](http://localhost:4371/).
 | Path | Page |
 | --- | --- |
 | `/` | Home |
-| `/work/zoom-drain/` | Zoom Drain case study |
-| `/work/ecclesio/` | Ecclesio case study |
-| `/experience/` | Paid roles, then projects |
+| `/work/livable/` | Livable case study |
+| `/work/stoa/` | Stoa case study |
+| `/work/homelight/` | HomeLight case study |
+| `/work/zillow/` | Zillow case study |
+| `/work/zoom-drain/` | Zoom Drain Phoenix case study |
+| `/work/ecclesio/` | Ecclesio, side project |
+| `/experience/` | Roles, then projects |
 | `/about/` | About |
-| `/contact/` | Phone, email, LinkedIn |
+| `/contact/` | Email, phone, LinkedIn, resume |
 | `/privacy/` | Privacy |
 
 ## Stack
@@ -95,15 +101,17 @@ No indigo. No `#864AEC`. No purple brand accent.
 ## Rules
 
 - No em dashes or en dashes
-- Do not brand Jon as executive, owner, founder, entrepreneur, or co-owner
+- Jon is a product manager. Titles on the site are the real ones and nothing is inflated
+- The gmail address is never printed as visible page copy. Pages carry a "Show email" control
+- Dates must match `COPY-LOCK.md` on every page they appear
 - No secrets, no `dist`, no `node_modules` in git
-- Ecclesio is a side project, not a job
+- Ecclesio is a side project, not a role
 
 ## Contact
 
 - Phoenix, AZ
 - LinkedIn: [linkedin.com/in/jon-oneill-020196](https://www.linkedin.com/in/jon-oneill-020196)
-- Email: [jon.oneill.m@gmail.com](mailto:jon.oneill.m@gmail.com)
+- Email: see `/contact/`
 
 ## License
 
