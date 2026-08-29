@@ -62,7 +62,7 @@ export const roles: readonly Role[] = [
   },
   {
     org: "Zillow",
-    title: "Associate",
+    title: "Business Analyst",
     dates: "Sep 2019 to Mar 2021",
     bullets: [
       "First enterprise product seat. Underwriting and AI models running in production on live inventory.",
@@ -77,7 +77,7 @@ export const projects: readonly Project[] = [
     name: "Ecclesio",
     kind: "Side project",
     dates: "Dec 2025 to Present",
-    href: "/work/ecclesio/",
+    href: "#ecclesio",
     body: "Church software. I directed a contract engineering team through the first build, then took it over as the only person maintaining it. Zero to beta in four months, per-church isolated databases, tokenized payments, and a dashboard that loads in about 50ms. Churches join by invitation.",
   },
 ];

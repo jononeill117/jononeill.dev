@@ -6,6 +6,7 @@ import "../styles/global.css";
 import SiteNav from "@jononeill/ui/SiteNav.astro";
 import JsonLd from "@jononeill/ui/JsonLd.astro";
 import SitePageFooter from "../components/SitePageFooter.astro";
+import ResumeOverlay from "../components/ResumeOverlay.astro";
 import { SITE, NAV_LINKS, personSchema, webSiteSchema } from "../components/site";
 
 type NavSurface = "canvas" | "inverted" | "accent";
@@ -96,6 +97,8 @@ const graph = [personSchema(), webSiteSchema(), ...schema];
     </div>
 
     {chrome && <SitePageFooter />}
+
+    {chrome && <ResumeOverlay />}
 
     <style is:global>
       @layer base {

@@ -1,0 +1,239 @@
+---
+import { SITE } from "./site";
+---
+
+<div
+  class="resume-overlay"
+  id="resume-overlay"
+  hidden
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="resume-overlay-title"
+>
+  <div class="resume-overlay__backdrop" data-resume-close tabindex="-1"></div>
+  <div class="resume-overlay__panel" role="document">
+    <header class="resume-overlay__header">
+      <h2 id="resume-overlay-title" class="resume-overlay__title">Resume</h2>
+      <div class="resume-overlay__actions">
+        <a class="resume-overlay__download" href={SITE.resume} download>
+          Download
+        </a>
+        <button
+          type="button"
+          class="resume-overlay__close"
+          data-resume-close
+          aria-label="Close resume"
+        >
+          Close
+        </button>
+      </div>
+    </header>
+    <object
+      class="resume-overlay__frame"
+      data={SITE.resume}
+      type="application/pdf"
+      aria-label="Jon O'Neill resume PDF"
+    >
+      <p class="resume-overlay__fallback">
+        <a href={SITE.resume} download>Download the resume PDF</a>
+      </p>
+    </object>
+  </div>
+</div>
+
+<script>
+  const OVERLAY_ID = "resume-overlay";
+  const FOCUSABLE =
+    'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+
+  let lastFocus: HTMLElement | null = null;
+
+  function getOverlay(): HTMLElement | null {
+    return document.getElementById(OVERLAY_ID);
+  }
+
+  function getFocusables(root: HTMLElement): HTMLElement[] {
+    return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+      (el) => !el.hasAttribute("disabled") && el.offsetParent !== null,
+    );
+  }
+
+  function openResumeOverlay(trigger?: HTMLElement | null) {
+    const overlay = getOverlay();
+    if (!overlay || !overlay.hidden) return;
+
+    lastFocus = trigger ?? (document.activeElement as HTMLElement | null);
+    overlay.hidden = false;
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
+    const panel = overlay.querySelector<HTMLElement>(".resume-overlay__panel");
+    const focusables = panel ? getFocusables(panel) : [];
+    (focusables[0] ?? overlay.querySelector<HTMLElement>("[data-resume-close]"))?.focus();
+  }
+
+  function closeResumeOverlay() {
+    const overlay = getOverlay();
+    if (!overlay || overlay.hidden) return;
+
+    overlay.hidden = true;
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+
+    if (lastFocus && typeof lastFocus.focus === "function") {
+      lastFocus.focus();
+    }
+    lastFocus = null;
+  }
+
+  function isOpen(): boolean {
+    const overlay = getOverlay();
+    return !!overlay && !overlay.hidden;
+  }
+
+  function onKeydown(event: KeyboardEvent) {
+    if (!isOpen()) return;
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeResumeOverlay();
+      return;
+    }
+
+    if (event.key !== "Tab") return;
+
+    const overlay = getOverlay();
+    if (!overlay) return;
+
+    const panel = overlay.querySelector<HTMLElement>(".resume-overlay__panel");
+    if (!panel) return;
+
+    const focusables = getFocusables(panel);
+    if (focusables.length === 0) return;
+
+    const first = focusables[0]!;
+    const last = focusables[focusables.length - 1]!;
+    const active = document.activeElement as HTMLElement | null;
+
+    if (event.shiftKey && active === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  function wireResumeTriggers() {
+    document.querySelectorAll<HTMLElement>("[data-resume-open]").forEach((el) => {
+      el.addEventListener("click", (event) => {
+        event.preventDefault();
+        openResumeOverlay(el);
+      });
+    });
+
+    document.querySelectorAll<HTMLElement>("[data-resume-close]").forEach((el) => {
+      el.addEventListener("click", () => closeResumeOverlay());
+    });
+
+    document.addEventListener("keydown", onKeydown);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wireResumeTriggers);
+  } else {
+    wireResumeTriggers();
+  }
+
+  (window as Window & { openResumeOverlay?: typeof openResumeOverlay }).openResumeOverlay =
+    openResumeOverlay;
+</script>
+
+<style>
+  .resume-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    display: grid;
+    place-items: center;
+    padding: var(--s-4);
+  }
+
+  .resume-overlay[hidden] {
+    display: none;
+  }
+
+  .resume-overlay__backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in srgb, var(--surface-inverted) 72%, transparent);
+  }
+
+  .resume-overlay__panel {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    width: min(100%, 56rem);
+    height: min(92vh, 52rem);
+    background-color: var(--bg);
+    border: var(--hairline) solid var(--hairline-color);
+  }
+
+  .resume-overlay__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding: var(--s-4) var(--s-6);
+    border-block-end: var(--hairline) solid var(--hairline-color);
+  }
+
+  .resume-overlay__title {
+    margin: 0;
+    font-size: var(--t-body-sm);
+    font-family: var(--font-label);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    font-weight: var(--fw-bold);
+  }
+
+  .resume-overlay__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--s-6);
+  }
+
+  .resume-overlay__download,
+  .resume-overlay__close {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--fg);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    border-block-end: var(--hairline) solid currentColor;
+  }
+
+  .resume-overlay__frame {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .resume-overlay__fallback {
+    padding: var(--s-8);
+    font-size: var(--t-body);
+    color: var(--fg-secondary);
+  }
+
+  .resume-overlay__fallback a {
+    color: var(--accent);
+  }
+</style>

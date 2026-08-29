@@ -69,7 +69,7 @@ interface Props {
    * correct: this is a migration, and quietly reordering it would be exactly
    * the unrequested improvement the scope ruling forbids.
    */
-  links?: readonly { label: string; href: string; count?: string }[];
+  links?: readonly { label: string; href: string; count?: string; resume?: boolean }[];
   /** Surface at the top of the page, used before any scroll and with JS off. */
   initialSurface?: NavSurface;
   /**
@@ -141,7 +141,11 @@ const {
       <ul class="nav-links">
         {links.map((link) => (
           <li>
-            <a class="nav-link" href={link.href}>
+            <a
+              class="nav-link"
+              href={link.href}
+              {...(link.resume ? { "data-resume-open": true } : {})}
+            >
               {link.label}
               {link.count && <span class="nav-count">({link.count})</span>}
             </a>
@@ -522,10 +526,8 @@ const {
   }
 
   /*
-    NARROW. The three-column grid squeezes the wordmark and the first link
-    together on a phone, so the bar switches to a wrapping flex layout with
-    explicit gaps. Links stay reachable; they move to their own row when the
-    viewport cannot hold brand and items on one line.
+    NARROW. Brand stays on its own row. Links scroll horizontally so every
+    route is reachable by swiping without crushing the wordmark into Work.
   */
   @media (max-width: 60rem) {
     .site-nav {
@@ -549,11 +551,20 @@ const {
     .nav-links {
       display: flex;
       flex: 1 1 100%;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       grid-column: unset;
       align-items: center;
-      gap: var(--s-3) var(--s-6);
+      gap: var(--s-6);
       min-width: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-block-end: var(--s-1);
+    }
+
+    .nav-links::-webkit-scrollbar {
+      display: none;
     }
 
     .nav-route {

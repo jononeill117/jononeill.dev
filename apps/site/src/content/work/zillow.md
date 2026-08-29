@@ -1,7 +1,7 @@
 ---
 title: Zillow
 lede: First enterprise product seat. Underwriting and AI models in production, running every day on inventory the company was buying.
-role: Associate
+role: Business Analyst
 dates: Sep 2019 to Mar 2021
 outcome: About ten a day. About 3,000 in the period.
 kind: product
