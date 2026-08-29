@@ -2,7 +2,7 @@
 /**
  * Home. One scrolling page: hero, experience, about, contact.
  */
-import { getCollection, render } from "astro:content";
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Band from "@jononeill/ui/Band.astro";
 import Eyebrow from "@jononeill/ui/Eyebrow.astro";
@@ -27,13 +27,6 @@ const experienceEntries = EXPERIENCE_ORDER.map((id) => {
   return entry;
 });
 
-const rendered = await Promise.all(
-  experienceEntries.map(async (entry) => ({
-    entry,
-    ...(await render(entry)),
-  })),
-);
-
 const COMPANY_INDEX = experienceEntries.map((entry) => ({
   id: entry.id,
   name: entry.data.title,
@@ -47,13 +40,11 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
 >
   <Band surface="canvas" as="header" class="hero">
     <div class="page-inner">
-      <Eyebrow>Product leader</Eyebrow>
+      <Eyebrow>Product · operations · analytics</Eyebrow>
       <h1 class="hero__title">{SITE.name}</h1>
       <p class="hero__lede">
-        Product professional with seven years across product management,
-        operations, strategy, and analytics. I work at the point where product
-        and operations meet: turn a manual process into a system, then use what
-        that system produces to make better calls.
+        Seven years turning manual processes into automated systems — then using
+        the data to guide product, pricing, and go-to-market.
       </p>
     </div>
   </Band>
@@ -62,10 +53,6 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
     <div class="page-inner">
       <Eyebrow>Experience</Eyebrow>
       <h2 class="page-section-title">Product &amp; operations.</h2>
-      <p class="page-body">
-        Building products, platforms, and operating systems across real estate,
-        proptech, SaaS, and operations.
-      </p>
 
       <nav class="company-index" aria-label="Companies">
         <ul class="company-index__list" role="list">
@@ -88,7 +75,7 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
 
       <ol class="role-list">
         {
-          rendered.map(({ entry, Content }) => (
+          experienceEntries.map((entry) => (
             <li class="role" id={entry.id}>
               <Eyebrow>
                 {entry.data.role} · {entry.data.dates}
@@ -102,12 +89,14 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
                 Check out what I built at {entry.data.title}.
               </p>
               <RoleDemo id={entry.id} />
-              <p class="role__lede">{entry.data.lede}</p>
-              <p class="role__outcome">{entry.data.outcome}</p>
+              <ul class="role__bullets">
+                {entry.data.bullets.map((bullet) => (
+                  <li>{bullet}</li>
+                ))}
+              </ul>
               {
                 entry.data.marketingUrl && (
                   <p class="role__site">
-                    Also the marketing site:{" "}
                     <a
                       href={entry.data.marketingUrl}
                       target="_blank"
@@ -118,9 +107,6 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
                   </p>
                 )
               }
-              <div class="role__study prose">
-                <Content />
-              </div>
             </li>
           ))
         }
@@ -131,38 +117,15 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
   <Band surface="inverted" as="section" id="about" class="page-section about">
     <div class="page-inner">
       <Eyebrow>About</Eyebrow>
-      <h2 class="page-section-title">Models, then platforms, then a P&amp;L.</h2>
-      <p class="page-lede about__lede">
-        I am a product leader. I like the problems where the answer is a number.
-      </p>
+      <h2 class="page-section-title">Where product meets operations.</h2>
       <div class="page-body about__body">
         <p>
-          I started at Zillow in 2019, my first enterprise product seat, on
-          underwriting and AI models that ran every day on inventory the company
-          was buying. That is where I learned a model is a product: it has users,
-          it has a latency budget, and when it is wrong somebody answers for it.
+          Started at Zillow on underwriting models, then Cash Close at HomeLight,
+          Portico at Stoa, Head of Product at Livable, and the P&amp;L at Zoom
+          Drain Phoenix. Looking for a product role where operational execution
+          and product thinking meet.
         </p>
-        <p>
-          HomeLight was the same lesson at higher stakes: the underwriting model
-          behind Cash Close and the automation that sent 300 offers a month
-          against an $800M book. Stoa was the platform version. Portico, forty
-          analysts, cycle time down 85%, twenty-two vendor feeds down to six.
-        </p>
-        <p>
-          Livable was the one I had been building toward. Head of Product on a
-          zero to one SaaS: hire the team, ship the product, take it to the board
-          monthly, 2,000 units in four months.
-        </p>
-        <p>
-          Then I applied product and systems thinking to a live operating
-          business at Zoom Drain Phoenix. Dispatch, intake, an office I hired, a
-          P&amp;L I had to live with. It taught me what my old roadmaps cost the
-          people downstream.
-        </p>
-        <p>
-          Open to startups and to established companies that move with a sense of
-          urgency. Phoenix, AZ, and glad to work remote.
-        </p>
+        <p>Phoenix, AZ · open to remote.</p>
       </div>
       <p class="hero-actions hero-actions--on-inverted">
         <a href="#experience">Experience</a>
@@ -181,9 +144,7 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
       <Eyebrow>Contact</Eyebrow>
       <h2 class="page-section-title">Open to product roles</h2>
       <p class="page-body">
-        Open to startups and to established companies that move with a sense of
-        urgency. Phoenix, AZ, and glad to work remote. Email is the fastest way
-        to reach me.
+        Phoenix, AZ · glad to work remote. Email is fastest.
       </p>
       <ul class="contact-lines" role="list">
         <li>
@@ -310,22 +271,23 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
     margin-block-start: var(--s-4);
   }
 
-  .role__lede {
-    margin-block-start: var(--s-10);
+  .role__bullets {
+    margin: var(--s-8) 0 0;
+    padding: 0 0 0 1.15rem;
     max-width: var(--measure);
+    display: grid;
+    gap: var(--s-3);
     font-size: var(--t-body);
+    line-height: var(--lh-body);
     color: var(--fg-secondary);
   }
 
-  .role__outcome {
-    margin-block-start: var(--s-4);
-    font-size: var(--t-stat);
-    line-height: var(--lh-body);
-    color: var(--fg);
+  .role__bullets li::marker {
+    color: var(--fg-muted);
   }
 
   .role__site {
-    margin-block-start: var(--s-3);
+    margin-block-start: var(--s-4);
     font-size: var(--t-proof, var(--t-body-sm));
     color: var(--fg-muted);
   }
@@ -341,36 +303,6 @@ const COMPANY_INDEX = experienceEntries.map((entry) => ({
     color: var(--accent);
   }
 
-  .role__study {
-    margin-block-start: var(--s-8);
-  }
-
-  .role__study :global(p) {
-    max-width: var(--measure);
-    color: var(--fg-secondary);
-  }
-
-  .role__study :global(p + p) {
-    margin-block-start: var(--s-6);
-  }
-
-  .portfolio-tease {
-    margin-block-start: var(--s-16);
-    font-size: var(--t-proof);
-    color: var(--fg-secondary);
-  }
-
-  .portfolio-tease a {
-    color: var(--accent);
-  }
-
-  .role--side {
-    margin-block-start: var(--s-12);
-    padding-block-start: var(--s-12);
-    border-block-start: var(--hairline) solid var(--hairline-color);
-  }
-
-  .about__lede,
   .about__body {
     color: var(--fg-secondary-on-inverted);
   }

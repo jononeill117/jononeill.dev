@@ -18,7 +18,7 @@ export const SITE = {
   jobTitle: "Product leader",
 
   description:
-    "Product professional with seven years across product management, operations, strategy, and analytics. Zillow, HomeLight, Stoa, Livable, Zoom Drain. Phoenix, AZ.",
+    "Seven years across product, operations, and analytics. Zillow, HomeLight, Stoa, Livable, Zoom Drain. Phoenix, AZ.",
 
   email: "jon.oneill.m@gmail.com",
 
