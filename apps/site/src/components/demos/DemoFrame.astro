@@ -1,7 +1,7 @@
 ---
 /**
- * Inline demo shell. Cover → walkthrough → try. Replay stays on the board.
- * No modal. No Figma embed.
+ * Inline demo shell. Cover → walkthrough → try.
+ * Replay sits outside the board so it never covers the mini-app.
  */
 interface Props {
   class?: string;
@@ -36,7 +36,23 @@ const {
     )
   }
   <p class="demo-frame__cta">{cta}</p>
-  <div class="demo-frame__board">
+  <div class="demo-frame__widget">
+    <div class="demo-frame__board">
+      <div class="demo-frame__cover" data-demo-cover>
+        <button type="button" class="demo-frame__play" data-demo-play>
+          <span class="demo-frame__play-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" width="48" height="48" focusable="false">
+              <circle cx="24" cy="24" r="23" fill="none" stroke="currentColor" stroke-width="1"></circle>
+              <path d="M20 15 L34 24 L20 33 Z" fill="currentColor"></path>
+            </svg>
+          </span>
+          <span class="demo-frame__play-label">{playLabel}</span>
+        </button>
+      </div>
+      <div class="demo-frame__stage" data-demo-stage hidden>
+        <slot />
+      </div>
+    </div>
     <button
       type="button"
       class="demo-frame__replay"
@@ -64,20 +80,6 @@ const {
         ></path>
       </svg>
     </button>
-    <div class="demo-frame__cover" data-demo-cover>
-      <button type="button" class="demo-frame__play" data-demo-play>
-        <span class="demo-frame__play-icon" aria-hidden="true">
-          <svg viewBox="0 0 48 48" width="48" height="48" focusable="false">
-            <circle cx="24" cy="24" r="23" fill="none" stroke="currentColor" stroke-width="1"></circle>
-            <path d="M20 15 L34 24 L20 33 Z" fill="currentColor"></path>
-          </svg>
-        </span>
-        <span class="demo-frame__play-label">{playLabel}</span>
-      </button>
-    </div>
-    <div class="demo-frame__stage" data-demo-stage hidden>
-      <slot />
-    </div>
   </div>
   <figcaption class="demo-frame__caption">{caption}</figcaption>
 </figure>
@@ -232,6 +234,14 @@ const {
     color: var(--fg);
   }
 
+  .demo-frame__widget {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.55rem;
+  }
+
   .demo-frame__board {
     position: relative;
     aspect-ratio: var(--demo-aspect, 16 / 9);
@@ -243,31 +253,41 @@ const {
 
   /* Phone: tall board so mini-apps fit without inner scrolling. */
   @media (max-width: 40rem) {
+    .demo-frame__widget {
+      grid-template-columns: 1fr;
+      gap: 0.45rem;
+    }
+
     .demo-frame__board {
       aspect-ratio: auto;
       height: min(42rem, 88vh);
       max-height: min(42rem, 88vh);
       min-height: 26rem;
     }
+
+    .demo-frame__replay {
+      justify-self: end;
+      order: 2;
+    }
   }
 
   .demo-frame__replay {
-    position: absolute;
-    top: 0.55rem;
-    right: 0.55rem;
-    z-index: 5;
     display: grid;
     place-items: center;
-    width: 2rem;
-    height: 2rem;
+    width: 2.15rem;
+    height: 2.15rem;
+    margin-block-start: 0.15rem;
     padding: 0;
     border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
     border-radius: 999px;
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
     color: var(--fg);
     cursor: pointer;
-    backdrop-filter: blur(6px);
     transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .demo-frame__replay[hidden] {
+    display: none !important;
   }
 
   .demo-frame__replay:hover {
