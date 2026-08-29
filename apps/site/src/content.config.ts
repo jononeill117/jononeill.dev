@@ -9,6 +9,7 @@ const work = defineCollection({
     role: z.string(),
     kind: z.enum(["operations", "project"]),
     order: z.number(),
+    visualCaption: z.string().optional(),
   }),
 });
 

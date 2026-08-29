@@ -1,8 +1,6 @@
 ---
-/**
- * Minimal privacy page. Required by the shared footer privacy link.
- */
 import BaseLayout from "../layouts/BaseLayout.astro";
+import RevealEmail from "../components/RevealEmail.astro";
 import { SITE } from "../components/site";
 ---
 
@@ -16,12 +14,12 @@ import { SITE } from "../components/site";
         personal data.
       </p>
       <p>
-        If you email {SITE.email}, that message is handled as ordinary
-        correspondence. Hosting and CDN logs may retain standard request
-        metadata for a limited time.
+        If you email after using the reveal control on the contact page, that
+        message is handled as ordinary correspondence. Hosting and CDN logs may
+        retain standard request metadata for a limited time.
       </p>
       <p>
-        Questions: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+        Questions: <RevealEmail />
       </p>
     </div>
   </article>

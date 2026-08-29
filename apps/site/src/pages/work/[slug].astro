@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Band from "@jononeill/ui/Band.astro";
 import Eyebrow from "@jononeill/ui/Eyebrow.astro";
+import VisualPlaceholder from "../../components/VisualPlaceholder.astro";
 
 export async function getStaticPaths() {
   const studies = await getCollection("work");
@@ -15,6 +16,8 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const title = `${entry.data.title}. ${entry.data.role}.`;
+const visualCaption =
+  entry.data.visualCaption ?? "Product screenshot, placeholder";
 ---
 
 <BaseLayout
@@ -33,8 +36,9 @@ const title = `${entry.data.title}. ${entry.data.role}.`;
   <Band surface="canvas" as="article" class="page-section">
     <div class="page-inner prose">
       <Content />
+      <VisualPlaceholder caption={visualCaption} />
       <p class="page-meta">
-        <a href="/#work">Back to work</a>
+        <a href="/work/">Back to work</a>
       </p>
     </div>
   </Band>

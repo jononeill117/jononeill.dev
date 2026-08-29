@@ -1,8 +1,9 @@
 /**
  * Site constants for jononeill.dev.
  *
- * One place the shell reads identity from so nav, footer, canonical URL,
- * and JSON-LD cannot disagree.
+ * Identity for nav, footer, canonical URL, and JSON-LD lives here so those
+ * surfaces cannot disagree. The mailbox is stored in parts and assembled in
+ * the browser on demand. Do not join the parts in this file.
  */
 
 export const SITE = {
@@ -10,7 +11,6 @@ export const SITE = {
   domain: "jononeill.dev",
   name: "Jon ONeill",
   legalName: "Jon ONeill",
-  email: "jon.oneill.m@gmail.com",
   wordmark: "jononeill",
   wordmarkSuffix: ".dev",
 
@@ -34,12 +34,20 @@ export const SITE = {
 
   phone: "928.499.8446",
   phoneHref: "tel:+19284998446",
+
+  resumeHref: "/Jon-ONeill-Director-of-Product.pdf",
+  resumeName: "Jon-ONeill-Director-of-Product.pdf",
 } as const;
 
+/** Split mailbox parts. Never concatenate in server-rendered HTML. */
+export const EMAIL_USER = "jon.oneill.m";
+export const EMAIL_HOST = "gmail.com";
+
 export const NAV_LINKS = [
-  { label: "Work", href: "/#work" },
+  { label: "Work", href: "/work/" },
   { label: "Experience", href: "/experience/" },
   { label: "About", href: "/about/" },
+  { label: "Resume", href: SITE.resumeHref },
   { label: "Contact", href: "/contact/" },
 ] as const;
 
@@ -49,8 +57,6 @@ export function personSchema() {
     "@id": `${SITE.origin}/#person`,
     name: SITE.name,
     url: `${SITE.origin}/`,
-    email: SITE.email,
-    telephone: SITE.phoneHref.replace("tel:", ""),
     description: SITE.description,
     address: {
       "@type": "PostalAddress",

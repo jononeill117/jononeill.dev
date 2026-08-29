@@ -4,6 +4,7 @@ lede: Operations and dispatch for a Phoenix drain service. Product habits applie
 role: Director of Operations
 kind: operations
 order: 1
+visualCaption: "Workflow diagram, coming"
 ---
 
 I run operations at Zoom Drain Phoenix. Dispatch, routing, and the daily system that turns inbound calls into completed jobs.

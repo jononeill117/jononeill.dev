@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Band from "@jononeill/ui/Band.astro";
 import Eyebrow from "@jononeill/ui/Eyebrow.astro";
+import RevealEmail from "../components/RevealEmail.astro";
 import { SITE } from "../components/site";
 ---
 
@@ -14,16 +15,19 @@ import { SITE } from "../components/site";
   <Band surface="accent" as="header" class="page-hero contact-hero">
     <div class="page-inner">
       <Eyebrow>Contact</Eyebrow>
-      <h1 class="page-title">Phoenix, AZ</h1>
+      <h1 class="page-title">Contact</h1>
       <ul class="lines" role="list">
         <li>
           <a href={SITE.phoneHref}>{SITE.phone}</a>
         </li>
         <li>
-          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          <RevealEmail class="contact-email" />
         </li>
         <li>
           <a href={SITE.linkedin}>linkedin.com/in/jon-oneill-020196</a>
+        </li>
+        <li>
+          <a href={SITE.resumeHref}>Resume</a>
         </li>
       </ul>
     </div>
@@ -32,9 +36,7 @@ import { SITE } from "../components/site";
 
 <style>
   .contact-hero {
-    min-height: calc(100vh - var(--nav-height));
-    display: flex;
-    align-items: flex-end;
+    padding-block: var(--s-section-tight);
   }
 
   .contact-hero .page-title {
@@ -50,7 +52,8 @@ import { SITE } from "../components/site";
     font-size: var(--t-body-lg);
   }
 
-  .lines a {
+  .lines a,
+  .lines :global(.reveal-email) {
     color: inherit;
     text-decoration: none;
     border-block-end: var(--hairline) solid currentColor;

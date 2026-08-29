@@ -1,11 +1,9 @@
 ---
-/**
- * Home. Hire packet.
- */
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Band from "@jononeill/ui/Band.astro";
 import Eyebrow from "@jononeill/ui/Eyebrow.astro";
+import RevealEmail from "../components/RevealEmail.astro";
 import { SITE } from "../components/site";
 
 const studies = (await getCollection("work")).sort(
@@ -23,10 +21,14 @@ const studies = (await getCollection("work")).sort(
         Phoenix. Previously Head of Product at Livable. Product and analytics at
         HomeLight, Stoa, and Zillow.
       </p>
-      <p class="page-meta">
+      <p class="page-meta hero__actions">
+        <a href="/work/">View work</a>
+        <span aria-hidden="true"> · </span>
+        <a href={SITE.resumeHref}>Resume</a>
+        <span aria-hidden="true"> · </span>
         <a href={SITE.linkedin}>LinkedIn</a>
         <span aria-hidden="true"> · </span>
-        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        <RevealEmail />
       </p>
     </div>
   </Band>
@@ -34,11 +36,7 @@ const studies = (await getCollection("work")).sort(
   <Band surface="canvas" as="section" id="work" class="page-section">
     <div class="page-inner">
       <Eyebrow>Work</Eyebrow>
-      <h2 class="page-section-title">Two writeups</h2>
-      <p class="page-body">
-        This site is the hire packet. Short pages and facts. Not a product
-        marketing site.
-      </p>
+      <h2 class="page-section-title">Case studies</h2>
       <ul class="work-list" role="list">
         {
           studies.map((study) => (
@@ -71,10 +69,7 @@ const studies = (await getCollection("work")).sort(
 
 <style>
   .hero {
-    min-height: calc(100vh - var(--nav-height));
-    display: flex;
-    align-items: flex-end;
-    padding-block: var(--s-section);
+    padding-block: var(--s-section-tight);
   }
 
   .hero__title {
@@ -91,6 +86,13 @@ const studies = (await getCollection("work")).sort(
     max-width: var(--measure-tight);
     font-size: var(--t-body-lg);
     color: var(--fg-secondary);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-2);
   }
 
   .work-list {

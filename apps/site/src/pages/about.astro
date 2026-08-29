@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Band from "@jononeill/ui/Band.astro";
 import Eyebrow from "@jononeill/ui/Eyebrow.astro";
-import { SITE } from "../components/site";
+import RevealEmail from "../components/RevealEmail.astro";
 ---
 
 <BaseLayout
@@ -14,11 +14,10 @@ import { SITE } from "../components/site";
   <Band surface="inverted" as="header" class="page-hero">
     <div class="page-inner">
       <Eyebrow>About</Eyebrow>
-      <h1 class="page-title">Phoenix, AZ</h1>
+      <h1 class="page-title">About</h1>
       <p class="page-lede">
-        Product, operations, and analytics. Mid-level. I currently run
-        operations at Zoom Drain Phoenix. Before that I was Head of Product at
-        Livable.
+        Product, operations, and analytics. Full role history is on
+        <a href="/experience/">Experience</a>.
       </p>
     </div>
   </Band>
@@ -32,13 +31,20 @@ import { SITE } from "../components/site";
           Stoa, and Livable.
         </p>
         <p>
-          Ecclesio is a side project. Church software. It is not a job.
+          Ecclesio is a side project. Church software. Invite-only.
         </p>
         <p>
-          This site is the hire packet. If you want the long version, email
-          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+          <RevealEmail />
         </p>
       </div>
     </div>
   </Band>
 </BaseLayout>
+
+<style>
+  .page-lede a {
+    color: inherit;
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+  }
+</style>

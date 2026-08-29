@@ -1,0 +1,199 @@
+---
+/**
+ * Site footer without a plaintext mailbox in the initial HTML.
+ */
+import { SITE } from "./site";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-page-footer" data-surface="inverted" aria-labelledby="site-page-footer-heading">
+  <h2 id="site-page-footer-heading" class="vh">Footer</h2>
+
+  <div class="site-page-footer__lay">
+    <div class="site-page-footer__routes">
+      <a class="route" href="/contact/">Contact</a>
+      <a class="route" href={SITE.resumeHref}>Resume</a>
+    </div>
+
+    <div class="site-page-footer__meta">
+      <div class="meta-group">
+        <h3 class="meta-label">Where we are</h3>
+        <p class="meta-value">
+          {SITE.locality.map((line, i) => (i === 0 ? line : [<br />, line]))}
+        </p>
+      </div>
+
+      <div class="meta-group">
+        <h3 class="meta-label">The practice</h3>
+        <p class="meta-value">{SITE.practice}</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="site-page-footer__categories">
+    {SITE.categories.map((label) => <span class="category">{label}</span>)}
+  </p>
+
+  <div class="site-page-footer__base">
+    <span>&copy; {SITE.name} {year}</span>
+    <a href="/privacy/">Privacy policy</a>
+  </div>
+
+  <div class="site-page-footer__wordmark-wrap" aria-hidden="true">
+    <span class="site-page-footer__wordmark">{SITE.wordmark}</span>
+  </div>
+</footer>
+
+<style>
+  .site-page-footer {
+    --bg: var(--surface-inverted);
+    --fg: var(--fg-on-inverted);
+    --fg-secondary: var(--fg-on-inverted);
+    --fg-muted: var(--fg-muted-on-inverted);
+    --hairline-color: var(--hairline-on-inverted);
+
+    position: relative;
+    overflow: hidden;
+    background-color: var(--bg);
+    color: var(--fg);
+    padding-block-start: var(--s-section);
+    padding-block-end: 0;
+    padding-inline: var(--gutter);
+  }
+
+  .site-page-footer__lay {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: var(--gutter-wide);
+    align-items: start;
+  }
+
+  .site-page-footer__routes {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  .route {
+    display: inline-block;
+    color: var(--fg-on-inverted);
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-size: var(--t-h2);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-display);
+  }
+
+  .site-page-footer__meta {
+    display: grid;
+    gap: var(--s-12);
+    padding-block-start: var(--s-2);
+  }
+
+  .meta-label {
+    margin: 0;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    font-weight: var(--fw-bold);
+  }
+
+  .meta-value {
+    margin-block-start: var(--s-3);
+    max-width: var(--measure-tight);
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+  }
+
+  .site-page-footer__categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-12);
+    margin-block-start: var(--s-32);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    font-weight: var(--fw-bold);
+  }
+
+  .site-page-footer__base {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-6);
+    margin-block-start: var(--s-24);
+    padding-block-end: var(--s-8);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    line-height: var(--lh-mono);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    font-weight: var(--fw-medium);
+  }
+
+  .site-page-footer__base a {
+    color: inherit;
+    text-decoration: none;
+    border-block-end: var(--hairline) solid transparent;
+  }
+
+  .site-page-footer__base a:hover,
+  .site-page-footer__base a:focus-visible {
+    border-block-end-color: var(--fg-on-inverted);
+  }
+
+  .site-page-footer__wordmark-wrap {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .site-page-footer__wordmark {
+    display: block;
+    margin-inline-start: calc(var(--gutter-wide) * -1);
+    margin-block-end: calc(var(--s-4) * -1);
+    font-family: var(--font-heading);
+    font-size: var(--t-display-2);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-display);
+    white-space: nowrap;
+    user-select: none;
+    color: var(--hairline-on-inverted);
+  }
+
+  .vh {
+    position: absolute;
+    width: var(--hairline);
+    height: var(--hairline);
+    margin: calc(var(--hairline) * -1);
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 52rem) {
+    .site-page-footer__lay {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s-24);
+    }
+
+    .route {
+      font-size: var(--t-h3);
+    }
+
+    .site-page-footer__categories {
+      margin-block-start: var(--s-24);
+    }
+
+    .site-page-footer__base {
+      margin-block-start: var(--s-16);
+    }
+  }
+</style>
