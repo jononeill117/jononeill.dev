@@ -7,8 +7,13 @@ const work = defineCollection({
     title: z.string(),
     lede: z.string(),
     role: z.string(),
-    kind: z.enum(["operations", "project"]),
+    /** Employment window as a reader sees it. Must match /experience/. */
+    dates: z.string(),
+    /** One line, one number. The card is not allowed to end without it. */
+    outcome: z.string(),
+    kind: z.enum(["product", "operations", "project"]),
     order: z.number(),
+    visualCaption: z.string(),
   }),
 });
 

@@ -1,0 +1,572 @@
+---
+import DemoFrame from "./DemoFrame.astro";
+---
+
+<DemoFrame
+  class="zillow-demo"
+  system="Data → model → acquisition"
+  cta="Watch a pricing queue: model estimate vs human."
+  caption="Interactive walkthrough"
+>
+  <div class="zl" data-zl>
+    <header class="zl__head">
+      <div class="zl__title-row">
+        <h4 class="zl__title">Pricing queue</h4>
+        <span class="zl__chip" data-zl-chip hidden>~10 / day</span>
+      </div>
+      <span class="zl__kicker" data-zl-step>Ready</span>
+    </header>
+
+    <div class="zl__table" role="table" aria-label="Pricing queue">
+      <div class="zl__cols" role="row">
+        <span role="columnheader">Address</span>
+        <span role="columnheader">Model</span>
+        <span role="columnheader">Human</span>
+        <span role="columnheader">Delta</span>
+        <span role="columnheader">Status</span>
+      </div>
+      <ul class="zl__rows" role="rowgroup" data-zl-rows>
+        <li role="row">
+          <button type="button" class="zl__row" data-zl-row="0">
+            <span class="zl__addr">142 Harbor Ln</span>
+            <span class="zl__model" data-zl-model>-</span>
+            <span class="zl__human" data-zl-human>-</span>
+            <span class="zl__delta" data-zl-delta>-</span>
+            <span class="zl__status" data-zl-status>Pending</span>
+          </button>
+        </li>
+        <li role="row">
+          <button type="button" class="zl__row" data-zl-row="1">
+            <span class="zl__addr">55 Ridge Ct</span>
+            <span class="zl__model" data-zl-model>-</span>
+            <span class="zl__human" data-zl-human>-</span>
+            <span class="zl__delta" data-zl-delta>-</span>
+            <span class="zl__status" data-zl-status>Pending</span>
+          </button>
+        </li>
+        <li role="row">
+          <button type="button" class="zl__row" data-zl-row="2">
+            <span class="zl__addr">901 Willow St</span>
+            <span class="zl__model" data-zl-model>-</span>
+            <span class="zl__human" data-zl-human>-</span>
+            <span class="zl__delta" data-zl-delta>-</span>
+            <span class="zl__status" data-zl-status>Pending</span>
+          </button>
+        </li>
+        <li role="row">
+          <button type="button" class="zl__row" data-zl-row="3">
+            <span class="zl__addr">18 Oak Grove</span>
+            <span class="zl__model" data-zl-model>-</span>
+            <span class="zl__human" data-zl-human>-</span>
+            <span class="zl__delta" data-zl-delta>-</span>
+            <span class="zl__status" data-zl-status>Pending</span>
+          </button>
+        </li>
+        <li role="row">
+          <button type="button" class="zl__row" data-zl-row="4">
+            <span class="zl__addr">770 Pine Ave</span>
+            <span class="zl__model" data-zl-model>-</span>
+            <span class="zl__human" data-zl-human>-</span>
+            <span class="zl__delta" data-zl-delta>-</span>
+            <span class="zl__status" data-zl-status>Pending</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <p class="zl__detail" data-zl-detail>Select a row after the walkthrough.</p>
+
+    <details class="zl__sql">
+      <summary class="zl__sql-summary">Queue query</summary>
+      <pre class="zl__sql-code">SELECT address, model_est, human_est, delta_pct
+FROM pricing_queue
+WHERE status = 'pending'
+ORDER BY created_at
+LIMIT 5;</pre>
+    </details>
+
+    <div class="zl__actions">
+      <p class="zl__hint" data-zl-hint hidden>Now explore it yourself.</p>
+      <button type="button" class="zl__btn zl__btn--pulse" data-zl-try hidden>
+        Select a row
+      </button>
+      <button type="button" class="zl__btn" data-zl-replay hidden>Replay</button>
+    </div>
+  </div>
+</DemoFrame>
+
+<script>
+  type ZlRow = {
+    address: string;
+    model: string;
+    human: string;
+    delta: string;
+    deltaNote: string;
+  };
+
+  const ROWS: ZlRow[] = [
+    {
+      address: "142 Harbor Ln",
+      model: "$318,400",
+      human: "$322,100",
+      delta: "+1.2%",
+      deltaNote: "Model vs human: $3,700 (1.2%)",
+    },
+    {
+      address: "55 Ridge Ct",
+      model: "$445,200",
+      human: "$441,800",
+      delta: "-0.8%",
+      deltaNote: "Model vs human: -$3,400 (-0.8%)",
+    },
+    {
+      address: "901 Willow St",
+      model: "$267,900",
+      human: "$271,500",
+      delta: "+1.3%",
+      deltaNote: "Model vs human: $3,600 (1.3%)",
+    },
+    {
+      address: "18 Oak Grove",
+      model: "$512,000",
+      human: "$518,400",
+      delta: "+1.2%",
+      deltaNote: "Model vs human: $6,400 (1.2%)",
+    },
+    {
+      address: "770 Pine Ave",
+      model: "$389,100",
+      human: "$385,200",
+      delta: "-1.0%",
+      deltaNote: "Model vs human: -$3,900 (-1.0%)",
+    },
+  ];
+
+  const STEP_MS = 1000;
+  const WALK_INDEX = 0;
+  const EMPTY = "-";
+
+  function sleep(ms: number) {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
+  function wireZillow(root: HTMLElement) {
+    const frame = root.closest<HTMLElement>("[data-demo-frame]");
+    if (!frame || frame.hasAttribute("data-zl-wired")) return;
+    frame.setAttribute("data-zl-wired", "true");
+
+    const stepEl = root.querySelector<HTMLElement>("[data-zl-step]");
+    const chipEl = root.querySelector<HTMLElement>("[data-zl-chip]");
+    const detail = root.querySelector<HTMLElement>("[data-zl-detail]");
+    const tryBtn = root.querySelector<HTMLButtonElement>("[data-zl-try]");
+    const replayBtn = root.querySelector<HTMLButtonElement>("[data-zl-replay]");
+    const hint = root.querySelector<HTMLElement>("[data-zl-hint]");
+    const rowBtns = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-zl-row]"));
+
+    let running = false;
+    let token = 0;
+    let tryMode = false;
+
+    const rowEls = (index: number) => {
+      const btn = root.querySelector<HTMLElement>(`[data-zl-row='${index}']`);
+      if (!btn) return null;
+      return {
+        btn,
+        model: btn.querySelector("[data-zl-model]"),
+        human: btn.querySelector("[data-zl-human]"),
+        delta: btn.querySelector("[data-zl-delta]"),
+        status: btn.querySelector("[data-zl-status]"),
+      };
+    };
+
+    const clearSelection = () => {
+      rowBtns.forEach((r) => r.classList.remove("is-active"));
+    };
+
+    const resetBoard = () => {
+      ROWS.forEach((_, i) => {
+        const els = rowEls(i);
+        if (!els) return;
+        if (els.model) els.model.textContent = EMPTY;
+        if (els.human) els.human.textContent = EMPTY;
+        if (els.delta) els.delta.textContent = EMPTY;
+        if (els.status) els.status.textContent = "Pending";
+        els.btn.classList.remove("is-live", "is-accepted", "is-active");
+      });
+      if (chipEl) chipEl.hidden = true;
+      if (stepEl) stepEl.textContent = "Ready";
+      if (detail) detail.textContent = "Select a row after the walkthrough.";
+      if (tryBtn) tryBtn.hidden = true;
+      if (replayBtn) replayBtn.hidden = true;
+      if (hint) hint.hidden = true;
+      tryBtn?.classList.remove("is-pulse");
+      tryMode = false;
+    };
+
+    const paintRowFinal = (index: number) => {
+      const data = ROWS[index];
+      const els = rowEls(index);
+      if (!data || !els) return;
+      if (els.model) els.model.textContent = data.model;
+      if (els.human) els.human.textContent = data.human;
+      if (els.delta) els.delta.textContent = data.delta;
+      if (els.status) els.status.textContent = "Accepted";
+      els.btn.classList.add("is-live", "is-accepted");
+    };
+
+    const finish = () => {
+      running = false;
+      tryMode = true;
+      if (chipEl) chipEl.hidden = false;
+      if (stepEl) stepEl.textContent = "Accepted";
+      if (detail) detail.textContent = ROWS[WALK_INDEX]?.deltaNote ?? "";
+      rowEls(WALK_INDEX)?.btn.classList.add("is-active");
+      if (tryBtn) tryBtn.hidden = false;
+      if (replayBtn) replayBtn.hidden = false;
+      if (hint) hint.hidden = false;
+      tryBtn?.classList.add("is-pulse");
+      frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
+    };
+
+    const run = async () => {
+      const my = ++token;
+      running = true;
+      resetBoard();
+
+      const data = ROWS[WALK_INDEX];
+      const els = rowEls(WALK_INDEX);
+      if (!data || !els) return;
+
+      els.btn.classList.add("is-live", "is-active");
+      if (els.status) els.status.textContent = "Pending";
+      if (stepEl) stepEl.textContent = "Pending";
+      if (detail) detail.textContent = `${data.address} waiting on model`;
+      await sleep(STEP_MS);
+      if (my !== token) return;
+
+      if (els.model) els.model.textContent = data.model;
+      if (els.status) els.status.textContent = "Model";
+      if (stepEl) stepEl.textContent = "Model paints";
+      if (detail) detail.textContent = `Model estimate ${data.model}`;
+      await sleep(STEP_MS);
+      if (my !== token) return;
+
+      if (els.human) els.human.textContent = data.human;
+      if (els.status) els.status.textContent = "Human";
+      if (stepEl) stepEl.textContent = "Human paints";
+      if (detail) detail.textContent = `Human estimate ${data.human}`;
+      await sleep(STEP_MS);
+      if (my !== token) return;
+
+      if (els.delta) els.delta.textContent = data.delta;
+      if (els.status) els.status.textContent = "Delta";
+      if (stepEl) stepEl.textContent = "Delta 1.2%";
+      if (detail) detail.textContent = data.deltaNote;
+      await sleep(STEP_MS);
+      if (my !== token) return;
+
+      if (els.status) els.status.textContent = "Accepted";
+      els.btn.classList.add("is-accepted");
+      if (stepEl) stepEl.textContent = "Accepted";
+      if (detail) detail.textContent = "Status accepted";
+      await sleep(STEP_MS);
+      if (my !== token) return;
+
+      if (chipEl) chipEl.hidden = false;
+      if (stepEl) stepEl.textContent = "Throughput";
+      if (detail) detail.textContent = "Throughput ~10 / day";
+      await sleep(STEP_MS);
+      if (my !== token) return;
+
+      ROWS.forEach((_, i) => {
+        if (i === WALK_INDEX) return;
+        paintRowFinal(i);
+      });
+
+      finish();
+    };
+
+    frame.addEventListener("demo-play", (e) => {
+      const eventDetail = (e as CustomEvent).detail as { reduced?: boolean } | undefined;
+      if (eventDetail?.reduced) {
+        resetBoard();
+        ROWS.forEach((_, i) => paintRowFinal(i));
+        if (chipEl) chipEl.hidden = false;
+        finish();
+        return;
+      }
+      void run();
+    });
+    frame.addEventListener("demo-replay", () => void run());
+
+    rowBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (!tryMode || running) return;
+        const index = Number(btn.getAttribute("data-zl-row") ?? "0");
+        const data = ROWS[index];
+        if (!data) return;
+        clearSelection();
+        btn.classList.add("is-active");
+        if (detail) detail.textContent = data.deltaNote;
+        if (stepEl) stepEl.textContent = "Selected";
+        tryBtn?.classList.remove("is-pulse");
+      });
+    });
+
+    tryBtn?.addEventListener("click", () => {
+      if (!tryMode || running) return;
+      const active = root.querySelector(".zl__row.is-active");
+      if (!active) {
+        rowBtns[0]?.click();
+      } else {
+        const next = (Number(active.getAttribute("data-zl-row") ?? "0") + 1) % ROWS.length;
+        rowBtns[next]?.click();
+      }
+    });
+    replayBtn?.addEventListener("click", () => {
+      frame.dispatchEvent(new CustomEvent("demo-request-replay", { bubbles: true }));
+    });
+  }
+
+  document.querySelectorAll("[data-zl]").forEach((el) => wireZillow(el as HTMLElement));
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll("[data-zl]").forEach((el) => wireZillow(el as HTMLElement));
+  });
+</script>
+
+<style>
+  .zl {
+    --zl-canvas: var(--c-canvas, #0b0a09);
+    --zl-ink: var(--c-ink, #f2ebe1);
+    --zl-copper: var(--c-copper, #b87333);
+    --zl-line: color-mix(in srgb, var(--zl-ink) 18%, transparent);
+    height: 100%;
+    padding: var(--s-4);
+    display: grid;
+    grid-template-rows: auto 1fr auto auto auto;
+    gap: var(--s-3);
+    color: var(--zl-ink);
+    background:
+      radial-gradient(ellipse at bottom left, color-mix(in srgb, var(--zl-copper) 14%, transparent), transparent 55%),
+      linear-gradient(165deg, #141210 0%, var(--zl-canvas) 55%, #0a0908 100%);
+  }
+
+  .zl__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-3);
+  }
+
+  .zl__title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-2) var(--s-3);
+  }
+
+  .zl__title {
+    margin: 0;
+    font-size: var(--t-proof, var(--t-body));
+    font-weight: var(--fw-semibold);
+    color: var(--zl-ink);
+  }
+
+  .zl__chip {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--zl-copper);
+    border: var(--hairline) solid color-mix(in srgb, var(--zl-copper) 55%, transparent);
+    padding: 0.15rem 0.5rem;
+  }
+
+  .zl__kicker {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--zl-ink) 55%, transparent);
+  }
+
+  .zl__table {
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .zl__cols,
+  .zl__row {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 0.8fr 1fr;
+    gap: var(--s-2);
+    align-items: center;
+  }
+
+  .zl__cols {
+    padding: 0 var(--s-2) var(--s-2);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--zl-ink) 55%, transparent);
+    border-block-end: var(--hairline) solid var(--zl-line);
+  }
+
+  .zl__rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .zl__row {
+    width: 100%;
+    padding: var(--s-2);
+    border: 0;
+    border-block-end: var(--hairline) solid var(--zl-line);
+    background: transparent;
+    color: inherit;
+    font-size: var(--t-body-sm);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .zl__row.is-live {
+    box-shadow: inset 2px 0 0 var(--zl-copper);
+  }
+
+  .zl__row.is-active {
+    background: color-mix(in srgb, var(--zl-copper) 12%, transparent);
+  }
+
+  .zl__row.is-accepted .zl__status {
+    color: var(--zl-copper);
+  }
+
+  .zl__addr {
+    color: var(--zl-ink);
+  }
+
+  .zl__model,
+  .zl__human,
+  .zl__delta,
+  .zl__status {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    letter-spacing: var(--ls-mono);
+  }
+
+  .zl__model,
+  .zl__human {
+    color: color-mix(in srgb, var(--zl-ink) 72%, transparent);
+  }
+
+  .zl__delta {
+    color: var(--zl-ink);
+  }
+
+  .zl__status {
+    color: color-mix(in srgb, var(--zl-ink) 55%, transparent);
+    text-transform: uppercase;
+  }
+
+  .zl__detail {
+    margin: 0;
+    font-size: var(--t-proof, var(--t-body-sm));
+    color: color-mix(in srgb, var(--zl-ink) 72%, transparent);
+  }
+
+  .zl__sql {
+    border-block-start: var(--hairline) solid var(--zl-line);
+    padding-block-start: var(--s-2);
+  }
+
+  .zl__sql-summary {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--zl-ink) 55%, transparent);
+    cursor: pointer;
+  }
+
+  .zl__sql-summary:hover {
+    color: var(--zl-copper);
+  }
+
+  .zl__sql-code {
+    margin: var(--s-2) 0 0;
+    padding: var(--s-3);
+    overflow: auto;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: var(--t-mono-md);
+    line-height: 1.45;
+    color: color-mix(in srgb, var(--zl-ink) 78%, transparent);
+    background: color-mix(in srgb, var(--zl-canvas) 70%, #000);
+    border: var(--hairline) solid var(--zl-line);
+  }
+
+  .zl__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3);
+  }
+
+  .zl__hint {
+    margin: 0;
+    font-size: var(--t-proof, var(--t-body-sm));
+    color: color-mix(in srgb, var(--zl-ink) 72%, transparent);
+  }
+
+  .zl__btn {
+    padding: var(--s-2) var(--s-4);
+    border: var(--hairline) solid var(--zl-line);
+    background: transparent;
+    color: var(--zl-ink);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .zl__btn--pulse.is-pulse {
+    border-color: var(--zl-copper);
+    color: var(--zl-copper);
+    animation: zl-pulse 1.6s ease-out infinite;
+  }
+
+  @keyframes zl-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--zl-copper) 0%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--zl-copper) 28%, transparent);
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .zl__cols,
+    .zl__row {
+      grid-template-columns: 1.2fr 0.9fr 0.9fr;
+    }
+
+    .zl__cols span:nth-child(4),
+    .zl__cols span:nth-child(5),
+    .zl__row .zl__delta,
+    .zl__row .zl__status {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zl__row,
+    .zl__btn--pulse.is-pulse {
+      transition: none;
+      animation: none;
+    }
+  }
+</style>

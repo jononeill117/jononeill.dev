@@ -1,59 +1,190 @@
 ---
 /**
- * Home. Hire packet.
+ * Home. One scrolling page: hero, experience, about, contact.
  */
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Band from "@jononeill/ui/Band.astro";
 import Eyebrow from "@jononeill/ui/Eyebrow.astro";
+import RevealEmail from "../components/RevealEmail.astro";
+import RoleDemo from "../components/demos/RoleDemo.astro";
 import { SITE } from "../components/site";
 
-const studies = (await getCollection("work")).sort(
-  (a, b) => a.data.order - b.data.order,
+const allEntries = await getCollection("work");
+
+const EXPERIENCE_ORDER = [
+  "zoom-drain",
+  "livable",
+  "stoa",
+  "homelight",
+  "zillow",
+] as const;
+
+const experienceEntries = EXPERIENCE_ORDER.map((id) => {
+  const entry = allEntries.find((e) => e.id === id);
+  if (!entry) throw new Error(`Missing work entry: ${id}`);
+  return entry;
+});
+
+const rendered = await Promise.all(
+  experienceEntries.map(async (entry) => ({
+    entry,
+    ...(await render(entry)),
+  })),
 );
+
+const ecclesio = allEntries.find((e) => e.id === "ecclesio");
+const ecclesioRendered = ecclesio ? await render(ecclesio) : null;
+
+const COMPANY_INDEX = experienceEntries.map((entry) => ({
+  id: entry.id,
+  name: entry.data.title,
+}));
 ---
 
-<BaseLayout title="Jon ONeill. Product, operations, and analytics.">
+<BaseLayout
+  title="Jon O'Neill. Product leader."
+  description={SITE.description}
+  canonicalPath="/"
+>
   <Band surface="canvas" as="header" class="hero">
     <div class="page-inner">
-      <Eyebrow>Phoenix, AZ</Eyebrow>
+      <Eyebrow>Product leader</Eyebrow>
       <h1 class="hero__title">{SITE.name}</h1>
       <p class="hero__lede">
-        Product, operations, and analytics. Director of Operations at Zoom Drain
-        Phoenix. Previously Head of Product at Livable. Product and analytics at
-        HomeLight, Stoa, and Zillow.
-      </p>
-      <p class="page-meta">
-        <a href={SITE.linkedin}>LinkedIn</a>
-        <span aria-hidden="true"> · </span>
-        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        Product professional with seven years across product management,
+        operations, strategy, and analytics. I work at the point where product
+        and operations meet: turn a manual process into a system, then use what
+        that system produces to make better calls.
       </p>
     </div>
   </Band>
 
-  <Band surface="canvas" as="section" id="work" class="page-section">
+  <Band surface="canvas" as="section" id="experience" class="page-section experience">
     <div class="page-inner">
-      <Eyebrow>Work</Eyebrow>
-      <h2 class="page-section-title">Two writeups</h2>
+      <Eyebrow>Experience</Eyebrow>
+      <h2 class="page-section-title">Product and operations expert.</h2>
       <p class="page-body">
-        This site is the hire packet. Short pages and facts. Not a product
-        marketing site.
+        Four product seats and one operating seat. Click a company to jump to
+        that role.
       </p>
-      <ul class="work-list" role="list">
+
+      <nav class="company-index" aria-label="Companies">
+        <ul class="company-index__list" role="list">
+          {
+            COMPANY_INDEX.map((company, i) => (
+              <li>
+                <a class="company-index__link" href={`#${company.id}`}>
+                  {company.name}
+                </a>
+                {i < COMPANY_INDEX.length - 1 && (
+                  <span class="company-index__sep" aria-hidden="true">
+                    ·
+                  </span>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <ol class="role-list">
         {
-          studies.map((study) => (
-            <li class="work-item">
-              <Eyebrow>{study.data.role}</Eyebrow>
-              <h3 class="work-item__title">
-                <a href={`/work/${study.id}/`}>{study.data.title}</a>
+          rendered.map(({ entry, Content }) => (
+            <li class="role" id={entry.id}>
+              <Eyebrow>
+                {entry.data.role} · {entry.data.dates}
+              </Eyebrow>
+              <h3 class="role__title">
+                <a class="role__company" href={`#${entry.id}`}>
+                  {entry.data.title}
+                </a>
               </h3>
-              <p class="work-item__lede">{study.data.lede}</p>
+              <p class="role__lede">{entry.data.lede}</p>
+              <p class="role__outcome">{entry.data.outcome}</p>
+              <div class="role__study prose">
+                <Content />
+                <RoleDemo id={entry.id} />
+              </div>
             </li>
           ))
         }
-      </ul>
-      <p class="page-meta">
-        <a href="/experience/">Full experience</a>
+      </ol>
+
+      <p class="portfolio-tease">
+        <a href="#ecclesio">Portfolio</a>
+        {" "}
+        - Ecclesio, church software I build on the side.
+      </p>
+
+      {
+        ecclesio && ecclesioRendered && (
+          <article class="role role--side" id="ecclesio">
+            <Eyebrow>
+              {ecclesio.data.kind === "project" ? "Side project" : ecclesio.data.role} ·{" "}
+              {ecclesio.data.dates}
+            </Eyebrow>
+            <h3 class="role__title">
+              <a class="role__company" href="#ecclesio">
+                {ecclesio.data.title}
+              </a>
+            </h3>
+            <p class="role__lede">{ecclesio.data.lede}</p>
+            <p class="role__outcome">{ecclesio.data.outcome}</p>
+            <div class="role__study prose">
+              <ecclesioRendered.Content />
+              <RoleDemo id="ecclesio" />
+            </div>
+          </article>
+        )
+      }
+    </div>
+  </Band>
+
+  <Band surface="inverted" as="section" id="about" class="page-section about">
+    <div class="page-inner">
+      <Eyebrow>About</Eyebrow>
+      <h2 class="page-section-title">Models, then platforms, then a P&amp;L.</h2>
+      <p class="page-lede about__lede">
+        I am a product leader. I like the problems where the answer is a number.
+      </p>
+      <div class="page-body about__body">
+        <p>
+          I started at Zillow in 2019, my first enterprise product seat, on
+          underwriting and AI models that ran every day on inventory the company
+          was buying. That is where I learned a model is a product: it has users,
+          it has a latency budget, and when it is wrong somebody answers for it.
+        </p>
+        <p>
+          HomeLight was the same lesson at higher stakes: the underwriting model
+          behind Cash Close and the automation that sent 300 offers a month
+          against an $800M book. Stoa was the platform version. Portico, forty
+          analysts, cycle time down 85%, twenty-two vendor feeds down to six.
+        </p>
+        <p>
+          Livable was the one I had been building toward. Head of Product on a
+          zero to one SaaS: hire the team, ship the product, take it to the board
+          monthly, 2,000 units in four months.
+        </p>
+        <p>
+          Then I applied product and systems thinking to a live operating
+          business at Zoom Drain Phoenix. Dispatch, intake, an office I hired, a
+          P&amp;L I had to live with. It taught me what my old roadmaps cost the
+          people downstream.
+        </p>
+        <p>
+          Open to startups and to established companies that move with a sense of
+          urgency. Phoenix, AZ, and glad to work remote.
+        </p>
+      </div>
+      <p class="hero-actions hero-actions--on-inverted">
+        <a href="#experience">Experience</a>
+        <span aria-hidden="true"> · </span>
+        <a href="#ecclesio">Portfolio</a>
+        <span aria-hidden="true"> · </span>
+        <a href="#resume" data-resume-open>Resume</a>
+        <span aria-hidden="true"> · </span>
+        <a href="#contact">Contact</a>
       </p>
     </div>
   </Band>
@@ -61,20 +192,42 @@ const studies = (await getCollection("work")).sort(
   <Band surface="accent" as="section" id="contact" class="page-section section--contact">
     <div class="page-inner">
       <Eyebrow>Contact</Eyebrow>
-      <h2 class="page-section-title">Phoenix, AZ</h2>
+      <h2 class="page-section-title">Open to product roles</h2>
       <p class="page-body">
-        <a href="/contact/">Phone, email, LinkedIn</a>
+        Open to startups and to established companies that move with a sense of
+        urgency. Phoenix, AZ, and glad to work remote. Email is the fastest way
+        to reach me.
       </p>
+      <ul class="contact-lines" role="list">
+        <li>
+          <RevealEmail class="contact-email" />
+        </li>
+        <li>
+          <a href={SITE.linkedin}>linkedin.com/in/jon-oneill-020196</a>
+        </li>
+        <li>
+          <a href="#resume" data-resume-open>Resume, PDF</a>
+        </li>
+      </ul>
     </div>
   </Band>
 </BaseLayout>
 
 <style>
   .hero {
-    min-height: calc(100vh - var(--nav-height));
-    display: flex;
-    align-items: flex-end;
-    padding-block: var(--s-section);
+    padding-block: var(--s-section-tight);
+    padding-block-start: calc(
+      var(--nav-stack-height, var(--nav-height-mobile, var(--nav-height))) +
+        var(--s-6)
+    );
+  }
+
+  @media (min-width: 60.0625rem) {
+    .hero {
+      padding-block-start: calc(
+        var(--nav-stack-height, var(--nav-height)) + var(--s-8)
+      );
+    }
   }
 
   .hero__title {
@@ -90,37 +243,125 @@ const studies = (await getCollection("work")).sort(
     margin-block-start: var(--s-6);
     max-width: var(--measure-tight);
     font-size: var(--t-body-lg);
+    line-height: var(--lh-body);
     color: var(--fg-secondary);
   }
 
-  .work-list {
-    list-style: none;
-    margin: var(--s-12) 0 0;
-    padding: 0;
-    display: grid;
-    gap: var(--s-12);
+  .hero-actions {
+    margin-block-start: var(--s-8);
+    font-size: var(--t-proof);
+    line-height: 1.6;
   }
 
-  .work-item__title {
+  .hero-actions a {
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+    padding-block: var(--s-2);
+  }
+
+  .hero-actions--on-inverted {
+    color: var(--fg-on-inverted);
+  }
+
+  .company-index {
+    margin-block-start: var(--s-8);
+  }
+
+  .company-index__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-2) var(--s-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .company-index__link {
+    font-size: var(--t-proof);
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.2em;
+  }
+
+  .company-index__sep {
+    color: var(--fg-muted);
+    margin-inline: var(--s-1);
+  }
+
+  .role-list {
+    list-style: none;
+    margin: var(--s-16) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-24);
+  }
+
+  .role__title {
     margin-block-start: var(--s-3);
     font-size: var(--t-h3);
     line-height: var(--lh-heading);
     letter-spacing: var(--ls-heading);
   }
 
-  .work-item__title a {
-    text-decoration: none;
+  .role__company {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.2em;
   }
 
-  .work-item__title a:hover,
-  .work-item__title a:focus-visible {
+  .role__lede {
+    margin-block-start: var(--s-4);
+    max-width: var(--measure);
+    font-size: var(--t-body);
+    color: var(--fg-secondary);
+  }
+
+  .role__outcome {
+    margin-block-start: var(--s-4);
+    font-size: var(--t-stat);
+    line-height: var(--lh-body);
+    color: var(--fg);
+  }
+
+  .role__study {
+    margin-block-start: var(--s-8);
+  }
+
+  .role__study :global(p) {
+    max-width: var(--measure);
+    color: var(--fg-secondary);
+  }
+
+  .role__study :global(p + p) {
+    margin-block-start: var(--s-6);
+  }
+
+  .portfolio-tease {
+    margin-block-start: var(--s-16);
+    font-size: var(--t-proof);
+    color: var(--fg-secondary);
+  }
+
+  .portfolio-tease a {
     color: var(--accent);
   }
 
-  .work-item__lede {
-    margin-block-start: var(--s-4);
-    max-width: var(--measure);
-    color: var(--fg-secondary);
+  .role--side {
+    margin-block-start: var(--s-12);
+    padding-block-start: var(--s-12);
+    border-block-start: var(--hairline) solid var(--hairline-color);
+  }
+
+  .about__lede,
+  .about__body {
+    color: var(--fg-secondary-on-inverted);
+  }
+
+  .about .page-section-title {
+    color: var(--fg-on-inverted);
   }
 
   .section--contact .page-section-title,
@@ -128,7 +369,19 @@ const studies = (await getCollection("work")).sort(
     color: var(--fg-on-accent);
   }
 
-  .section--contact a {
+  .section--contact a,
+  .section--contact :global(.reveal-email) {
     color: inherit;
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+  }
+
+  .contact-lines {
+    list-style: none;
+    margin: var(--s-12) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-4);
+    font-size: var(--t-body-lg);
   }
 </style>

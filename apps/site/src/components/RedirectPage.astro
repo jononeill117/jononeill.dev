@@ -1,0 +1,29 @@
+---
+/**
+ * Client redirect to a hash on the home page. Keeps old URLs from 404ing.
+ */
+interface Props {
+  hash: string;
+  label: string;
+}
+
+const { hash, label } = Astro.props;
+const target = `/${hash}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <title>Redirecting to {label}</title>
+    <link rel="canonical" href={`https://jononeill.dev${target}`} />
+    <script is:inline define:vars={{ target }}>
+      location.replace(target);
+    </script>
+  </head>
+  <body>
+    <p><a href={target}>{label}</a></p>
+  </body>
+</html>

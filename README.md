@@ -1,33 +1,35 @@
 # jononeill.dev
 
-Source for jononeill.dev, a hire-packet personal site. Dark editorial, not SaaS marketing.
+Source for jononeill.dev, the personal site of Jon O'Neill, product leader. Dark editorial, not SaaS marketing.
 
-**Status:** Pages are in the repo. Domain is not live. Atlas points jononeill.dev after the Worker exists.
+**Status:** Live at [jononeill.dev](https://jononeill.dev/). This repo is the source.
 
 ## If you are a recruiter
 
-This repo is the public source for Jon ONeill's personal site. The site is not live on the domain yet. Use this file as the briefing, then run the site locally.
-
-### What this is
-
-A personal site for hiring managers and recruiters. It shows who Jon is, the locked design system, and the stack. It is not a product marketing site and it is not Clairvos.
-
-### Status
-
-- Pages live in this repo
-- Design locked (tokens, motion, shared UI)
-- Domain not live (jononeill.dev is not serving this site yet)
+Open the site first. This file is the briefing if you are reading the repo.
 
 ### Who Jon is
 
-Jon works in product, operations, and analytics.
+A product leader in Phoenix. Underwriting and AI models at Zillow, the acquisitions model behind Cash Close at HomeLight, the Portico underwriting platform at Stoa, and a zero to one SaaS at Livable that reached 2,000 units in four months. Currently Director of Operations at Zoom Drain Phoenix, applying product discipline to a live operating system and P&L.
 
-- Zoom Drain Phoenix: Director of Operations
-- Livable: Head of Product
-- Earlier product and analytics work at HomeLight, Stoa, and Zillow
-- Ecclesio is a side project
+| Org | Title | Dates |
+| --- | --- | --- |
+| Zoom Drain Phoenix | Director of Operations | 2023 to Present |
+| Livable | Head of Product | Sep 2023 to Jul 2024 |
+| Stoa | Senior Product Manager, SaaS and Data Integrations | May 2022 to Jul 2023 |
+| HomeLight | Product Owner, Acquisitions | Mar 2021 to May 2022 |
+| Zillow | Associate | Sep 2019 to Mar 2021 |
 
-Phoenix, AZ. [LinkedIn](https://www.linkedin.com/in/jon-oneill-020196). [jon.oneill.m@gmail.com](mailto:jon.oneill.m@gmail.com).
+Ecclesio (Dec 2025 to Present) is a side project, not a role.
+
+Phoenix, AZ. [LinkedIn](https://www.linkedin.com/in/jon-oneill-020196). Email is on the contact section of the homepage.
+
+### Status
+
+- One-page hire packet on `/`
+- Design locked (tokens, motion, shared UI)
+- Domain live
+- Resume PDF at `/Jon-ONeill-Director-of-Product.pdf` (Zillow should be on the PDF; if missing, treat the homepage Zillow section as source of truth)
 
 ### Files to open first
 
@@ -52,13 +54,15 @@ Then open [http://localhost:4371/](http://localhost:4371/).
 
 | Path | Page |
 | --- | --- |
-| `/` | Home |
-| `/work/zoom-drain/` | Zoom Drain case study |
-| `/work/ecclesio/` | Ecclesio case study |
-| `/experience/` | Paid roles, then projects |
-| `/about/` | About |
-| `/contact/` | Phone, email, LinkedIn |
+| `/` | Home (hero, experience, demos, Ecclesio, about, contact) |
+| `/work/zoom-drain/` | Redirects to `/#zoom-drain` |
+| `/work/ecclesio/` | Redirects to `/#ecclesio` |
+| `/experience/` | Redirects to `/#experience` |
+| `/about/` | Redirects to `/#about` |
+| `/contact/` | Redirects to `/#contact` |
 | `/privacy/` | Privacy |
+
+Inline demos on the homepage cover Zoom Drain, Livable, Stoa, HomeLight, Zillow, and Ecclesio.
 
 ## Stack
 
@@ -78,33 +82,13 @@ Then open [http://localhost:4371/](http://localhost:4371/).
 | `apps/site` | Astro 5 site (port 4371) |
 | `packages/tokens` | Token CSS (canvas, ink, copper) |
 | `packages/motion` | GSAP / Lenis |
-| `packages/ui` | Shared UI + Instrument Sans fonts |
-| `scripts/sync-fonts.mjs` | Copies fonts into `apps/site/public/fonts` |
-| `wrangler.jsonc` | Workers static assets config |
+| `packages/ui` | Shared Astro components and fonts |
+| `wrangler.jsonc` | Cloudflare Worker deploy config |
 
-## Palette
+## Rules that stay locked
 
-Locked. Do not invent a fourth hue.
-
-- Canvas `#0B0A09`
-- Ink `#F2EBE1`
-- Copper `#B87333`
-
-No indigo. No `#864AEC`. No purple brand accent.
-
-## Rules
-
-- No em dashes or en dashes
-- Do not brand Jon as executive, owner, founder, entrepreneur, or co-owner
-- No secrets, no `dist`, no `node_modules` in git
-- Ecclesio is a side project, not a job
-
-## Contact
-
-- Phoenix, AZ
-- LinkedIn: [linkedin.com/in/jon-oneill-020196](https://www.linkedin.com/in/jon-oneill-020196)
-- Email: [jon.oneill.m@gmail.com](mailto:jon.oneill.m@gmail.com)
-
-## License
-
-MIT. See `LICENSE`.
+- Palette: canvas `#0B0A09`, ink `#F2EBE1`, copper `#B87333`. No fourth brand hue.
+- No em dashes or en dashes. Use `·` or commas.
+- Do not brand Jon as executive, owner, founder, entrepreneur, or co-owner.
+- Ecclesio is a side project and stays one.
+- Demos are inline boards. No modal. No Figma embed.

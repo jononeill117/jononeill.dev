@@ -1,0 +1,389 @@
+---
+import DemoFrame from "./DemoFrame.astro";
+---
+
+<DemoFrame
+  class="zoom-drain-demo"
+  system="Vendor intake → automation → dispatch"
+  cta="Watch a work order move from the vendor portal to a tech on a truck."
+  caption="See the operating system in action"
+>
+  <div class="zd" data-zd>
+    <header class="zd__head">
+      <span class="zd__kicker" data-zd-step>Ready</span>
+      <span class="zd__wo">WO-1842 · Copper fuse</span>
+    </header>
+
+    <svg class="zd__fuse" viewBox="0 0 640 72" aria-hidden="true">
+      <path class="zd__fuse-track" d="M40 36 H600" pathLength="1"></path>
+      <path class="zd__fuse-live" data-zd-fuse d="M40 36 H600" pathLength="1"></path>
+    </svg>
+
+    <div class="zd__nodes" role="list">
+      <div class="zd__node" data-zd-node="portal" role="listitem">
+        <span class="zd__node-name">Vendor portal</span>
+        <span class="zd__node-detail" data-zd-detail="portal">Waiting</span>
+      </div>
+      <div class="zd__node" data-zd-node="gmail" role="listitem">
+        <span class="zd__node-name">Gmail / intake</span>
+        <span class="zd__node-detail" data-zd-detail="gmail">Waiting</span>
+      </div>
+      <div class="zd__node" data-zd-node="gary" role="listitem">
+        <span class="zd__node-name">Gary · CSM</span>
+        <span class="zd__node-detail" data-zd-detail="gary">Waiting</span>
+      </div>
+      <div class="zd__node" data-zd-node="steve" role="listitem">
+        <span class="zd__node-name">Steve · Office</span>
+        <span class="zd__node-detail" data-zd-detail="steve">Waiting</span>
+      </div>
+      <div class="zd__node" data-zd-node="mike" role="listitem">
+        <span class="zd__node-name">Mike · Tech</span>
+        <span class="zd__node-detail" data-zd-detail="mike">Waiting</span>
+      </div>
+    </div>
+
+    <div class="zd__stats">
+      <div class="zd__stat">
+        <span class="zd__stat-label">Booking</span>
+        <span class="zd__stat-val" data-zd-stat="booking">baseline</span>
+      </div>
+      <div class="zd__stat">
+        <span class="zd__stat-label">Speed to lead</span>
+        <span class="zd__stat-val" data-zd-stat="speed">baseline</span>
+      </div>
+      <div class="zd__stat">
+        <span class="zd__stat-label">Weekly revenue</span>
+        <span class="zd__stat-val" data-zd-stat="revenue">baseline</span>
+      </div>
+    </div>
+
+    <div class="zd__actions">
+      <p class="zd__hint" data-zd-hint hidden>Now explore it yourself.</p>
+      <button type="button" class="zd__btn zd__btn--pulse" data-zd-try hidden>
+        Send another work order
+      </button>
+      <button type="button" class="zd__btn" data-zd-replay hidden>Replay</button>
+    </div>
+  </div>
+</DemoFrame>
+
+<script>
+  type ZdStep = {
+    id: string;
+    label: string;
+    detail: string;
+    fuse: number;
+  };
+
+  const STEPS: ZdStep[] = [
+    {
+      id: "portal",
+      label: "New work order",
+      detail: "WO-1842 · 918 Maple Ave · Priority",
+      fuse: 0.18,
+    },
+    {
+      id: "gmail",
+      label: "Inbox parsed",
+      detail: "Subject: New vendor work order received",
+      fuse: 0.36,
+    },
+    {
+      id: "gary",
+      label: "Gary reviews",
+      detail: "Accept · customer, address, job type",
+      fuse: 0.54,
+    },
+    {
+      id: "steve",
+      label: "Office board",
+      detail: "Steve queues dispatch · ETA window open",
+      fuse: 0.72,
+    },
+    {
+      id: "mike",
+      label: "Tech en route",
+      detail: "Mike assigned · ETA 42 min · Accept",
+      fuse: 1,
+    },
+  ];
+
+  function sleep(ms: number) {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
+  function wireZoomDrain(root: HTMLElement) {
+    const frame = root.closest<HTMLElement>("[data-demo-frame]");
+    if (!frame || frame.hasAttribute("data-zd-wired")) return;
+    frame.setAttribute("data-zd-wired", "true");
+
+    const stepEl = root.querySelector<HTMLElement>("[data-zd-step]");
+    const fuse = root.querySelector<SVGPathElement>("[data-zd-fuse]");
+    const tryBtn = root.querySelector<HTMLButtonElement>("[data-zd-try]");
+    const replayBtn = root.querySelector<HTMLButtonElement>("[data-zd-replay]");
+    const hint = root.querySelector<HTMLElement>("[data-zd-hint]");
+    const stats = {
+      booking: root.querySelector("[data-zd-stat='booking']"),
+      speed: root.querySelector("[data-zd-stat='speed']"),
+      revenue: root.querySelector("[data-zd-stat='revenue']"),
+    };
+
+    let running = false;
+    let token = 0;
+
+    const resetBoard = () => {
+      STEPS.forEach((s) => {
+        root.querySelector(`[data-zd-node='${s.id}']`)?.classList.remove("is-live");
+        const d = root.querySelector(`[data-zd-detail='${s.id}']`);
+        if (d) d.textContent = "Waiting";
+      });
+      if (fuse) fuse.style.strokeDashoffset = "1";
+      if (stepEl) stepEl.textContent = "Ready";
+      if (stats.booking) stats.booking.textContent = "baseline";
+      if (stats.speed) stats.speed.textContent = "baseline";
+      if (stats.revenue) stats.revenue.textContent = "baseline";
+      if (tryBtn) tryBtn.hidden = true;
+      if (replayBtn) replayBtn.hidden = true;
+      if (hint) hint.hidden = true;
+      tryBtn?.classList.remove("is-pulse");
+    };
+
+    const finish = () => {
+      running = false;
+      if (stats.booking) stats.booking.textContent = "-3 hr";
+      if (stats.speed) stats.speed.textContent = "+300%";
+      if (stats.revenue) stats.revenue.textContent = "+10-15%";
+      if (stepEl) stepEl.textContent = "Appointment confirmed";
+      if (tryBtn) tryBtn.hidden = false;
+      if (replayBtn) replayBtn.hidden = false;
+      if (hint) hint.hidden = false;
+      tryBtn?.classList.add("is-pulse");
+      frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
+    };
+
+    const run = async () => {
+      const my = ++token;
+      running = true;
+      resetBoard();
+      if (tryBtn) tryBtn.hidden = true;
+      if (replayBtn) replayBtn.hidden = true;
+      if (hint) hint.hidden = true;
+
+      for (const step of STEPS) {
+        if (my !== token) return;
+        if (fuse) fuse.style.strokeDashoffset = String(1 - step.fuse);
+        root.querySelector(`[data-zd-node='${step.id}']`)?.classList.add("is-live");
+        const d = root.querySelector(`[data-zd-detail='${step.id}']`);
+        if (d) d.textContent = step.detail;
+        if (stepEl) stepEl.textContent = step.label;
+        await sleep(1400);
+      }
+
+      if (my !== token) return;
+      finish();
+    };
+
+    frame.addEventListener("demo-play", (e) => {
+      const detail = (e as CustomEvent).detail as { reduced?: boolean } | undefined;
+      if (detail?.reduced) {
+        resetBoard();
+        STEPS.forEach((s) => {
+          root.querySelector(`[data-zd-node='${s.id}']`)?.classList.add("is-live");
+          const d = root.querySelector(`[data-zd-detail='${s.id}']`);
+          if (d) d.textContent = s.detail;
+        });
+        if (fuse) fuse.style.strokeDashoffset = "0";
+        finish();
+        return;
+      }
+      void run();
+    });
+    frame.addEventListener("demo-replay", () => void run());
+
+    tryBtn?.addEventListener("click", () => {
+      if (running) return;
+      void run();
+    });
+    replayBtn?.addEventListener("click", () => {
+      frame.dispatchEvent(new CustomEvent("demo-request-replay", { bubbles: true }));
+    });
+  }
+
+  document.querySelectorAll("[data-zd]").forEach((el) => wireZoomDrain(el as HTMLElement));
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll("[data-zd]").forEach((el) => wireZoomDrain(el as HTMLElement));
+  });
+</script>
+
+<style>
+  .zd {
+    --zd-copper: var(--accent, #b87333);
+    height: 100%;
+    padding: var(--s-4);
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    gap: var(--s-3);
+    color: var(--fg);
+    background:
+      radial-gradient(ellipse at top left, color-mix(in srgb, var(--zd-copper) 18%, transparent), transparent 55%),
+      var(--bg);
+  }
+
+  .zd__head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-3);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+  }
+
+  .zd__kicker {
+    color: var(--zd-copper);
+  }
+
+  .zd__wo {
+    color: var(--fg-muted);
+  }
+
+  .zd__fuse {
+    width: 100%;
+    height: 2.5rem;
+  }
+
+  .zd__fuse-track {
+    fill: none;
+    stroke: var(--hairline-color);
+    stroke-width: 2;
+  }
+
+  .zd__fuse-live {
+    fill: none;
+    stroke: var(--zd-copper);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 0.7s var(--ease-out, ease-out);
+  }
+
+  .zd__nodes {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--s-2);
+  }
+
+  .zd__node {
+    border: var(--hairline) solid var(--hairline-color);
+    padding: var(--s-3);
+    display: grid;
+    gap: var(--s-2);
+    min-height: 5.5rem;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .zd__node.is-live {
+    border-color: var(--zd-copper);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--zd-copper) 45%, transparent);
+  }
+
+  .zd__node-name {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+  }
+
+  .zd__node-detail {
+    font-size: var(--t-body-sm);
+    color: var(--fg-secondary);
+    line-height: 1.35;
+  }
+
+  .zd__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-2);
+  }
+
+  .zd__stat {
+    border-block-start: var(--hairline) solid var(--hairline-color);
+    padding-block-start: var(--s-2);
+    display: grid;
+    gap: var(--s-1);
+  }
+
+  .zd__stat-label {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  .zd__stat-val {
+    font-size: var(--t-proof, var(--t-body));
+    color: var(--fg);
+  }
+
+  .zd__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3);
+  }
+
+  .zd__hint {
+    margin: 0;
+    font-size: var(--t-proof, var(--t-body-sm));
+    color: var(--fg-secondary);
+  }
+
+  .zd__btn {
+    padding: var(--s-2) var(--s-4);
+    border: var(--hairline) solid var(--hairline-color);
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .zd__btn--pulse.is-pulse {
+    border-color: var(--zd-copper);
+    color: var(--zd-copper);
+    animation: zd-pulse 1.6s ease-out infinite;
+  }
+
+  @keyframes zd-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--zd-copper) 0%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--zd-copper) 28%, transparent);
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .zd__nodes {
+      grid-template-columns: 1fr;
+    }
+
+    .zd__fuse {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zd__fuse-live,
+    .zd__btn--pulse.is-pulse {
+      transition: none;
+      animation: none;
+    }
+  }
+</style>

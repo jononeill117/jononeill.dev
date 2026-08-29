@@ -1,0 +1,745 @@
+---
+import DemoFrame from "./DemoFrame.astro";
+---
+
+<DemoFrame
+  class="stoa-demo"
+  system="Data → underwriting → decision"
+  cta="Open a Portico file. This is the queue 40 analysts worked."
+  caption="Interactive walkthrough"
+>
+  <div class="sp" data-sp>
+    <header class="sp__head">
+      <div class="sp__brand">
+        <span class="sp__product">Portico</span>
+        <span class="sp__queue-label" data-sp-step>Queue idle</span>
+      </div>
+      <span class="sp__eval" data-sp-eval>Eval -</span>
+    </header>
+
+    <div class="sp__queue" data-sp-queue>
+      <div class="sp__file is-empty" data-sp-file>
+        <span class="sp__file-id" data-sp-file-id>Waiting for file</span>
+        <span class="sp__file-addr" data-sp-file-addr></span>
+        <span class="sp__file-status" data-sp-file-status></span>
+      </div>
+    </div>
+
+    <div class="sp__feeds" data-sp-feeds aria-label="Vendor feeds">
+      <span class="sp__feed" data-sp-feed="mls">MLS</span>
+      <span class="sp__feed" data-sp-feed="tax">Tax</span>
+      <span class="sp__feed" data-sp-feed="title">Title</span>
+      <span class="sp__feed" data-sp-feed="avm">AVM</span>
+      <span class="sp__feed" data-sp-feed="insp">Inspection</span>
+      <span class="sp__feed" data-sp-feed="comp">Comps</span>
+    </div>
+
+    <div class="sp__record" data-sp-record>
+      <p class="sp__record-title">Property record</p>
+      <p class="sp__record-body" data-sp-record-body>Feeds unresolved. No consolidated file yet.</p>
+    </div>
+
+    <ul class="sp__flags" data-sp-flags hidden>
+      <li class="sp__flag" data-sp-flag="roof">Roof age 14 yr</li>
+      <li class="sp__flag" data-sp-flag="title">Title exception</li>
+      <li class="sp__flag" data-sp-flag="avm">Valuation variance 6%</li>
+    </ul>
+
+    <div class="sp__review" data-sp-review hidden>
+      <span class="sp__review-label" data-sp-review-label>Analyst review</span>
+      <button type="button" class="sp__accept" data-sp-accept disabled>Accept</button>
+    </div>
+
+    <div class="sp__metrics" data-sp-metrics hidden>
+      <span class="sp__chip">$1B underwritten</span>
+      <span class="sp__chip">cycle time −85%</span>
+      <span class="sp__chip">22 → 6 integrations</span>
+    </div>
+
+    <div class="sp__try" data-sp-try hidden>
+      <table class="sp__table">
+        <thead>
+          <tr><th>Field</th><th>Source</th><th>Final data</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Sq ft</td>
+            <td>1,840</td>
+            <td>1,840</td>
+          </tr>
+          <tr>
+            <td>Roof age</td>
+            <td>12 yr</td>
+            <td>
+              <button type="button" class="sp__cell sp__cell--pulse" data-sp-nudge="roof">14 yr</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Contingency</td>
+            <td>$8,200</td>
+            <td>
+              <button type="button" class="sp__cell" data-sp-nudge="contingency">$9,400</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="sp__try-bar">
+        <p class="sp__valuation">
+          Valuation <strong data-sp-val>$392,547</strong>
+        </p>
+        <button type="button" class="sp__recalc" data-sp-recalc>Recalc</button>
+        <button type="button" class="sp__replay" data-sp-replay>Replay</button>
+      </div>
+      <p class="sp__hint" data-sp-hint>Nudge roof age or contingency, then Recalc.</p>
+    </div>
+  </div>
+</DemoFrame>
+
+<script>
+  const FEEDS = ["mls", "tax", "title", "avm", "insp", "comp"] as const;
+
+  const ROOF_VALUES = ["14 yr", "16 yr", "11 yr"] as const;
+  const CONTINGENCY_VALUES = ["$9,400", "$11,200", "$7,800"] as const;
+  const VALUATIONS = ["$392,547", "$384,200", "$401,100"] as const;
+
+  function sleep(ms: number) {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
+  function wireStoa(root: HTMLElement) {
+    const frame = root.closest<HTMLElement>("[data-demo-frame]");
+    if (!frame || frame.hasAttribute("data-sp-wired")) return;
+    frame.setAttribute("data-sp-wired", "true");
+
+    const stepEl = root.querySelector<HTMLElement>("[data-sp-step]");
+    const evalEl = root.querySelector<HTMLElement>("[data-sp-eval]");
+    const fileEl = root.querySelector<HTMLElement>("[data-sp-file]");
+    const fileId = root.querySelector<HTMLElement>("[data-sp-file-id]");
+    const fileAddr = root.querySelector<HTMLElement>("[data-sp-file-addr]");
+    const fileStatus = root.querySelector<HTMLElement>("[data-sp-file-status]");
+    const recordBody = root.querySelector<HTMLElement>("[data-sp-record-body]");
+    const flags = root.querySelector<HTMLElement>("[data-sp-flags]");
+    const review = root.querySelector<HTMLElement>("[data-sp-review]");
+    const reviewLabel = root.querySelector<HTMLElement>("[data-sp-review-label]");
+    const acceptBtn = root.querySelector<HTMLButtonElement>("[data-sp-accept]");
+    const metrics = root.querySelector<HTMLElement>("[data-sp-metrics]");
+    const tryPanel = root.querySelector<HTMLElement>("[data-sp-try]");
+    const recalcBtn = root.querySelector<HTMLButtonElement>("[data-sp-recalc]");
+    const replayBtn = root.querySelector<HTMLButtonElement>("[data-sp-replay]");
+    const valEl = root.querySelector<HTMLElement>("[data-sp-val]");
+    const roofBtn = root.querySelector<HTMLButtonElement>("[data-sp-nudge='roof']");
+    const contingencyBtn = root.querySelector<HTMLButtonElement>("[data-sp-nudge='contingency']");
+
+    let running = false;
+    let token = 0;
+    let roofIdx = 0;
+    let contingencyIdx = 0;
+    let valuationIdx = 0;
+    let dirty = false;
+
+    const setStep = (text: string) => {
+      if (stepEl) stepEl.textContent = text;
+    };
+
+    const clearFeeds = () => {
+      FEEDS.forEach((id) => {
+        root.querySelector(`[data-sp-feed='${id}']`)?.classList.remove("is-live", "is-done");
+      });
+    };
+
+    const clearFlags = () => {
+      flags?.querySelectorAll(".sp__flag").forEach((el) => el.classList.remove("is-live"));
+      if (flags) flags.hidden = true;
+    };
+
+    const resetBoard = () => {
+      setStep("Queue idle");
+      if (evalEl) evalEl.textContent = "Eval -";
+      fileEl?.classList.add("is-empty");
+      fileEl?.classList.remove("is-live", "is-accepted");
+      if (fileId) fileId.textContent = "Waiting for file";
+      if (fileAddr) fileAddr.textContent = "";
+      if (fileStatus) fileStatus.textContent = "";
+      clearFeeds();
+      if (recordBody) {
+        recordBody.textContent = "Feeds unresolved. No consolidated file yet.";
+      }
+      root.querySelector("[data-sp-record]")?.classList.remove("is-live");
+      clearFlags();
+      if (review) review.hidden = true;
+      review?.classList.remove("is-live");
+      if (reviewLabel) reviewLabel.textContent = "Analyst review";
+      if (acceptBtn) {
+        acceptBtn.disabled = true;
+        acceptBtn.classList.remove("is-done");
+        acceptBtn.textContent = "Accept";
+      }
+      if (metrics) metrics.hidden = true;
+      if (tryPanel) tryPanel.hidden = true;
+      roofBtn?.classList.remove("is-pulse");
+      dirty = false;
+    };
+
+    const showTry = () => {
+      if (tryPanel) tryPanel.hidden = false;
+      if (metrics) metrics.hidden = false;
+      roofBtn?.classList.add("is-pulse");
+      if (roofBtn) roofBtn.textContent = ROOF_VALUES[0];
+      if (contingencyBtn) contingencyBtn.textContent = CONTINGENCY_VALUES[0];
+      if (valEl) valEl.textContent = VALUATIONS[0];
+      roofIdx = 0;
+      contingencyIdx = 0;
+      valuationIdx = 0;
+      dirty = false;
+    };
+
+    const finish = () => {
+      running = false;
+      setStep("Decision recorded");
+      if (metrics) metrics.hidden = false;
+      showTry();
+      frame.dispatchEvent(new CustomEvent("demo-request-complete", { bubbles: true }));
+    };
+
+    const snapFinal = () => {
+      resetBoard();
+      setStep("Decision recorded");
+      if (evalEl) evalEl.textContent = "#4418";
+      fileEl?.classList.remove("is-empty");
+      fileEl?.classList.add("is-live", "is-accepted");
+      if (fileId) fileId.textContent = "#4418";
+      if (fileAddr) fileAddr.textContent = "1847 Longcityname Blvd, Unit 3B";
+      if (fileStatus) fileStatus.textContent = "Accepted";
+      FEEDS.forEach((id) => {
+        root.querySelector(`[data-sp-feed='${id}']`)?.classList.add("is-done");
+      });
+      root.querySelector("[data-sp-record]")?.classList.add("is-live");
+      if (recordBody) {
+        recordBody.textContent =
+          "1847 Longcityname Blvd, Unit 3B · 1,840 sq ft · SFR · Phoenix MSA";
+      }
+      if (flags) flags.hidden = false;
+      flags?.querySelectorAll(".sp__flag").forEach((el) => el.classList.add("is-live"));
+      if (review) review.hidden = false;
+      review?.classList.add("is-live");
+      if (reviewLabel) reviewLabel.textContent = "Analyst accepted";
+      if (acceptBtn) {
+        acceptBtn.disabled = false;
+        acceptBtn.classList.add("is-done");
+        acceptBtn.textContent = "Accepted";
+      }
+      finish();
+    };
+
+    const run = async () => {
+      const my = ++token;
+      running = true;
+      resetBoard();
+
+      // 1. File lands in queue
+      setStep("File in queue");
+      if (evalEl) evalEl.textContent = "#4418";
+      fileEl?.classList.remove("is-empty");
+      fileEl?.classList.add("is-live");
+      if (fileId) fileId.textContent = "#4418";
+      if (fileAddr) fileAddr.textContent = "1847 Longcityname Blvd, Unit 3B";
+      if (fileStatus) fileStatus.textContent = "New";
+      await sleep(2200);
+      if (my !== token) return;
+
+      // 2. Six vendor feeds resolve
+      setStep("Resolving vendor feeds");
+      if (fileStatus) fileStatus.textContent = "Pulling data";
+      for (const id of FEEDS) {
+        if (my !== token) return;
+        const el = root.querySelector(`[data-sp-feed='${id}']`);
+        el?.classList.add("is-live");
+        await sleep(280);
+        el?.classList.remove("is-live");
+        el?.classList.add("is-done");
+      }
+      await sleep(400);
+      if (my !== token) return;
+
+      // 3. Consolidate to one property record
+      setStep("Consolidating record");
+      if (fileStatus) fileStatus.textContent = "Consolidating";
+      root.querySelector("[data-sp-record]")?.classList.add("is-live");
+      if (recordBody) {
+        recordBody.textContent =
+          "1847 Longcityname Blvd, Unit 3B · 1,840 sq ft · SFR · Phoenix MSA";
+      }
+      await sleep(2200);
+      if (my !== token) return;
+
+      // 4. Automation flags
+      setStep("Automation flags");
+      if (fileStatus) fileStatus.textContent = "Flagged";
+      if (flags) flags.hidden = false;
+      const flagIds = ["roof", "title", "avm"] as const;
+      for (const id of flagIds) {
+        if (my !== token) return;
+        root.querySelector(`[data-sp-flag='${id}']`)?.classList.add("is-live");
+        await sleep(520);
+      }
+      await sleep(600);
+      if (my !== token) return;
+
+      // 5. Analyst review → Accept
+      setStep("Analyst review");
+      if (review) review.hidden = false;
+      review?.classList.add("is-live");
+      if (acceptBtn) acceptBtn.disabled = false;
+      await sleep(1400);
+      if (my !== token) return;
+      if (acceptBtn) {
+        acceptBtn.classList.add("is-done");
+        acceptBtn.textContent = "Accepted";
+      }
+      if (reviewLabel) reviewLabel.textContent = "Analyst accepted";
+      fileEl?.classList.add("is-accepted");
+      if (fileStatus) fileStatus.textContent = "Accepted";
+      await sleep(1200);
+      if (my !== token) return;
+
+      // 6. Metrics + try
+      setStep("Decision recorded");
+      finish();
+    };
+
+    frame.addEventListener("demo-play", (e) => {
+      const detail = (e as CustomEvent).detail as { reduced?: boolean } | undefined;
+      if (detail?.reduced) {
+        snapFinal();
+        return;
+      }
+      void run();
+    });
+
+    frame.addEventListener("demo-replay", () => void run());
+
+    root.querySelectorAll<HTMLButtonElement>("[data-sp-nudge]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (running) return;
+        const key = btn.getAttribute("data-sp-nudge");
+        if (key === "roof") {
+          roofIdx = (roofIdx + 1) % ROOF_VALUES.length;
+          btn.textContent = ROOF_VALUES[roofIdx] ?? ROOF_VALUES[0]!;
+        } else if (key === "contingency") {
+          contingencyIdx = (contingencyIdx + 1) % CONTINGENCY_VALUES.length;
+          btn.textContent = CONTINGENCY_VALUES[contingencyIdx] ?? CONTINGENCY_VALUES[0]!;
+        }
+        dirty = true;
+        btn.classList.add("is-nudge");
+        setTimeout(() => btn.classList.remove("is-nudge"), 280);
+        roofBtn?.classList.remove("is-pulse");
+      });
+    });
+
+    recalcBtn?.addEventListener("click", () => {
+      if (running || !dirty) return;
+      valuationIdx = (valuationIdx + 1) % VALUATIONS.length;
+      if (valEl) valEl.textContent = VALUATIONS[valuationIdx] ?? VALUATIONS[0]!;
+      valEl?.classList.add("is-nudge");
+      setTimeout(() => valEl?.classList.remove("is-nudge"), 320);
+      dirty = false;
+      recalcBtn.classList.add("is-nudge");
+      setTimeout(() => recalcBtn.classList.remove("is-nudge"), 280);
+    });
+
+    replayBtn?.addEventListener("click", () => {
+      if (running) return;
+      frame.dispatchEvent(new CustomEvent("demo-request-replay", { bubbles: true }));
+    });
+  }
+
+  document.querySelectorAll("[data-sp]").forEach((el) => wireStoa(el as HTMLElement));
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll("[data-sp]").forEach((el) => wireStoa(el as HTMLElement));
+  });
+</script>
+
+<style>
+  .sp {
+    --sp-copper: var(--accent, #b87333);
+    --sp-ink: var(--fg, #f2ebe1);
+    --sp-muted: var(--fg-muted, #8a837a);
+    --sp-secondary: var(--fg-secondary, #b8afa3);
+    --sp-line: var(--hairline-color, #1f1d1b);
+    --sp-panel: var(--ghost-color, #2e2b28);
+
+    height: 100%;
+    padding: var(--s-4);
+    display: grid;
+    grid-template-rows: auto auto auto auto auto auto 1fr;
+    gap: var(--s-3);
+    color: var(--sp-ink);
+    background:
+      radial-gradient(ellipse at 12% 0%, color-mix(in srgb, var(--sp-copper) 16%, transparent), transparent 48%),
+      linear-gradient(180deg, color-mix(in srgb, var(--sp-panel) 55%, transparent), transparent 42%),
+      var(--bg, #0b0a09);
+  }
+
+  .sp__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-3);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+  }
+
+  .sp__brand {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-3);
+    align-items: baseline;
+  }
+
+  .sp__product {
+    color: var(--sp-copper);
+  }
+
+  .sp__queue-label {
+    color: var(--sp-muted);
+  }
+
+  .sp__eval {
+    color: var(--sp-secondary);
+  }
+
+  .sp__queue {
+    min-height: 3.25rem;
+  }
+
+  .sp__file {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--s-3);
+    align-items: baseline;
+    padding: var(--s-3);
+    border: var(--hairline) solid var(--sp-line);
+    background: color-mix(in srgb, var(--sp-panel) 70%, transparent);
+    transition:
+      border-color var(--dur-base, 240ms) var(--ease-out, ease-out),
+      opacity var(--dur-base, 240ms) var(--ease-out, ease-out);
+  }
+
+  .sp__file.is-empty {
+    opacity: 0.45;
+  }
+
+  .sp__file.is-live {
+    border-color: color-mix(in srgb, var(--sp-copper) 55%, var(--sp-line));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sp-copper) 28%, transparent);
+  }
+
+  .sp__file.is-accepted {
+    border-color: var(--sp-copper);
+  }
+
+  .sp__file-id {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--sp-copper);
+  }
+
+  .sp__file-addr {
+    font-size: var(--t-body-sm);
+    color: var(--sp-ink);
+  }
+
+  .sp__file-status {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--sp-muted);
+  }
+
+  .sp__feeds {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--s-2);
+  }
+
+  .sp__feed {
+    padding: var(--s-2);
+    border: var(--hairline) solid var(--sp-line);
+    text-align: center;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--sp-muted);
+    opacity: 0.4;
+    transition:
+      opacity var(--dur-quick, 160ms) ease,
+      border-color var(--dur-quick, 160ms) ease,
+      color var(--dur-quick, 160ms) ease;
+  }
+
+  .sp__feed.is-live {
+    opacity: 1;
+    color: var(--sp-copper);
+    border-color: var(--sp-copper);
+  }
+
+  .sp__feed.is-done {
+    opacity: 1;
+    color: var(--sp-ink);
+    border-color: color-mix(in srgb, var(--sp-copper) 40%, var(--sp-line));
+  }
+
+  .sp__record {
+    padding: var(--s-3);
+    border-block-start: var(--hairline) solid var(--sp-line);
+    opacity: 0.5;
+    transition: opacity var(--dur-base, 240ms) var(--ease-out, ease-out);
+  }
+
+  .sp__record.is-live {
+    opacity: 1;
+  }
+
+  .sp__record-title {
+    margin: 0 0 var(--s-2);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--sp-muted);
+  }
+
+  .sp__record-body {
+    margin: 0;
+    font-size: var(--t-body-sm);
+    color: var(--sp-secondary);
+    line-height: 1.4;
+  }
+
+  .sp__record.is-live .sp__record-body {
+    color: var(--sp-ink);
+  }
+
+  .sp__flags {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+
+  .sp__flag {
+    padding: var(--s-2) var(--s-3);
+    border: var(--hairline) solid var(--sp-line);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--sp-muted);
+    opacity: 0.35;
+    transition:
+      opacity var(--dur-quick, 160ms) ease,
+      border-color var(--dur-quick, 160ms) ease,
+      color var(--dur-quick, 160ms) ease;
+  }
+
+  .sp__flag.is-live {
+    opacity: 1;
+    color: var(--sp-copper);
+    border-color: color-mix(in srgb, var(--sp-copper) 50%, var(--sp-line));
+  }
+
+  .sp__review {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding-block-start: var(--s-2);
+    border-block-start: var(--hairline) solid var(--sp-line);
+    opacity: 0.4;
+    transition: opacity var(--dur-base, 240ms) ease;
+  }
+
+  .sp__review.is-live {
+    opacity: 1;
+  }
+
+  .sp__review-label {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--sp-secondary);
+  }
+
+  .sp__accept {
+    padding: var(--s-2) var(--s-4);
+    border: var(--hairline) solid var(--sp-line);
+    background: transparent;
+    color: var(--sp-ink);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    cursor: default;
+  }
+
+  .sp__accept.is-done {
+    border-color: var(--sp-copper);
+    color: var(--sp-copper);
+  }
+
+  .sp__metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+
+  .sp__chip {
+    padding: var(--s-2) var(--s-3);
+    border: var(--hairline) solid color-mix(in srgb, var(--sp-copper) 45%, var(--sp-line));
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--sp-copper);
+  }
+
+  .sp__try {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+    border-block-start: var(--hairline) solid var(--sp-line);
+    padding-block-start: var(--s-3);
+  }
+
+  .sp__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--t-mono-sm);
+  }
+
+  .sp__table th,
+  .sp__table td {
+    padding: var(--s-2);
+    text-align: left;
+    border-block-end: var(--hairline) solid var(--sp-line);
+  }
+
+  .sp__table th {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--sp-muted);
+  }
+
+  .sp__cell {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sp-copper);
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .sp__cell--pulse.is-pulse {
+    animation: sp-control-pulse 1.6s var(--ease-out, ease-out) infinite;
+  }
+
+  .sp__cell.is-nudge,
+  .sp__recalc.is-nudge,
+  .sp__valuation strong.is-nudge {
+    color: var(--sp-ink);
+  }
+
+  .sp__try-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3);
+  }
+
+  .sp__valuation {
+    margin: 0;
+    margin-inline-end: auto;
+    font-size: var(--t-body-sm);
+    color: var(--sp-secondary);
+  }
+
+  .sp__valuation strong {
+    color: var(--sp-ink);
+    font-size: var(--t-proof, var(--t-body));
+  }
+
+  .sp__recalc,
+  .sp__replay {
+    padding: var(--s-2) var(--s-4);
+    border: var(--hairline) solid var(--sp-line);
+    background: transparent;
+    color: var(--sp-ink);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .sp__recalc {
+    border-color: color-mix(in srgb, var(--sp-copper) 50%, var(--sp-line));
+    color: var(--sp-copper);
+  }
+
+  .sp__hint {
+    margin: 0;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    color: var(--sp-muted);
+  }
+
+  @keyframes sp-control-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--sp-copper) 0%, transparent);
+      color: var(--sp-copper);
+    }
+    50% {
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--sp-copper) 28%, transparent);
+      color: var(--sp-ink);
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .sp__feeds {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .sp__file {
+      grid-template-columns: 1fr;
+      gap: var(--s-1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sp__file,
+    .sp__feed,
+    .sp__record,
+    .sp__flag,
+    .sp__review,
+    .sp__cell--pulse.is-pulse {
+      transition: none;
+      animation: none;
+    }
+  }
+</style>

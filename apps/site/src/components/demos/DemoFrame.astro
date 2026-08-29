@@ -1,0 +1,249 @@
+---
+/**
+ * Inline demo shell. Cover → walkthrough → try. Replay stays on the board.
+ * No modal. No Figma embed.
+ */
+interface Props {
+  class?: string;
+  aspect?: string;
+  cta: string;
+  system?: string;
+  playLabel?: string;
+  caption?: string;
+}
+
+const {
+  class: className,
+  aspect = "16 / 9",
+  cta,
+  system,
+  playLabel = "Play the walkthrough",
+  caption = "Interactive walkthrough",
+} = Astro.props;
+---
+
+<figure
+  class:list={["demo-frame", className]}
+  style={`--demo-aspect: ${aspect}`}
+  data-demo-frame
+>
+  {
+    system && (
+      <p class="demo-frame__system">
+        <span class="demo-frame__system-label">System</span>
+        <span class="demo-frame__system-path">{system}</span>
+      </p>
+    )
+  }
+  <p class="demo-frame__cta">{cta}</p>
+  <div class="demo-frame__board">
+    <div class="demo-frame__cover" data-demo-cover>
+      <button type="button" class="demo-frame__play" data-demo-play>
+        <span class="demo-frame__play-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="48" height="48" focusable="false">
+            <circle cx="24" cy="24" r="23" fill="none" stroke="currentColor" stroke-width="1"></circle>
+            <path d="M20 15 L34 24 L20 33 Z" fill="currentColor"></path>
+          </svg>
+        </span>
+        <span class="demo-frame__play-label">{playLabel}</span>
+      </button>
+    </div>
+    <div class="demo-frame__stage" data-demo-stage hidden>
+      <slot />
+    </div>
+  </div>
+  <figcaption class="demo-frame__caption">{caption}</figcaption>
+</figure>
+
+<script>
+  type DemoMode = "cover" | "walkthrough" | "try";
+
+  function wireDemoFrame(root: HTMLElement) {
+    if (root.hasAttribute("data-demo-wired")) return;
+    root.setAttribute("data-demo-wired", "true");
+
+    const cover = root.querySelector<HTMLElement>("[data-demo-cover]");
+    const stage = root.querySelector<HTMLElement>("[data-demo-stage]");
+    if (!cover || !stage) return;
+
+    let mode: DemoMode = "cover";
+
+    const setMode = (next: DemoMode) => {
+      mode = next;
+      root.dataset.demoMode = next;
+      if (next === "cover") {
+        cover.hidden = false;
+        stage.hidden = true;
+        return;
+      }
+      cover.hidden = true;
+      stage.hidden = false;
+    };
+
+    const startWalkthrough = () => {
+      setMode("walkthrough");
+      root.dispatchEvent(new CustomEvent("demo-play", { bubbles: true }));
+    };
+
+    const enterTry = () => {
+      if (mode === "cover") return;
+      setMode("try");
+      root.dispatchEvent(new CustomEvent("demo-complete", { bubbles: true }));
+    };
+
+    const replay = () => {
+      setMode("walkthrough");
+      root.dispatchEvent(new CustomEvent("demo-replay", { bubbles: true }));
+    };
+
+    cover.addEventListener("click", (e) => {
+      e.preventDefault();
+      startWalkthrough();
+    });
+    root.querySelector("[data-demo-play]")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      startWalkthrough();
+    });
+
+    // Child demos may still emit demo-reset for legacy wiring. Never return to cover.
+    root.addEventListener("demo-reset", (e) => {
+      e.stopPropagation();
+      replay();
+    });
+    root.addEventListener("demo-request-complete", () => enterTry());
+    root.addEventListener("demo-request-replay", () => replay());
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setMode("try");
+      root.dispatchEvent(new CustomEvent("demo-play", { bubbles: true, detail: { reduced: true } }));
+      root.dispatchEvent(new CustomEvent("demo-complete", { bubbles: true, detail: { reduced: true } }));
+    } else {
+      setMode("cover");
+    }
+  }
+
+  document.querySelectorAll("[data-demo-frame]").forEach((el) => wireDemoFrame(el as HTMLElement));
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll("[data-demo-frame]").forEach((el) => wireDemoFrame(el as HTMLElement));
+  });
+</script>
+
+<style>
+  .demo-frame {
+    margin: var(--s-12) 0 0;
+    max-width: var(--demo-max, 52rem);
+  }
+
+  .demo-frame__system {
+    margin: 0 0 var(--s-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-3);
+    align-items: baseline;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-md);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  .demo-frame__system-label {
+    color: var(--accent);
+  }
+
+  .demo-frame__system-path {
+    color: var(--fg-secondary);
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: var(--font-body);
+    font-size: var(--t-proof, var(--t-body));
+  }
+
+  .demo-frame__cta {
+    margin: 0 0 var(--s-4);
+    max-width: var(--measure);
+    font-size: var(--t-proof, var(--t-body));
+    line-height: var(--lh-body);
+    color: var(--fg);
+  }
+
+  .demo-frame__board {
+    position: relative;
+    aspect-ratio: var(--demo-aspect, 16 / 9);
+    max-height: min(540px, 70vh);
+    border: var(--hairline) solid var(--hairline-color);
+    background-color: var(--ghost-color);
+    overflow: hidden;
+  }
+
+  .demo-frame__cover {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background-color: color-mix(in srgb, var(--bg) 88%, transparent);
+    cursor: pointer;
+  }
+
+  .demo-frame__play {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-3);
+    padding: var(--s-4);
+    border: 0;
+    background: transparent;
+    color: var(--fg);
+    cursor: pointer;
+  }
+
+  .demo-frame__play-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    color: var(--accent);
+    animation: demo-play-pulse 1.6s var(--ease-out) infinite;
+  }
+
+  .demo-frame__play-label {
+    font-family: var(--font-label);
+    font-size: var(--t-proof, var(--t-mono-md));
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+
+  .demo-frame__stage {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+    font-size: var(--t-body-sm);
+  }
+
+  .demo-frame__caption {
+    margin-block-start: var(--s-4);
+    font-size: var(--t-proof, var(--t-body-sm));
+    line-height: var(--lh-body);
+    color: var(--fg-muted);
+  }
+
+  @keyframes demo-play-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.72;
+      transform: scale(1.06);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .demo-frame__play-icon {
+      animation: none;
+    }
+  }
+</style>

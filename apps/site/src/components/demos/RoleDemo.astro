@@ -1,0 +1,30 @@
+---
+/**
+ * Maps each experience entry to its inline demo widget.
+ */
+import ZoomDrainDemo from "./ZoomDrainDemo.astro";
+import LivableDemo from "./LivableDemo.astro";
+import StoaDemo from "./StoaDemo.astro";
+import HomeLightDemo from "./HomeLightDemo.astro";
+import ZillowDemo from "./ZillowDemo.astro";
+import EcclesioDemo from "./EcclesioDemo.astro";
+
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+
+const DEMOS: Record<string, typeof ZoomDrainDemo> = {
+  "zoom-drain": ZoomDrainDemo,
+  livable: LivableDemo,
+  stoa: StoaDemo,
+  homelight: HomeLightDemo,
+  zillow: ZillowDemo,
+  ecclesio: EcclesioDemo,
+};
+
+const Demo = DEMOS[id];
+---
+
+{Demo ? <Demo /> : null}

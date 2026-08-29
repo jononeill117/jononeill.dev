@@ -1,0 +1,24 @@
+---
+/**
+ * Mailbox link. Address is visible. Recruiters should not hunt for it.
+ */
+import { SITE } from "./site";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<a class:list={["reveal-email", className]} href={`mailto:${SITE.email}`}>
+  {SITE.email}
+</a>
+
+<style>
+  .reveal-email {
+    color: inherit;
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+  }
+</style>

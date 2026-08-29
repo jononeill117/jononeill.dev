@@ -8,21 +8,26 @@
 export const SITE = {
   origin: "https://jononeill.dev",
   domain: "jononeill.dev",
-  name: "Jon ONeill",
-  legalName: "Jon ONeill",
-  email: "jon.oneill.m@gmail.com",
+  name: "Jon O'Neill",
+  legalName: "Jon O'Neill",
   wordmark: "jononeill",
   wordmarkSuffix: ".dev",
 
+  resume: "/Jon-ONeill-Director-of-Product.pdf",
+
+  jobTitle: "Product leader",
+
   description:
-    "Personal site for Jon ONeill. Product, operations, and analytics. Phoenix, AZ.",
+    "Product professional with seven years across product management, operations, strategy, and analytics. Zillow, HomeLight, Stoa, Livable, Zoom Drain. Phoenix, AZ.",
+
+  email: "jon.oneill.m@gmail.com",
 
   locality: ["Phoenix, Arizona", "United States"],
 
   practice:
-    "Product, operations, and analytics. Currently Director of Operations at Zoom Drain Phoenix.",
+    "Product management. Zero to one SaaS, pricing and underwriting platforms, data and machine learning, and the go to market that has to follow.",
 
-  categories: ["Product", "Operations", "Analytics"],
+  categories: ["Product", "Pricing and underwriting", "Data and ML", "Go to market"],
 
   postal: {
     locality: "Phoenix",
@@ -31,16 +36,18 @@ export const SITE = {
   },
 
   linkedin: "https://www.linkedin.com/in/jon-oneill-020196",
-
-  phone: "928.499.8446",
-  phoneHref: "tel:+19284998446",
 } as const;
 
+/** Split mailbox parts kept for any remaining client-side assembly. */
+export const EMAIL_USER = "jon.oneill.m";
+export const EMAIL_HOST = "gmail.com";
+
 export const NAV_LINKS = [
-  { label: "Work", href: "/#work" },
-  { label: "Experience", href: "/experience/" },
-  { label: "About", href: "/about/" },
-  { label: "Contact", href: "/contact/" },
+  { label: "Experience", href: "#experience" },
+  { label: "Portfolio", href: "#ecclesio" },
+  { label: "About", href: "#about" },
+  { label: "Resume", href: "#resume", resume: true },
+  { label: "Contact", href: "#contact" },
 ] as const;
 
 export function personSchema() {
@@ -49,9 +56,9 @@ export function personSchema() {
     "@id": `${SITE.origin}/#person`,
     name: SITE.name,
     url: `${SITE.origin}/`,
-    email: SITE.email,
-    telephone: SITE.phoneHref.replace("tel:", ""),
+    jobTitle: SITE.jobTitle,
     description: SITE.description,
+    email: SITE.email,
     address: {
       "@type": "PostalAddress",
       addressLocality: SITE.postal.locality,
