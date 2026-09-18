@@ -13,7 +13,7 @@ export const SITE = {
   wordmark: "jononeill",
   wordmarkSuffix: ".dev",
 
-  resume: "/Jon-ONeill-Director-of-Product.pdf",
+  resume: "/Jon-ONeill-Product-Leader.pdf",
 
   jobTitle: "Product leader",
 
