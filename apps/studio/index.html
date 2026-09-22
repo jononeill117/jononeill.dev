@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Muse Character Studio — turn Muse into anyone</title>
+  <meta name="description" content="A community studio for the Meta Muse character. Copy the prompt, attach your Muse photo, and generate your own full body character icons.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%23f3ecdd'/%3E%3Ccircle cx='23' cy='27' r='5' fill='%23111'/%3E%3Ccircle cx='41' cy='27' r='5' fill='%23111'/%3E%3Cpath d='M24 40 Q32 46 40 40' stroke='%23111' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#gallery">Skip to gallery</a>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="wordmark" href="#top" aria-label="Muse Character Studio home">
+        <svg class="wordmark-glyph" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#f3ecdd"/><circle cx="23" cy="27" r="5" fill="#111"/><circle cx="41" cy="27" r="5" fill="#111"/><path d="M24 40 Q32 46 40 40" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+        <span>Muse Character Studio</span>
+      </a>
+      <nav class="site-nav" aria-label="Sections">
+        <a href="#gallery">Gallery</a>
+        <a href="#make">Make your own</a>
+        <a href="#community">Community</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">A community studio for the Meta Muse character</p>
+          <h1>Turn Muse into anyone.</h1>
+          <p class="lede">Copy the prompt, attach your Muse photo, and generate your own full body character icons. Download ours, or make your own and share it.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#make">Copy the prompt</a>
+            <a class="btn btn-ghost" href="#gallery">Browse the gallery</a>
+          </div>
+        </div>
+        <figure class="hero-figure">
+          <img src="muse-reference.jpg" alt="The original Muse character, a small cream fuzzy blob with dot eyes and a smile" width="640" height="640">
+          <figcaption>The original Muse. Every icon starts here.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="gallery" aria-labelledby="gallery-title">
+      <div class="wrap">
+        <p class="eyebrow">Gallery</p>
+        <h2 id="gallery-title">Thirteen Muses, ready to download.</h2>
+        <p class="section-lede">Every one is full body, every face untouched. Pick one to preview it large, download it, or copy a prompt tuned for its theme.</p>
+
+        <div class="viewer">
+          <figure class="featured">
+            <img id="featured-img" src="gallery/master-chief.webp" alt="Muse character dressed as Master Chief, full body" width="1024" height="1024">
+            <figcaption aria-live="polite">
+              <span class="featured-name" id="featured-name">Master Chief</span>
+              <span class="featured-theme" id="featured-theme">Halo</span>
+            </figcaption>
+          </figure>
+          <div class="viewer-actions">
+            <a class="btn btn-primary" id="featured-download" href="gallery/master-chief.webp" download="muse-master-chief.webp">Download</a>
+            <button class="btn btn-ghost" id="featured-copy" type="button">Copy prompt for this theme</button>
+            <a class="btn btn-ghost" id="featured-share" href="#" target="_blank" rel="noopener">Share on X</a>
+          </div>
+          <p class="copy-note" id="featured-copy-note" role="status" hidden></p>
+        </div>
+
+        <div class="thumbs" id="thumbs" role="group" aria-label="Character thumbnails"></div>
+      </div>
+    </section>
+
+    <section class="section" id="make" aria-labelledby="make-title">
+      <div class="wrap">
+        <p class="eyebrow">Make your own</p>
+        <h2 id="make-title">The prompt.</h2>
+        <p class="section-lede">Read it first, then copy it. Both versions start the same way: attach your Muse reference photo, then send the text. Short fits anywhere. Full is the complete spec.</p>
+
+        <div class="prompt-grid">
+          <article class="prompt-card" aria-labelledby="short-title">
+            <div class="prompt-head">
+              <h3 id="short-title">Short prompt</h3>
+              <button class="btn btn-small" type="button" data-copy="short">Copy</button>
+            </div>
+            <div class="prompt-box" id="short-box" tabindex="0" aria-label="Short prompt text"></div>
+            <div class="prompt-foot">
+              <button class="btn btn-small" type="button" data-copy="short">Copy short prompt</button>
+              <span class="copy-note" data-note="short" role="status" hidden></span>
+            </div>
+          </article>
+
+          <article class="prompt-card" aria-labelledby="full-title">
+            <div class="prompt-head">
+              <h3 id="full-title">Full prompt</h3>
+              <button class="btn btn-small" type="button" data-copy="full">Copy</button>
+            </div>
+            <div class="prompt-box" id="full-box" tabindex="0" aria-label="Full prompt text"></div>
+            <div class="prompt-foot">
+              <button class="btn btn-small" type="button" data-copy="full">Copy full prompt</button>
+              <span class="copy-note" data-note="full" role="status" hidden></span>
+            </div>
+          </article>
+        </div>
+
+        <ol class="steps">
+          <li><span class="step-num">01</span><div><strong>Copy the prompt.</strong><p>Pick short or full above. What you see in the box is exactly what gets copied.</p></div></li>
+          <li><span class="step-num">02</span><div><strong>Attach your Muse reference photo.</strong><p>The prompt matches every detail to that photo. No photo handy? <a href="muse-reference.jpg" download="muse-reference.jpg">Download the reference photo</a>.</p></div></li>
+          <li><span class="step-num">03</span><div><strong>Open Muse, paste, send.</strong><p><a href="https://muse.ai" target="_blank" rel="noopener">Open Muse</a> in a new tab, attach the photo, paste the prompt, and send.</p></div></li>
+        </ol>
+
+        <p class="reco">Muse's image generation is the recommended tool for this prompt.</p>
+
+        <details class="help">
+          <summary>Running into trouble?</summary>
+          <div class="help-body">
+            <h4>Not signed in</h4>
+            <p>If Muse asks you to sign in first, that is normal. Sign in, then come back and paste the prompt again.</p>
+            <h4>On a mobile browser</h4>
+            <p>Attaching a photo works best in the Muse app. If your mobile browser will not attach the photo, switch to the app and try there.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="section" id="variations" aria-labelledby="variations-title">
+      <div class="wrap">
+        <p class="eyebrow">Variations</p>
+        <h2 id="variations-title">Make it yours.</h2>
+        <ul class="tips">
+          <li><strong>Change the theme line.</strong> Swap <code>[THEME]</code> for anything: a show, a game, a movie, your Dungeons and Dragons character.</li>
+          <li><strong>Leave the base character section alone.</strong> That part is what keeps every result reading as Muse.</li>
+          <li><strong>One change at a time.</strong> Follow-up edits work best when you ask for a single change per message.</li>
+        </ul>
+        <div class="animate-note">
+          <h3>Want it moving?</h3>
+          <p>Generate the still first, then run it through an image to video tool with a simple motion prompt like "gentle idle bounce, soft blink". The still is the hard part. Motion is easy after that.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="community" aria-labelledby="community-title">
+      <div class="wrap">
+        <p class="eyebrow">Community</p>
+        <h2 id="community-title">Made something? Show it.</h2>
+        <p class="section-lede">The best community creations get featured here, with credit.</p>
+        <ol class="steps">
+          <li><span class="step-num">01</span><div><strong>Post it on X.</strong><p>Share your Muse creation with the hashtag <code>#MuseCharacterStudio</code>.</p></div></li>
+          <li><span class="step-num">02</span><div><strong>Get featured.</strong><p>Submissions are curated by hand. If yours is picked, it lands in the carousel below with your name and a link to your post.</p></div></li>
+        </ol>
+        <div class="hashtag-row">
+          <code class="hashtag">#MuseCharacterStudio</code>
+          <button class="btn btn-small" type="button" id="hashtag-copy">Copy hashtag</button>
+          <span class="copy-note" id="hashtag-note" role="status" hidden></span>
+        </div>
+        <div class="carousel" aria-label="Community creations">
+          <article class="community-empty">
+            <p class="community-empty-title">Your Muse could be here.</p>
+            <p>Nothing featured yet. Post with the hashtag to be first.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section hiring" aria-labelledby="hiring-title">
+      <div class="wrap">
+        <h2 id="hiring-title">A note from the studio's builder.</h2>
+        <p>If you are hiring an engineering product manager, I am looking for a great company to call home. <a href="https://jononeill.dev">That's me: jononeill.dev</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p>The prompt text is shared under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>. Images you generate are yours. This is a fan project, not affiliated with Meta.</p>
+      <p class="version"><span id="app-version" title="">v…</span></p>
+    </div>
+  </footer>
+
+  <noscript><p class="noscript">This studio needs JavaScript for the gallery and copy buttons. The prompt text is still yours to use: attach your Muse photo in Muse and describe the theme.</p></noscript>
+  <script src="app.js" defer></script>
+</body>
+</html>
