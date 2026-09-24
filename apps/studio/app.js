@@ -19,7 +19,8 @@
     { id: "stormtrooper",   name: "Stormtrooper",   theme: "Star Wars",            file: "gallery/stormtrooper.webp" },
     { id: "totoro",         name: "Totoro",         theme: "My Neighbor Totoro",   file: "gallery/totoro.webp" },
     { id: "dwight-schrute", name: "Dwight Schrute", theme: "The Office",           file: "gallery/dwight-schrute.webp" },
-    { id: "woody",          name: "Woody",          theme: "Toy Story",            file: "gallery/woody.webp" }
+    { id: "woody",          name: "Woody",          theme: "Toy Story",            file: "gallery/woody.webp" },
+    { id: "pirate",         name: "Pirate",         theme: "Pirates",              file: "gallery/pirate.webp" }
   ];
 
   var SHORT_PROMPT =
