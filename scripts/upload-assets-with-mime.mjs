@@ -3,15 +3,32 @@
  * Upload apps/site/dist to Workers Assets with correct Content-Type on each part.
  *
  * Usage (after assets-upload-session returns jwt + buckets):
- *   node scripts/upload-assets-with-mime.mjs <uploadJwt> '<buckets-json>'
+ *   CF_ASSETS_UPLOAD_JWT=<uploadJwt> node scripts/upload-assets-with-mime.mjs '<buckets-json>'
+ *   echo '<uploadJwt>' | node scripts/upload-assets-with-mime.mjs '<buckets-json>'
  *
- * Writes completion JWT to /tmp/cf-assets-completion.jwt
+ * The upload JWT is read from the CF_ASSETS_UPLOAD_JWT environment variable or
+ * from stdin — never from argv, which is world-readable via /proc/<pid>/cmdline
+ * and persists in shell history. Rotate the credential and clear shell history
+ * if it was previously passed on the command line.
+ *
+ * On success the completion JWT is written to a file inside a private
+ * mkdtemp directory (mode 0700) under the OS temp root; the file itself is
+ * mode 0600 and created with O_EXCL so it cannot be pre-planted. The path is
+ * printed to stdout for the deploy step that consumes it — delete it when done.
  *
  * Requires: Node 18+, account id via CLOUDFLARE_ACCOUNT_ID or wrangler.jsonc default.
  */
 import { createHash } from "node:crypto";
-import { readFileSync, writeFileSync, readdirSync, statSync } from "node:fs";
+import {
+  lstatSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  readdirSync,
+  writeFileSync,
+} from "node:fs";
 import { join, relative, extname, sep } from "node:path";
+import { tmpdir } from "node:os";
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -37,20 +54,51 @@ const MIME = {
 
 const accountId =
   process.env.CLOUDFLARE_ACCOUNT_ID || "0504b58e93fd6ed01430450afe1b9984";
-const dist = join(process.cwd(), "apps/site/dist");
 
-function walk(dir, files = []) {
+function underRoot(resolved, base) {
+  return resolved === base || resolved.startsWith(base + sep);
+}
+
+// Every entry must lstat as a plain single-link regular file or a real
+// directory that stays inside the dist root. A planted symlink would
+// otherwise smuggle arbitrary operator-readable bytes into the account's
+// asset store.
+function walk(dir, base, files = []) {
   for (const name of readdirSync(dir)) {
     const p = join(dir, name);
-    if (statSync(p).isDirectory()) walk(p, files);
-    else files.push(p);
+    const lst = lstatSync(p);
+    if (lst.isSymbolicLink()) {
+      throw new Error(`assets: refusing symlink ${p}`);
+    }
+    if (lst.isDirectory()) {
+      const resolved = realpathSync(p);
+      if (!underRoot(resolved, base)) {
+        throw new Error(`assets: ${p} resolves outside ${base}`);
+      }
+      walk(resolved, base, files);
+    } else if (lst.isFile() && lst.nlink === 1) {
+      const resolved = realpathSync(p);
+      if (!underRoot(resolved, base)) {
+        throw new Error(`assets: ${p} resolves outside ${base}`);
+      }
+      files.push(resolved);
+    } else {
+      throw new Error(
+        `assets: refusing non-regular file ${p} (hard link, fifo, or device)`,
+      );
+    }
   }
   return files;
 }
 
 function buildIndex() {
+  const cwd = realpathSync(process.cwd());
+  const dist = realpathSync(join(cwd, "apps/site/dist"));
+  if (!underRoot(dist, cwd)) {
+    throw new Error(`assets: dist resolves outside ${cwd}`);
+  }
   const byHash = new Map();
-  for (const file of walk(dist)) {
+  for (const file of walk(dist, dist)) {
     const buf = readFileSync(file);
     const hash = createHash("sha256").update(buf).digest("hex").slice(0, 32);
     const rel = "/" + relative(dist, file).split(sep).join("/");
@@ -91,10 +139,17 @@ async function uploadBucket(hashes, byHash, jwt) {
   return json.result?.jwt || null;
 }
 
-const uploadJwt = process.argv[2];
-const buckets = JSON.parse(process.argv[3] || "[]");
+const buckets = JSON.parse(process.argv[2] || "[]");
+const uploadJwt =
+  process.env.CF_ASSETS_UPLOAD_JWT?.trim() ||
+  (process.stdin.isTTY ? "" : readFileSync(0, "utf8").trim());
 if (!uploadJwt) {
-  console.error("Usage: node scripts/upload-assets-with-mime.mjs <uploadJwt> '<buckets-json>'");
+  console.error(
+    "Usage: CF_ASSETS_UPLOAD_JWT=<uploadJwt> node scripts/upload-assets-with-mime.mjs '<buckets-json>'",
+  );
+  console.error(
+    "   or: echo '<uploadJwt>' | node scripts/upload-assets-with-mime.mjs '<buckets-json>'",
+  );
   process.exit(1);
 }
 
@@ -109,5 +164,7 @@ if (!completion) {
   console.error("No completion JWT returned");
   process.exit(1);
 }
-writeFileSync("/tmp/cf-assets-completion.jwt", completion);
-console.log("Wrote /tmp/cf-assets-completion.jwt");
+const jwtDir = mkdtempSync(join(tmpdir(), "cf-assets-"));
+const jwtPath = join(jwtDir, "completion.jwt");
+writeFileSync(jwtPath, completion, { mode: 0o600, flag: "wx" });
+console.log(`Wrote ${jwtPath}`);

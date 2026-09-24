@@ -34,8 +34,8 @@ function contentTypeForPathname(pathname) {
   const base = pathname.slice(slash + 1);
   const dot = base.lastIndexOf(".");
   if (dot === -1) {
-    // Pretty URL without trailing slash (before redirect) — treat as HTML.
-    return "text/html; charset=utf-8";
+    // No extension — keep the asset's own label.
+    return null;
   }
   return MIME_BY_EXT[base.slice(dot).toLowerCase()] ?? null;
 }
@@ -43,12 +43,15 @@ function contentTypeForPathname(pathname) {
 export default {
   async fetch(request, env) {
     const response = await env.ASSETS.fetch(request);
-    const type = contentTypeForPathname(new URL(request.url).pathname);
-    if (!type || response.status >= 300 && response.status < 400) {
-      return response;
-    }
+    // Only a real 200 body gets the extension-derived label. Error pages
+    // (the HTML 404 served for any missing path) keep the platform
+    // Content-Type, so the request extension cannot relabel them.
+    const type = response.ok
+      ? contentTypeForPathname(new URL(request.url).pathname)
+      : null;
     const headers = new Headers(response.headers);
-    headers.set("Content-Type", type);
+    headers.set("X-Content-Type-Options", "nosniff");
+    if (type) headers.set("Content-Type", type);
     return new Response(response.body, {
       status: response.status,
       statusText: response.statusText,

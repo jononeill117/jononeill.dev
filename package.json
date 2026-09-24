@@ -8,8 +8,9 @@
   },
   "scripts": {
     "dev": "pnpm --filter site dev",
-    "build": "pnpm --filter site build",
+    "build": "node scripts/security-fixes.test.mjs && pnpm --filter site build",
     "check": "pnpm -r check",
+    "test": "node scripts/security-fixes.test.mjs",
     "fonts:sync": "node scripts/sync-fonts.mjs",
     "deploy": "pnpm build && wrangler deploy"
   },
