@@ -8,7 +8,7 @@ kind: product
 order: 3
 visualCaption: units on the platform, launch through month four
 bullets:
-  - Took a new SaaS offering from concept through public launch — 2,000 units in the first four months.
+  - "Took a new SaaS offering from concept through public launch: 2,000 units in the first four months."
   - Landed an enterprise integration that created evergreen exposure to an 8M-unit base.
   - Drove a 35% lift in CSAT and retention by restructuring the roadmap around direct user feedback.
   - Presented product strategy to the board monthly; hired and mentored PMs, designers, and business analysts.

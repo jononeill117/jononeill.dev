@@ -24,7 +24,7 @@ export const roles: readonly Role[] = [
     title: "Director of Operations",
     dates: "2023 to Present",
     bullets: [
-      "Rebuilt job intake as an automated pipeline across a vendor portal, CSM, and VOIP — average booking time down three hours.",
+      "Rebuilt job intake as an automated pipeline across a vendor portal, CSM, and VOIP: average booking time down three hours.",
       "Automation lifted speed to lead 300%, grew weekly revenue 10 to 15%, and cut office labor about 30% (~$40k a year).",
       "Wrote the dispatch operating system, then hired and trained the office team that runs it.",
       "Built SOPs and estimate tooling; used booking data for GTM; won commercial contracts including sewer laterals and multi-crew renovations.",
@@ -35,7 +35,7 @@ export const roles: readonly Role[] = [
     title: "Head of Product",
     dates: "Sep 2023 to Jul 2024",
     bullets: [
-      "Took a new SaaS offering from concept through public launch — 2,000 units in the first four months.",
+      "Took a new SaaS offering from concept through public launch: 2,000 units in the first four months.",
       "Landed an enterprise integration with evergreen exposure to an 8M-unit base.",
       "Drove a 35% lift in CSAT and retention; presented to the board monthly; hired PMs, designers, and analysts.",
     ],
@@ -45,9 +45,9 @@ export const roles: readonly Role[] = [
     title: "Senior Product Manager, SaaS and Data Integrations",
     dates: "May 2022 to Jul 2023",
     bullets: [
-      "Owned Portico for 40 analysts — cycle time down 85%, over $1B underwritten and $300M purchased.",
+      "Owned Portico for 40 analysts: cycle time down 85%, over $1B underwritten and $300M purchased.",
       "Consolidated 22 data vendors to 6; ML and automation up to $4M in labor savings.",
-      "Rebuilt data integration — time down 40%, accuracy up 25%.",
+      "Rebuilt data integration: time down 40%, accuracy up 25%.",
     ],
   },
   {
@@ -64,7 +64,7 @@ export const roles: readonly Role[] = [
     title: "Business Analyst",
     dates: "Sep 2019 to Mar 2021",
     bullets: [
-      "First enterprise product seat — underwriting and AI models on live inventory.",
+      "First enterprise product seat: underwriting and AI models on live inventory.",
       "About ten a day; about 3,000 in the period.",
     ],
   },

@@ -8,7 +8,7 @@ kind: product
 order: 6
 visualCaption: daily model throughput on live inventory
 bullets:
-  - First enterprise product seat — underwriting and AI models running daily on live inventory.
+  - "First enterprise product seat: underwriting and AI models running daily on live inventory."
   - About ten decisions a day; about 3,000 across the period.
   - Sat between analysts running the models and engineers shipping them.
 ---

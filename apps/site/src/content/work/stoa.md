@@ -9,8 +9,8 @@ order: 4
 visualCaption: underwriting cycle time before and after Portico automation
 bullets:
   - Owned Portico, the pricing platform used by 40 analysts to underwrite residential real estate.
-  - Compressed underwriting cycle time 85% — over $1B underwritten and $300M in completed purchases.
+  - "Compressed underwriting cycle time 85%: over $1B underwritten and $300M in completed purchases."
   - Audited 22 data vendors down to 6, cutting spend while improving data quality.
   - Introduced ML and process automation across underwriting, up to $4M in labor savings.
-  - Rebuilt end-to-end data integration — integration time down 40%, data accuracy up 25%.
+  - "Rebuilt end-to-end data integration: integration time down 40%, data accuracy up 25%."
 ---
