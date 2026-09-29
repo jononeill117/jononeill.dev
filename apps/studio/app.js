@@ -21,7 +21,8 @@
     { id: "dwight-schrute", name: "Dwight Schrute", theme: "The Office",           file: "gallery/dwight-schrute.webp" },
     { id: "woody",          name: "Woody",          theme: "Toy Story",            file: "gallery/woody.webp" },
     { id: "pirate",         name: "Pirate",         theme: "Pirates",              file: "gallery/pirate.webp" },
-    { id: "batman",         name: "Batman",         theme: "DC Comics",            file: "gallery/batman.webp" }
+    { id: "batman",         name: "Batman",         theme: "DC Comics",            file: "gallery/batman.webp" },
+    { id: "muscular-muse",  name: "Muscular Muse",  theme: "Strength Training",    file: "gallery/muscular-muse.webp" }
   ];
 
   var SHORT_PROMPT =
