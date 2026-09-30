@@ -161,8 +161,23 @@
         <div class="hashtag-row">
           <code class="hashtag">#MuseCharacterStudio</code>
           <button class="btn btn-small" type="button" id="hashtag-copy">Copy hashtag</button>
+          <a class="btn btn-small btn-ghost" id="hashtag-post" href="https://x.com/intent/post?hashtags=MuseCharacterStudio" target="_blank" rel="noopener">Post on X</a>
           <span class="copy-note" id="hashtag-note" role="status" hidden></span>
         </div>
+        <form class="submit-form" id="submit-form" novalidate>
+          <h3>Already posted? Send your link.</h3>
+          <p>Paste your X post link and your name. It opens an email draft to the studio inbox with everything filled in, ready to send.</p>
+          <div class="field">
+            <label for="submit-post-url">Your X post link</label>
+            <input id="submit-post-url" name="postUrl" type="url" inputmode="url" placeholder="https://x.com/you/status/123456789" autocomplete="url">
+          </div>
+          <div class="field">
+            <label for="submit-handle">Your name or handle</label>
+            <input id="submit-handle" name="handle" type="text" placeholder="How to credit you" autocomplete="nickname" maxlength="60">
+          </div>
+          <button class="btn btn-primary" type="submit">Send submission</button>
+          <p class="copy-note" id="submit-note" role="status" hidden></p>
+        </form>
         <div class="carousel" aria-label="Community creations">
           <article class="community-empty">
             <p class="community-empty-title">Your Muse could be here.</p>

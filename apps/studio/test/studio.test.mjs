@@ -17,6 +17,12 @@
 //  8. Wrong MIME type: the asset worker serves app.js as
 //     application/octet-stream -> browsers download it instead of running it
 //     (the exact bug worker.js was written to fix).
+//  9. Deep-link drift: a #/muse/<id> hash for an id not in the manifest
+//     selects nothing -> the visitor lands on a broken viewer.
+// 10. Submission intake accepts a non-X URL or an empty handle ->
+//     phishing links or uncredited entries reach the curation inbox.
+// 11. mailto built without encoding: a handle like "A & Co" breaks the
+//     subject/body query string -> the draft arrives mangled.
 //
 // Strategy: static contract tests read the REAL files (app.js, index.html,
 // version.json, gallery/), and behavioral tests drive the REAL app.js IIFE
@@ -51,6 +57,48 @@ function evalVar(source, name) {
 const CHARACTERS = evalVar(APP_JS, "CHARACTERS");
 const SHORT_PROMPT = evalVar(APP_JS, "SHORT_PROMPT");
 const FULL_PROMPT = evalVar(APP_JS, "FULL_PROMPT");
+
+/** Evaluate a top-level `var NAME = "...";` one-liner from the real app.js. */
+function evalConst(source, name) {
+  const m = source.match(
+    new RegExp(`var ${name} = ("(?:[^"\\\\]|\\\\.)*"|'[^']*');`)
+  );
+  assert.ok(m, `${name} not found in app.js`);
+  return vm.runInNewContext(`(${m[1]})`, {});
+}
+
+/** Evaluate a top-level `function NAME(...) { ... }` from the real app.js. */
+function evalFn(source, name, sandboxVars = {}) {
+  const marker = `function ${name}(`;
+  const start = source.indexOf(marker);
+  assert.ok(start !== -1, `${name} not found in app.js`);
+  const open = source.indexOf("{", start);
+  assert.ok(open !== -1, `body of ${name} not found`);
+  let depth = 0;
+  for (let j = open; j < source.length; j++) {
+    const ch = source[j];
+    if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) {
+        return vm.runInNewContext(`(${source.slice(start, j + 1)})`, {
+          ...sandboxVars,
+        });
+      }
+    }
+  }
+  assert.fail(`end of ${name} not found`);
+}
+
+const communityShareUrl = evalFn(APP_JS, "communityShareUrl", {
+  HASHTAG: evalConst(APP_JS, "HASHTAG"),
+  PAGE_URL: evalConst(APP_JS, "PAGE_URL"),
+});
+const characterFromHash = evalFn(APP_JS, "characterFromHash", { CHARACTERS });
+const validateSubmission = evalFn(APP_JS, "validateSubmission", { URL });
+const submissionMailto = evalFn(APP_JS, "submissionMailto", {
+  SUBMISSIONS_INBOX: evalConst(APP_JS, "SUBMISSIONS_INBOX"),
+});
 
 // --- 1+2. Gallery manifest consistency -----------------------------------------
 
@@ -149,7 +197,7 @@ function makeElement(tag) {
  * Minimal DOM stub: a platform seam so the REAL app.js IIFE runs end to end.
  * Returns the sandbox globals plus handles to inspect and drive the page.
  */
-function runStudio({ clipboard = "ok", execCommandResult = true, version = null } = {}) {
+function runStudio({ clipboard = "ok", execCommandResult = true, version = null, hash = "", captureNav = false } = {}) {
   const byId = new Map();
   const thumbs = [];
   const copyButtons = [];
@@ -206,7 +254,18 @@ function runStudio({ clipboard = "ok", execCommandResult = true, version = null 
 
   const sandbox = {
     document: doc,
-    window: { setTimeout, clearTimeout },
+    URL,
+    window: captureNav
+      ? {
+          setTimeout,
+          clearTimeout,
+          location: { href: "", hash },
+          history: {
+            replaceState(s, t, u) { sandbox.window._replaced = u; },
+            _replaced: null,
+          },
+        }
+      : { setTimeout, clearTimeout },
     navigator: nav,
     fetch: (...args) => fetchHandler(...args),
     console,
@@ -223,7 +282,9 @@ function runStudio({ clipboard = "ok", execCommandResult = true, version = null 
 
   return {
     doc,
+    window: sandbox.window,
     get copiedText() { return copiedText; },
+    get replacedUrl() { return sandbox.window._replaced ?? null; },
     setFetchHandler(fn) { fetchHandler = fn; },
     tick: (ms = 30) => new Promise((r) => setTimeout(r, ms)),
   };
@@ -319,4 +380,138 @@ test("worker passes 404s and redirects through untouched", async () => {
   });
   assert.equal(redirect.status, 301);
   assert.equal(redirect.headers.get("location"), "/new");
+});
+
+// --- 10. Community share URL -----------------------------------------------------------
+
+test("community share URL carries the hashtag and page URL", () => {
+  const url = communityShareUrl();
+  assert.ok(url.startsWith("https://x.com/intent/post?"), "x intent endpoint");
+  assert.ok(url.includes("hashtags=MuseCharacterStudio"), "hashtag param");
+  assert.ok(
+    url.includes(encodeURIComponent("https://musecharacters.jononeill.dev")),
+    "page url"
+  );
+});
+
+// --- 11. Deep links ----------------------------------------------------------------------
+
+test("characterFromHash resolves deep links and rejects everything else", () => {
+  assert.equal(characterFromHash("#/muse/goku").id, "goku");
+  assert.equal(characterFromHash("#/muse/master-chief").id, "master-chief");
+  assert.equal(characterFromHash("#gallery"), null, "nav anchor falls back");
+  assert.equal(characterFromHash("#/muse/nope"), null, "unknown id falls back");
+  assert.equal(characterFromHash(""), null, "empty hash falls back");
+});
+
+// --- 12. Submission validation -------------------------------------------------------------
+
+test("validateSubmission rejects bad links and missing credit", () => {
+  assert.match(validateSubmission("", "@a"), /Add the link/, "empty url");
+  assert.match(validateSubmission("not a url", "@a"), /does not look like/, "garbage url");
+  assert.match(
+    validateSubmission("https://phish.example/x/status/1", "@a"),
+    /Only links to X/,
+    "non-X domain"
+  );
+  assert.match(
+    validateSubmission("https://x.com/someone", "@a"),
+    /not a single X post/,
+    "profile page is not a post"
+  );
+  assert.match(validateSubmission("https://x.com/a/status/1", "  "), /name or handle/, "blank handle");
+  assert.equal(validateSubmission("https://x.com/a/status/123", "@maker"), null, "x.com ok");
+  assert.equal(
+    validateSubmission("https://twitter.com/a/status/123", "A Maker"),
+    null,
+    "twitter.com ok"
+  );
+});
+
+// --- 13. mailto construction ----------------------------------------------------------------
+
+test("submissionMailto builds an encoded mailto to the studio inbox", () => {
+  const href = submissionMailto("https://x.com/a/status/123", "A Maker & Co");
+  assert.ok(href.startsWith("mailto:meetnightshiftai@agentmail.to?"), "studio inbox");
+  assert.ok(
+    href.includes("subject=" + encodeURIComponent("Community submission: A Maker & Co")),
+    "encoded subject survives &"
+  );
+  assert.ok(
+    href.includes("body=" + encodeURIComponent("X post: https://x.com/a/status/123")),
+    "encoded body carries the post link"
+  );
+});
+
+// --- 14. Deep links in the live app ------------------------------------------------------------
+
+test("deep link #/muse/goku selects goku on load", () => {
+  const { doc } = runStudio({ captureNav: true, hash: "#/muse/goku" });
+  assert.equal(doc.getElementById("featured-name").textContent, "Goku");
+});
+
+test("selecting a character writes the deep link via replaceState", () => {
+  const studio = runStudio({ captureNav: true });
+  const { doc } = studio;
+  const goku = doc.querySelectorAll(".thumb").find((t) => t.getAttribute("data-id") === "goku");
+  goku.click();
+  assert.equal(studio.replacedUrl, "#/muse/goku");
+});
+
+test("featured share link points at the deep link", () => {
+  const studio = runStudio({ captureNav: true });
+  const { doc } = studio;
+  const goku = doc.querySelectorAll(".thumb").find((t) => t.getAttribute("data-id") === "goku");
+  goku.click();
+  const href = doc.getElementById("featured-share").href;
+  assert.ok(href.startsWith("https://x.com/intent/post?"), "intent endpoint");
+  assert.ok(href.includes(encodeURIComponent("#/muse/goku")), "deep link in shared url");
+});
+
+// --- 15. Submission form -------------------------------------------------------------------------
+
+function submitForm(doc, postUrl, handle) {
+  doc.getElementById("submit-post-url").value = postUrl;
+  doc.getElementById("submit-handle").value = handle;
+  const form = doc.getElementById("submit-form");
+  const e = { prevented: false, preventDefault() { this.prevented = true; } };
+  (form.listeners.submit || []).forEach((fn) => fn.call(form, e));
+  return e;
+}
+
+test("valid submission opens the mailto and confirms", () => {
+  const studio = runStudio({ captureNav: true });
+  const { doc, window: win } = studio;
+  const e = submitForm(doc, "https://x.com/maker/status/123", "@maker");
+  assert.ok(e.prevented, "default form navigation prevented");
+  assert.ok(
+    win.location.href.startsWith("mailto:meetnightshiftai@agentmail.to?"),
+    "mailto opened"
+  );
+  assert.ok(win.location.href.includes(encodeURIComponent("@maker")), "handle in mailto");
+  assert.match(doc.getElementById("submit-note").textContent, /review queue/);
+});
+
+test("bad submission shows the error and opens nothing", () => {
+  const studio = runStudio({ captureNav: true });
+  const { doc, window: win } = studio;
+  submitForm(doc, "https://phish.example/x", "@maker");
+  assert.equal(win.location.href, "", "no navigation on error");
+  assert.match(doc.getElementById("submit-note").textContent, /Only links to X/);
+});
+
+test("empty handle shows the credit error and opens nothing", () => {
+  const studio = runStudio({ captureNav: true });
+  const { doc, window: win } = studio;
+  submitForm(doc, "https://x.com/maker/status/123", "");
+  assert.equal(win.location.href, "", "no navigation on error");
+  assert.match(doc.getElementById("submit-note").textContent, /name or handle/);
+});
+
+// --- 16. Community markup --------------------------------------------------------------------------
+
+test("index.html carries the community form and post-on-x link", () => {
+  for (const id of ["submit-form", "submit-post-url", "submit-handle", "submit-note", "hashtag-post"]) {
+    assert.ok(INDEX_HTML.includes(`id="${id}"`), `missing #${id}`);
+  }
 });

@@ -78,6 +78,63 @@
 
   var HASHTAG = "#MuseCharacterStudio";
   var PAGE_URL = "https://musecharacters.jononeill.dev";
+  var SUBMISSIONS_INBOX = "meetnightshiftai@agentmail.to";
+
+  /**
+   * Share links and submission intake for the community loop.
+   * Pure helpers so the test suite can drive them without a DOM.
+   */
+
+  function communityShareUrl() {
+    return "https://x.com/intent/post?text=" +
+      encodeURIComponent("I made a Muse. Make your own:") +
+      "&hashtags=" + encodeURIComponent(HASHTAG.replace(/^#/, "")) +
+      "&url=" + encodeURIComponent(PAGE_URL);
+  }
+
+  function characterFromHash(hash) {
+    var m = /^#\/muse\/([\w-]+)$/.exec(hash || "");
+    if (!m) return null;
+    var found = CHARACTERS.filter(function (c) { return c.id === m[1]; });
+    return found.length ? found[0] : null;
+  }
+
+  function validateSubmission(postUrl, handle) {
+    var url = (postUrl || "").trim();
+    var name = (handle || "").trim();
+    if (!url) return "Add the link to your X post.";
+    var parsed;
+    try { parsed = new URL(url); } catch (e) { parsed = null; }
+    if (!parsed || (parsed.protocol !== "http:" && parsed.protocol !== "https:")) {
+      return "That does not look like a link to an X post.";
+    }
+    var host = parsed.hostname.replace(/^www\./, "").replace(/^mobile\./, "");
+    if (host !== "x.com" && host !== "twitter.com") {
+      return "Only links to X posts can be featured.";
+    }
+    if (parsed.pathname.indexOf("/status/") === -1) {
+      return "That link is not a single X post. Open your post and copy its link.";
+    }
+    if (!name) return "Tell us your name or handle so we can credit you.";
+    return null;
+  }
+
+  function submissionMailto(postUrl, handle) {
+    var url = (postUrl || "").trim();
+    var name = (handle || "").trim();
+    var subject = "Community submission: " + name;
+    var body = "X post: " + url + "\n" +
+      "Name or handle: " + name + "\n" +
+      "\n" +
+      "(Made with the Muse Character Studio.)";
+    return "mailto:" + SUBMISSIONS_INBOX +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(body);
+  }
+
+  function goTo(url) {
+    if (window.location) window.location.href = url;
+  }
 
   /* ------------------------------------------------------------------ */
   /* Prompt rendering: plain text in, readable HTML out                 */
@@ -188,7 +245,7 @@
   function shareUrl(character) {
     var text = "Muse as " + character.name + ". Make your own:";
     return "https://x.com/intent/post?text=" + encodeURIComponent(text) +
-      "&url=" + encodeURIComponent(PAGE_URL);
+      "&url=" + encodeURIComponent(PAGE_URL + "#/muse/" + character.id);
   }
 
   function selectCharacter(character, focusThumb) {
@@ -204,6 +261,12 @@
     dl.setAttribute("download", "muse-" + character.id + ".webp");
 
     document.getElementById("featured-share").href = shareUrl(character);
+
+    // Deep link: every piece gets a shareable URL so a linked visitor
+    // lands on the same character.
+    if (window.history && typeof window.history.replaceState === "function") {
+      window.history.replaceState(null, "", "#/muse/" + character.id);
+    }
 
     document.querySelectorAll(".thumb").forEach(function (el) {
       var active = el.getAttribute("data-id") === character.id;
@@ -263,7 +326,14 @@
     document.getElementById("full-box").innerHTML = renderPrompt(FULL_PROMPT);
 
     buildThumbs();
-    selectCharacter(CHARACTERS[0], false);
+
+    // A deep link like #/muse/goku lands on that character; anything else
+    // (including the nav anchors #gallery, #make, #community) starts at
+    // the first character.
+    var deepLinked = characterFromHash(
+      window.location && window.location.hash ? window.location.hash : ""
+    );
+    selectCharacter(deepLinked || CHARACTERS[0], false);
 
     document.querySelectorAll("[data-copy]").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -287,6 +357,28 @@
         note: document.getElementById("hashtag-note")
       });
     });
+
+    document.getElementById("hashtag-post").href = communityShareUrl();
+
+    var submitForm = document.getElementById("submit-form");
+    if (submitForm) {
+      submitForm.addEventListener("submit", function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        var postUrlEl = document.getElementById("submit-post-url");
+        var handleEl = document.getElementById("submit-handle");
+        var note = document.getElementById("submit-note");
+        var err = validateSubmission(
+          postUrlEl ? postUrlEl.value : "",
+          handleEl ? handleEl.value : ""
+        );
+        if (err) {
+          flashNote(note, err, 6000);
+          return;
+        }
+        goTo(submissionMailto(postUrlEl.value, handleEl.value));
+        flashNote(note, "Opening your email app. Send the draft and your Muse joins the review queue.");
+      });
+    }
 
     fetch("version.json", { cache: "no-store" })
       .then(function (r) { return r.ok ? r.json() : null; })
