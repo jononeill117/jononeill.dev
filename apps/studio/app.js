@@ -132,8 +132,12 @@
       "&body=" + encodeURIComponent(body);
   }
 
-  function goTo(url) {
-    if (window.location) window.location.href = url;
+  function showSubmitFallback(noteEl, fallbackEl, fallbackLink, msg, postUrl, handle) {
+    flashNote(noteEl, msg, 8000);
+    if (fallbackEl && fallbackLink) {
+      fallbackLink.href = submissionMailto(postUrl, handle);
+      fallbackEl.hidden = false;
+    }
   }
 
   /* ------------------------------------------------------------------ */
@@ -362,11 +366,15 @@
 
     var submitForm = document.getElementById("submit-form");
     if (submitForm) {
+      var fallbackEl = document.getElementById("submit-fallback");
+      var fallbackLink = document.getElementById("submit-fallback-link");
       submitForm.addEventListener("submit", function (e) {
         if (e && e.preventDefault) e.preventDefault();
         var postUrlEl = document.getElementById("submit-post-url");
         var handleEl = document.getElementById("submit-handle");
+        var hpEl = document.getElementById("submit-website");
         var note = document.getElementById("submit-note");
+        var btn = document.getElementById("submit-btn");
         var err = validateSubmission(
           postUrlEl ? postUrlEl.value : "",
           handleEl ? handleEl.value : ""
@@ -375,8 +383,35 @@
           flashNote(note, err, 6000);
           return;
         }
-        goTo(submissionMailto(postUrlEl.value, handleEl.value));
-        flashNote(note, "Opening your email app. Send the draft and your Muse joins the review queue.");
+        if (fallbackEl) fallbackEl.hidden = true;
+        if (btn) btn.disabled = true;
+        flashNote(note, "Sending your submission...", 10000);
+        fetch("/api/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            postUrl: postUrlEl.value.trim(),
+            handle: handleEl.value.trim(),
+            website: hpEl ? hpEl.value : ""
+          })
+        }).then(function (r) {
+          return r.json().then(function (d) { return { status: r.status, body: d }; });
+        }).then(function (res) {
+          if (btn) btn.disabled = false;
+          if (res.body && res.body.ok) {
+            flashNote(note, "Got it. Your Muse is in the review queue.", 8000);
+            postUrlEl.value = "";
+            handleEl.value = "";
+          } else {
+            var msg = (res.body && res.body.error) || "Something went wrong sending that.";
+            showSubmitFallback(note, fallbackEl, fallbackLink, msg, postUrlEl.value, handleEl.value);
+          }
+        }, function () {
+          if (btn) btn.disabled = false;
+          showSubmitFallback(note, fallbackEl, fallbackLink,
+            "Could not reach the studio. Check your connection and try again.",
+            postUrlEl.value, handleEl.value);
+        });
       });
     }
 

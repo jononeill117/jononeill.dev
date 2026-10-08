@@ -166,7 +166,11 @@
         </div>
         <form class="submit-form" id="submit-form" novalidate>
           <h3>Already posted? Send your link.</h3>
-          <p>Paste your X post link and your name. It opens an email draft to the studio inbox with everything filled in, ready to send.</p>
+          <p>Paste your X post link and your name. It goes straight to the studio review queue, no email needed.</p>
+          <div class="field hp-field" aria-hidden="true">
+            <label for="submit-website">Website</label>
+            <input id="submit-website" name="website" type="text" autocomplete="off" tabindex="-1">
+          </div>
           <div class="field">
             <label for="submit-post-url">Your X post link</label>
             <input id="submit-post-url" name="postUrl" type="url" inputmode="url" placeholder="https://x.com/you/status/123456789" autocomplete="url">
@@ -175,8 +179,9 @@
             <label for="submit-handle">Your name or handle</label>
             <input id="submit-handle" name="handle" type="text" placeholder="How to credit you" autocomplete="nickname" maxlength="60">
           </div>
-          <button class="btn btn-primary" type="submit">Send submission</button>
+          <button class="btn btn-primary" type="submit" id="submit-btn">Send submission</button>
           <p class="copy-note" id="submit-note" role="status" hidden></p>
+          <p class="copy-note" id="submit-fallback" hidden>Prefer email? <a id="submit-fallback-link" href="#">Send your submission by email instead.</a></p>
         </form>
         <div class="carousel" aria-label="Community creations">
           <article class="community-empty">
