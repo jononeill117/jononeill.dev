@@ -438,6 +438,16 @@ button:focus-visible, a:focus-visible, summary:focus-visible, [tabindex]:focus-v
 .submit-form h3 { margin: 0 0 0.5rem; font-size: 1.25rem; }
 .submit-form p { margin: 0 0 1.25rem; color: var(--fg-dim); }
 .field { margin-bottom: 1.25rem; }
+/* Honeypot: invisible to people, irresistible to bots. */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  margin: 0;
+}
 .field label { display: block; font-weight: 600; margin-bottom: 0.4rem; }
 .field input {
   width: 100%;

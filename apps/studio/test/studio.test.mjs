@@ -23,6 +23,13 @@
 //     phishing links or uncredited entries reach the curation inbox.
 // 11. mailto built without encoding: a handle like "A & Co" breaks the
 //     subject/body query string -> the draft arrives mangled.
+// 12. Server stores a honeypot submission -> bot traffic pollutes the queue.
+// 13. No per-IP rate limit -> one IP floods the queue.
+// 14. Curator listing reachable without the token -> the queue is public.
+// 15. Client and server validation words drift -> the visitor sees two
+//     different reasons for the same bad link.
+// 16. KV binding missing on the worker -> submissions fail with a raw 500
+//     instead of an honest "paused" message.
 //
 // Strategy: static contract tests read the REAL files (app.js, index.html,
 // version.json, gallery/), and behavioral tests drive the REAL app.js IIFE
@@ -479,39 +486,296 @@ function submitForm(doc, postUrl, handle) {
   return e;
 }
 
-test("valid submission opens the mailto and confirms", () => {
-  const studio = runStudio({ captureNav: true });
-  const { doc, window: win } = studio;
+test("valid submission POSTs to /api/submit and confirms", async () => {
+  const studio = runStudio();
+  const { doc } = studio;
+  let seen = null;
+  studio.setFetchHandler(async (url, opts) => {
+    seen = { url, opts, body: JSON.parse(opts.body) };
+    return { ok: true, json: async () => ({ ok: true }) };
+  });
   const e = submitForm(doc, "https://x.com/maker/status/123", "@maker");
   assert.ok(e.prevented, "default form navigation prevented");
-  assert.ok(
-    win.location.href.startsWith("mailto:meetnightshiftai@agentmail.to?"),
-    "mailto opened"
-  );
-  assert.ok(win.location.href.includes(encodeURIComponent("@maker")), "handle in mailto");
+  await studio.tick();
+  assert.ok(seen, "fetch called");
+  assert.equal(seen.url, "/api/submit");
+  assert.equal(seen.opts.method, "POST");
+  assert.equal(seen.body.postUrl, "https://x.com/maker/status/123");
+  assert.equal(seen.body.handle, "@maker");
+  assert.equal(seen.body.website, "", "honeypot sent empty");
   assert.match(doc.getElementById("submit-note").textContent, /review queue/);
+  assert.equal(doc.getElementById("submit-post-url").value, "", "form cleared");
+  assert.equal(doc.getElementById("submit-btn").disabled, false, "button re-enabled");
 });
 
-test("bad submission shows the error and opens nothing", () => {
-  const studio = runStudio({ captureNav: true });
-  const { doc, window: win } = studio;
+test("bad submission shows the error and sends nothing", async () => {
+  const studio = runStudio();
+  const { doc } = studio;
+  let called = false;
+  studio.setFetchHandler(async () => {
+    called = true;
+    return { ok: true, json: async () => ({ ok: true }) };
+  });
   submitForm(doc, "https://phish.example/x", "@maker");
-  assert.equal(win.location.href, "", "no navigation on error");
+  await studio.tick();
+  assert.equal(called, false, "no fetch on client validation error");
   assert.match(doc.getElementById("submit-note").textContent, /Only links to X/);
 });
 
-test("empty handle shows the credit error and opens nothing", () => {
-  const studio = runStudio({ captureNav: true });
-  const { doc, window: win } = studio;
+test("empty handle shows the credit error and sends nothing", async () => {
+  const studio = runStudio();
+  const { doc } = studio;
+  let called = false;
+  studio.setFetchHandler(async () => {
+    called = true;
+    return { ok: true, json: async () => ({ ok: true }) };
+  });
   submitForm(doc, "https://x.com/maker/status/123", "");
-  assert.equal(win.location.href, "", "no navigation on error");
+  await studio.tick();
+  assert.equal(called, false, "no fetch on client validation error");
   assert.match(doc.getElementById("submit-note").textContent, /name or handle/);
+});
+
+test("network failure shows the error and the email fallback", async () => {
+  const studio = runStudio();
+  const { doc } = studio;
+  studio.setFetchHandler(async () => { throw new Error("offline"); });
+  submitForm(doc, "https://x.com/maker/status/123", "@maker");
+  await studio.tick();
+  assert.match(doc.getElementById("submit-note").textContent, /Could not reach/);
+  assert.equal(doc.getElementById("submit-fallback").hidden, false, "fallback shown");
+  const href = doc.getElementById("submit-fallback-link").href;
+  assert.ok(
+    href.startsWith("mailto:meetnightshiftai@agentmail.to?"),
+    "mailto fallback"
+  );
+  assert.ok(
+    href.includes(encodeURIComponent("https://x.com/maker/status/123")),
+    "post url in mailto"
+  );
+  assert.equal(doc.getElementById("submit-btn").disabled, false, "button re-enabled");
+});
+
+test("server rejection shows the server message and the email fallback", async () => {
+  const studio = runStudio();
+  const { doc } = studio;
+  studio.setFetchHandler(async () => ({
+    ok: false,
+    json: async () => ({ ok: false, error: "Only links to X posts can be featured." }),
+  }));
+  submitForm(doc, "https://x.com/maker/status/123", "@maker");
+  await studio.tick();
+  assert.match(doc.getElementById("submit-note").textContent, /Only links to X posts/);
+  assert.equal(doc.getElementById("submit-fallback").hidden, false, "fallback shown");
 });
 
 // --- 16. Community markup --------------------------------------------------------------------------
 
 test("index.html carries the community form and post-on-x link", () => {
-  for (const id of ["submit-form", "submit-post-url", "submit-handle", "submit-note", "hashtag-post"]) {
+  for (const id of ["submit-form", "submit-post-url", "submit-handle", "submit-website", "submit-btn", "submit-note", "submit-fallback", "submit-fallback-link", "hashtag-post"]) {
     assert.ok(INDEX_HTML.includes(`id="${id}"`), `missing #${id}`);
   }
+});
+
+// --- 17. Submission intake API (worker.js) -----------------------------------------------
+// Drives the REAL worker fetch handler with a stubbed KV namespace.
+
+const WORKER = (await import("../worker.js")).default;
+
+function makeKV() {
+  const store = new Map();
+  return {
+    async get(k) { return store.has(k) ? store.get(k) : null; },
+    async put(k, v) { store.set(k, v); },
+    async list({ prefix, limit }) {
+      const keys = [...store.keys()]
+        .filter((k) => k.startsWith(prefix))
+        .map((name) => ({ name }));
+      return { keys: keys.slice(0, limit ?? 100), list_complete: true };
+    },
+    _keys: () => [...store.keys()],
+    _get: (k) => store.get(k),
+  };
+}
+
+function apiRequest(path, { method = "GET", body = null, ip = "1.2.3.4", token = null } = {}) {
+  const headers = {};
+  if (ip) headers["cf-connecting-ip"] = ip;
+  if (token) headers["authorization"] = "Bearer " + token;
+  const init = { method, headers };
+  if (body !== null) {
+    headers["content-type"] = "application/json";
+    init.body = JSON.stringify(body);
+  }
+  return new Request("https://studio.test" + path, init);
+}
+
+async function postSubmit(env, body, opts = {}) {
+  const res = await WORKER.fetch(
+    apiRequest("/api/submit", { method: "POST", body, ...opts }),
+    env
+  );
+  return { status: res.status, json: await res.json() };
+}
+
+const GOOD_SUBMISSION = {
+  postUrl: "https://x.com/maker/status/123456789",
+  handle: "@maker",
+  website: "",
+};
+
+const subKeys = (kv) => kv._keys().filter((k) => k.startsWith("sub:"));
+
+test("API stores a valid submission and returns ok", async () => {
+  const kv = makeKV();
+  const { status, json } = await postSubmit({ SUBMISSIONS: kv }, GOOD_SUBMISSION);
+  assert.equal(status, 200);
+  assert.equal(json.ok, true);
+  const keys = subKeys(kv);
+  assert.equal(keys.length, 1);
+  const rec = JSON.parse(kv._get(keys[0]));
+  assert.equal(rec.postUrl, GOOD_SUBMISSION.postUrl);
+  assert.equal(rec.handle, GOOD_SUBMISSION.handle);
+  assert.equal(rec.status, "pending");
+  assert.ok(rec.createdAt, "timestamp recorded");
+});
+
+test("API rejects a non-X URL with 400 and stores nothing", async () => {
+  const kv = makeKV();
+  const { status, json } = await postSubmit(
+    { SUBMISSIONS: kv },
+    { ...GOOD_SUBMISSION, postUrl: "https://phish.example/x" }
+  );
+  assert.equal(status, 400);
+  assert.equal(json.ok, false);
+  assert.match(json.error, /Only links to X/);
+  assert.equal(subKeys(kv).length, 0);
+});
+
+test("API rejects a non-status X link, an empty handle, and an oversize handle", async () => {
+  const kv = makeKV();
+  const env = { SUBMISSIONS: kv };
+  const r1 = await postSubmit(env, { ...GOOD_SUBMISSION, postUrl: "https://x.com/maker" });
+  assert.equal(r1.status, 400);
+  assert.match(r1.json.error, /single X post/);
+  const r2 = await postSubmit(env, { ...GOOD_SUBMISSION, handle: "   " });
+  assert.equal(r2.status, 400);
+  assert.match(r2.json.error, /name or handle/);
+  const r3 = await postSubmit(env, { ...GOOD_SUBMISSION, handle: "x".repeat(61) });
+  assert.equal(r3.status, 400);
+  assert.match(r3.json.error, /60 characters/);
+  assert.equal(subKeys(kv).length, 0);
+});
+
+test("API rejects a malformed JSON body with 400", async () => {
+  const kv = makeKV();
+  const req = new Request("https://studio.test/api/submit", {
+    method: "POST",
+    headers: { "cf-connecting-ip": "9.9.9.9", "content-type": "application/json" },
+    body: "{nope",
+  });
+  const res = await WORKER.fetch(req, { SUBMISSIONS: kv });
+  assert.equal(res.status, 400);
+  assert.equal((await res.json()).ok, false);
+});
+
+test("API acknowledges honeypot submissions without storing them", async () => {
+  const kv = makeKV();
+  const { status, json } = await postSubmit(
+    { SUBMISSIONS: kv },
+    { ...GOOD_SUBMISSION, website: "http://spam.example" }
+  );
+  assert.equal(status, 200);
+  assert.equal(json.ok, true);
+  assert.equal(subKeys(kv).length, 0);
+});
+
+test("API rate-limits an IP to five submissions a day", async () => {
+  const kv = makeKV();
+  const env = { SUBMISSIONS: kv };
+  for (let i = 0; i < 5; i++) {
+    const r = await postSubmit(env, {
+      ...GOOD_SUBMISSION,
+      postUrl: `https://x.com/maker/status/${1000 + i}`,
+    });
+    assert.equal(r.status, 200, `submission ${i + 1} accepted`);
+  }
+  const r6 = await postSubmit(env, {
+    ...GOOD_SUBMISSION,
+    postUrl: "https://x.com/maker/status/1005",
+  });
+  assert.equal(r6.status, 429);
+  assert.equal(r6.json.ok, false);
+  assert.equal(subKeys(kv).length, 5);
+});
+
+test("API answers GET /api/submit with 405, not the asset fallback", async () => {
+  const res = await WORKER.fetch(
+    apiRequest("/api/submit"),
+    { SUBMISSIONS: makeKV(), ASSETS: { fetch: () => { throw new Error("must not reach assets"); } } }
+  );
+  assert.equal(res.status, 405);
+});
+
+test("curator listing requires the bearer token", async () => {
+  const kv = makeKV();
+  await postSubmit({ SUBMISSIONS: kv }, GOOD_SUBMISSION);
+  const env = { SUBMISSIONS: kv, SUBMISSIONS_TOKEN: "tok123" };
+  const anon = await WORKER.fetch(apiRequest("/api/submissions"), env);
+  assert.equal(anon.status, 401);
+  const wrong = await WORKER.fetch(apiRequest("/api/submissions", { token: "nope" }), env);
+  assert.equal(wrong.status, 401);
+  const good = await WORKER.fetch(apiRequest("/api/submissions", { token: "tok123" }), env);
+  assert.equal(good.status, 200);
+  const body = await good.json();
+  assert.equal(body.ok, true);
+  assert.equal(body.submissions.length, 1);
+  assert.equal(body.submissions[0].handle, "@maker");
+  assert.ok(
+    body.submissions.every((s) => s.id.startsWith("sub:")),
+    "rate-limit keys are not listed as submissions"
+  );
+});
+
+test("curator listing returns newest first", async () => {
+  const kv = makeKV();
+  const env = { SUBMISSIONS: kv, SUBMISSIONS_TOKEN: "tok" };
+  await postSubmit(env, { ...GOOD_SUBMISSION, handle: "@first" }, { ip: "1.1.1.1" });
+  await new Promise((r) => setTimeout(r, 5));
+  await postSubmit(env, { ...GOOD_SUBMISSION, handle: "@second" }, { ip: "2.2.2.2" });
+  const res = await WORKER.fetch(apiRequest("/api/submissions", { token: "tok" }), env);
+  const body = await res.json();
+  assert.equal(body.submissions.length, 2);
+  assert.equal(body.submissions[0].handle, "@second");
+  assert.equal(body.submissions[1].handle, "@first");
+});
+
+test("intake is honest when the KV binding is missing", async () => {
+  const { status, json } = await postSubmit({}, GOOD_SUBMISSION);
+  assert.equal(status, 503);
+  assert.equal(json.ok, false);
+  assert.match(json.error, /paused/);
+});
+
+test("client and server validation reject the same bad links with the same words", async () => {
+  const kv = makeKV();
+  const bad = [
+    "",
+    "not-a-url",
+    "https://phish.example/x",
+    "https://x.com/maker",
+    "ftp://x.com/maker/status/1",
+  ];
+  for (const url of bad) {
+    const clientErr = validateSubmission(url, "@maker");
+    assert.ok(clientErr, `client rejects ${url || "(empty)"}`);
+    const { status, json } = await postSubmit(
+      { SUBMISSIONS: kv },
+      { postUrl: url, handle: "@maker", website: "" },
+      { ip: null }
+    );
+    assert.equal(status, 400, `server rejects ${url || "(empty)"}`);
+    assert.equal(json.error, clientErr, `same words for ${url || "(empty)"}`);
+  }
+  assert.equal(subKeys(kv).length, 0);
 });
