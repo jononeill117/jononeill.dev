@@ -1,0 +1,38 @@
+name: Node security
+
+# Weekly alarm for the next Node.js security release. The exact pin in .nvmrc
+# goes stale the day Node ships fixes; this job fails once the pinned version
+# appears in the Node.js security database (nodejs/security-wg, fetched live).
+# That database can lag a release by days (on Oct 22, 2026 it did not yet list
+# the Oct 21 CVEs), so scripts/check-node-version.mjs stays the hard floor.
+
+on:
+  schedule:
+    - cron: '17 13 * * 1'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.nvmrc', '.node-version']
+
+permissions:
+  contents: read
+
+jobs:
+  pinned-node:
+    name: Pinned Node is not known vulnerable
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      - name: Refuse unpatched Node
+        run: pnpm run check:node
+
+      - name: Check pinned Node against the security database
+        run: npx --yes is-my-node-vulnerable@1.6.1

@@ -9,11 +9,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      # Node comes from .nvmrc (an exact patched version). A bare major like `22`
+      # resolves to the runner image's cached build, which can predate a Node
+      # security release; check:node fails the job if that ever happens.
+      - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: pnpm
+      - name: Refuse unpatched Node
+        run: pnpm run check:node
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
