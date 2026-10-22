@@ -10,7 +10,7 @@
     "./*.astro": "./src/components/*.astro"
   },
   "peerDependencies": {
-    "astro": "^5.0.0"
+    "astro": "^7.0.0"
   },
   "dependencies": {
     "@jononeill/tokens": "workspace:*"
