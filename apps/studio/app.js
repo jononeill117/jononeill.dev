@@ -103,6 +103,10 @@
     var url = (postUrl || "").trim();
     var name = (handle || "").trim();
     if (!url) return "Add the link to your X post.";
+    // Must match POST_URL_MAX in worker.js, same words as the server.
+    if (url.length > 280) {
+      return "That link is too long. Copy the link straight from your post and try again.";
+    }
     var parsed;
     try { parsed = new URL(url); } catch (e) { parsed = null; }
     if (!parsed || (parsed.protocol !== "http:" && parsed.protocol !== "https:")) {

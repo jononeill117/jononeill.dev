@@ -50,6 +50,10 @@ function contentTypeForPathname(pathname) {
 /* ------------------------------------------------------------------ */
 
 const HANDLE_MAX = 60;
+// A canonical x.com/<handle>/status/<id> link runs about 50 characters.
+// 280 leaves room for share-sheet query strings while bounding what one
+// submission can store in KV and echo back in the curator listing.
+const POST_URL_MAX = 280;
 const MAX_SUBMISSIONS_PER_IP_PER_DAY = 5;
 
 function jsonResponse(data, status = 200) {
@@ -67,6 +71,9 @@ function jsonResponse(data, status = 200) {
 function validPostUrl(raw) {
   const url = (raw || "").trim();
   if (!url) return "Add the link to your X post.";
+  if (url.length > POST_URL_MAX) {
+    return "That link is too long. Copy the link straight from your post and try again.";
+  }
   let parsed;
   try {
     parsed = new URL(url);
@@ -90,6 +97,78 @@ function randomSuffix() {
   const bytes = new Uint8Array(6);
   crypto.getRandomValues(bytes);
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/* Per-IP daily submission cap on KV claim keys.
+ *
+ * The old design kept one counter key per IP and did get, check, put: N
+ * concurrent requests all read the same pre-limit count, all passed, and
+ * all wrote count + 1, so a burst admitted N submissions for one counted
+ * slot.
+ *
+ * KV offers no atomic increment or compare-and-swap, so the counter is
+ * replaced with per-request claim keys (the intake-rank pattern): every
+ * request first writes its own unique claim key for this IP + day window,
+ * then lists the window's claims in key order. The request's rank (its
+ * position in that sorted list) is the verdict: admitted iff rank <=
+ * MAX_SUBMISSIONS_PER_IP_PER_DAY. Concurrent claims all land before the
+ * lists run, so a burst converges to exactly the cap instead of racing
+ * past it, and a denied request deletes its own claim so it consumes no
+ * budget.
+ *
+ * Claim keys sort by arrival: millisecond timestamp, then a per-isolate
+ * monotonic sequence, then random bytes. The sequence is what makes the
+ * rank meaningful; within one isolate arrival order is exact, and across
+ * isolates sharing a millisecond the random tail breaks the tie.
+ *
+ * RESIDUAL (honest): Cloudflare KV is eventually consistent and list()
+ * results are cached at the edge, so two bursts served by different
+ * points of presence inside the propagation window can each rank against
+ * a partial claim set and over-admit. The overshoot is bounded by the
+ * claims not yet visible to the listing reader, and the window resets
+ * daily. Sequential traffic and same-PoP bursts are exact. An exact
+ * global limit needs an atomic store (D1 or a Durable Object); this app
+ * has neither binding, and adding one is deliberately out of scope here.
+ */
+let claimSeq = 0;
+
+async function claimSubmissionSlot(kv, ip) {
+  const windowS = 86400;
+  const window = Math.floor(Date.now() / (windowS * 1000));
+  const prefix = `rl:${ip}:${window}:c:`;
+  const stamp =
+    `${String(Date.now()).padStart(13, "0")}:` +
+    `${String(++claimSeq).padStart(12, "0")}:${randomSuffix()}`;
+  const claim = prefix + stamp;
+  await kv.put(claim, "1", { expirationTtl: windowS * 2 });
+
+  // Rank of this claim in the window's sorted claim list. Pages arrive in
+  // key order, so the rank is final the moment the claim itself appears.
+  let rank = 0;
+  let total = 0;
+  let cursor;
+  do {
+    const page = await kv.list({ prefix, cursor, limit: 1000 });
+    for (const k of page.keys) {
+      total += 1;
+      if (k.name === claim) {
+        rank = total;
+        break;
+      }
+    }
+    if (rank > 0) break;
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+
+  // rank 0 means our own put is not visible to list() yet (eventual
+  // consistency); fall back to the visible count rather than failing open
+  // or closed on a propagation artifact.
+  const admitted =
+    rank > 0
+      ? rank <= MAX_SUBMISSIONS_PER_IP_PER_DAY
+      : total < MAX_SUBMISSIONS_PER_IP_PER_DAY;
+  if (!admitted) await kv.delete(claim);
+  return admitted;
 }
 
 async function handleSubmit(request, env) {
@@ -130,15 +209,13 @@ async function handleSubmit(request, env) {
   }
   const ip = request.headers.get("cf-connecting-ip") || "";
   if (ip) {
-    const rlKey = "rl:" + ip;
-    const seen = parseInt((await env.SUBMISSIONS.get(rlKey)) || "0", 10) || 0;
-    if (seen >= MAX_SUBMISSIONS_PER_IP_PER_DAY) {
+    const admitted = await claimSubmissionSlot(env.SUBMISSIONS, ip);
+    if (!admitted) {
       return jsonResponse(
         { ok: false, error: "That is enough for today. Come back tomorrow." },
         429
       );
     }
-    await env.SUBMISSIONS.put(rlKey, String(seen + 1), { expirationTtl: 86400 });
   }
   const now = new Date().toISOString();
   const key = "sub:" + now + ":" + randomSuffix();

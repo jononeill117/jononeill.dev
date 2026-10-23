@@ -16,10 +16,12 @@
  * operator-local bytes into the public site.
  */
 
+import { createHash } from "node:crypto";
 import {
   copyFile,
   lstat,
   mkdir,
+  readFile,
   readdir,
   realpath,
   rename,
@@ -37,6 +39,10 @@ const targets = [join(root, "apps/site/public/fonts")];
 
 function underRoot(resolved, base) {
   return resolved === base || resolved.startsWith(base + sep);
+}
+
+async function contentHash(path) {
+  return createHash("sha256").update(await readFile(path)).digest("hex");
 }
 
 const sourceRoot = await realpath(source);
@@ -83,8 +89,17 @@ for (const target of targets) {
       );
     }
     if (dest && dest.size === src.size) {
-      skipped += 1;
-      continue;
+      // Same size is not same content: a corrupted or stale copy sitting
+      // in the gitignored target dir would otherwise be published as-is.
+      // Skip only on a content (hash) match.
+      const [srcHash, destHash] = await Promise.all([
+        contentHash(from),
+        contentHash(to),
+      ]);
+      if (srcHash === destHash) {
+        skipped += 1;
+        continue;
+      }
     }
 
     const tmp = `${to}.${process.pid}.tmp`;
