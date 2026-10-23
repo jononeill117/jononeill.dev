@@ -7,6 +7,10 @@
  *   3. The upload script must refuse to run without CF_ASSETS_UPLOAD_JWT or
  *      piped stdin — the JWT is never accepted on argv.
  *   4. A clean run of sync-fonts.mjs still succeeds.
+ *   5. A same-size but different-bytes file in a target fonts dir must be
+ *      repaired by sync-fonts.mjs (content hash decides, not size).
+ *   6. Wrangler per-environment secret files (.dev.vars.<env>) are
+ *      git-ignored everywhere; the .dev.vars.example template is not.
  *
  * Run: node scripts/security-fixes.test.mjs   (chained into `pnpm build`)
  */
@@ -16,6 +20,8 @@ import {
   existsSync,
   mkdirSync,
   mkdtempSync,
+  readFileSync,
+  readdirSync,
   rmSync,
   symlinkSync,
   writeFileSync,
@@ -105,6 +111,41 @@ try {
     "sync-fonts succeeds on a clean tree",
     r.status === 0,
     `status=${r.status} out=${r.stderr.slice(0, 200)}`,
+  );
+}
+
+// 5. Same-size corruption in a target fonts dir is repaired, not published.
+//    (Fixture 4 left the destination in sync; flip bytes in place, keeping
+//    the length identical, then re-run the sync.)
+{
+  const name = readdirSync(fontsDir)
+    .filter((f) => f.endsWith(".woff2"))
+    .sort()[0];
+  const canonical = readFileSync(join(fontsDir, name));
+  const destPath = join(root, "apps/site/public/fonts", name);
+  const corrupted = Buffer.from(canonical);
+  corrupted[0] = corrupted[0] ^ 0xff;
+  writeFileSync(destPath, corrupted);
+  const r = run("sync-fonts.mjs", []);
+  const repaired = readFileSync(destPath).equals(canonical);
+  check(
+    "sync-fonts repairs a same-size corrupted destination",
+    r.status === 0 && repaired,
+    `status=${r.status} repaired=${repaired}`,
+  );
+}
+
+// 6. .dev.vars.<env> secret files are ignored; the template is not.
+{
+  const ignored = (p) =>
+    spawnSync("git", ["check-ignore", "-q", p], { cwd: root }).status === 0;
+  check(
+    ".dev.vars.<env> variants are git-ignored",
+    ignored(".dev.vars.production") && ignored("apps/studio/.dev.vars.local"),
+  );
+  check(
+    ".dev.vars.example template is not git-ignored",
+    !ignored(".dev.vars.example"),
   );
 }
 

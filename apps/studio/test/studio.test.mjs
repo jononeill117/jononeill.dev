@@ -30,6 +30,11 @@
 //     different reasons for the same bad link.
 // 16. KV binding missing on the worker -> submissions fail with a raw 500
 //     instead of an honest "paused" message.
+// 17. Over-length postUrl stored verbatim -> unbounded values land in KV and
+//     echo back in the curator listing (the handle is capped, the link was
+//     not).
+// 18. Rate limit as a non-atomic get-then-put counter -> a concurrent burst
+//     from one IP reads the same count and sails past the 5-per-day cap.
 //
 // Strategy: static contract tests read the REAL files (app.js, index.html,
 // version.json, gallery/), and behavioral tests drive the REAL app.js IIFE
@@ -587,6 +592,7 @@ function makeKV() {
   return {
     async get(k) { return store.has(k) ? store.get(k) : null; },
     async put(k, v) { store.set(k, v); },
+    async delete(k) { store.delete(k); },
     async list({ prefix, limit }) {
       const keys = [...store.keys()]
         .filter((k) => k.startsWith(prefix))
@@ -755,6 +761,81 @@ test("intake is honest when the KV binding is missing", async () => {
   assert.equal(status, 503);
   assert.equal(json.ok, false);
   assert.match(json.error, /paused/);
+});
+
+// --- 17+18. Intake hardening: postUrl cap and atomic rate limit (WS7 J-1) ----------
+
+test("API rejects an over-length postUrl and stores nothing for it", async () => {
+  const kv = makeKV();
+  const env = { SUBMISSIONS: kv };
+  const base = "https://x.com/maker/status/123456789?t=";
+  const atCap = base + "a".repeat(280 - base.length);
+  assert.equal(atCap.length, 280);
+  const okRes = await postSubmit(env, { ...GOOD_SUBMISSION, postUrl: atCap }, { ip: "3.3.3.3" });
+  assert.equal(okRes.status, 200, "a link exactly at the cap is accepted");
+
+  const overCap = atCap + "a";
+  const { status, json } = await postSubmit(
+    env,
+    { ...GOOD_SUBMISSION, postUrl: overCap },
+    { ip: "4.4.4.4" }
+  );
+  assert.equal(status, 400);
+  assert.equal(json.ok, false);
+  assert.match(json.error, /too long/);
+  assert.equal(subKeys(kv).length, 1, "only the at-cap submission was stored");
+  assert.equal(
+    validateSubmission(overCap, "@maker"),
+    json.error,
+    "client and server use the same words for an over-length link"
+  );
+});
+
+/** KV stub whose list() returns keys in lexicographic order, like real KV. */
+function makeSortedKV() {
+  const store = new Map();
+  return {
+    async get(k) { return store.has(k) ? store.get(k) : null; },
+    async put(k, v) { store.set(k, v); },
+    async delete(k) { store.delete(k); },
+    async list({ prefix, limit }) {
+      const keys = [...store.keys()]
+        .filter((k) => k.startsWith(prefix))
+        .sort()
+        .map((name) => ({ name }));
+      return { keys: keys.slice(0, limit ?? 1000), list_complete: true };
+    },
+    _keys: () => [...store.keys()],
+    _get: (k) => store.get(k),
+  };
+}
+
+test("a concurrent burst from one IP admits exactly five submissions", async () => {
+  const kv = makeSortedKV();
+  const env = { SUBMISSIONS: kv };
+  const attempts = [];
+  for (let i = 0; i < 12; i++) {
+    attempts.push(
+      postSubmit(env, {
+        ...GOOD_SUBMISSION,
+        postUrl: `https://x.com/maker/status/${2000 + i}`,
+      })
+    );
+  }
+  const results = await Promise.all(attempts);
+  assert.equal(
+    results.filter((r) => r.status === 200).length,
+    5,
+    "exactly the daily cap is admitted"
+  );
+  assert.equal(
+    results.filter((r) => r.status === 429).length,
+    7,
+    "the rest of the burst is refused"
+  );
+  assert.equal(subKeys(kv).length, 5, "only admitted submissions are stored");
+  const claims = kv._keys().filter((k) => k.startsWith("rl:"));
+  assert.equal(claims.length, 5, "denied claims delete themselves");
 });
 
 test("client and server validation reject the same bad links with the same words", async () => {
