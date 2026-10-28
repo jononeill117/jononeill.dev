@@ -1,0 +1,111 @@
+---
+/**
+ * Writing post. Drafts get a route in dev only, so Jon can read a draft
+ * locally exactly as it will ship. Production builds never route them.
+ */
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Band from "@jononeill/ui/Band.astro";
+import Eyebrow from "@jononeill/ui/Eyebrow.astro";
+import { SITE } from "../../components/site";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("writing", ({ data }) =>
+    import.meta.env.DEV ? true : !data.draft,
+  );
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const dateLabel = post.data.date.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  timeZone: "UTC",
+});
+---
+
+<BaseLayout
+  title={`${post.data.title}. ${SITE.name}.`}
+  description={post.data.description}
+  canonicalPath={`/writing/${post.id}/`}
+>
+  <Band surface="canvas" as="article" class="page-hero post">
+    <div class="page-inner">
+      <Eyebrow>{dateLabel} · Writing</Eyebrow>
+      <h1 class="page-title">{post.data.title}</h1>
+      <p class="page-lede">{post.data.description}</p>
+      <div class="post__body">
+        <Content />
+      </div>
+      <p class="hero-actions">
+        <a href="/writing/">All writing</a>
+        <span aria-hidden="true"> · </span>
+        <a href="/">Home</a>
+        <span aria-hidden="true"> · </span>
+        <a href="/#contact">Contact</a>
+      </p>
+    </div>
+  </Band>
+</BaseLayout>
+
+<style>
+  .post {
+    padding-block-start: calc(
+      var(--nav-stack-height, var(--nav-height-mobile, var(--nav-height))) +
+        var(--s-6)
+    );
+  }
+
+  @media (min-width: 60.0625rem) {
+    .post {
+      padding-block-start: calc(
+        var(--nav-stack-height, var(--nav-height)) + var(--s-8)
+      );
+    }
+  }
+
+  .post__body {
+    margin-block-start: var(--s-12);
+    max-width: var(--measure);
+    font-size: var(--t-body-lg);
+    line-height: var(--lh-body);
+    color: var(--fg-secondary);
+  }
+
+  .post__body > :global(p) + :global(p) {
+    margin-block-start: var(--s-6);
+  }
+
+  .post__body :global(h2) {
+    margin-block-start: var(--s-12);
+    font-size: var(--t-h4);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--ls-heading);
+    color: var(--fg);
+  }
+
+  .post__body :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.2em;
+  }
+
+  .hero-actions {
+    margin-block-start: var(--s-16);
+    font-size: var(--t-proof);
+    line-height: 1.6;
+  }
+
+  .hero-actions a {
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+    padding-block: var(--s-2);
+  }
+</style>

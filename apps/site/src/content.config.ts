@@ -22,4 +22,20 @@ const work = defineCollection({
   }),
 });
 
-export const collections = { work };
+const writing = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/writing" }),
+  schema: z.object({
+    title: z.string(),
+    /** One line summary, used on the index and as the meta description. */
+    description: z.string(),
+    date: z.date(),
+    /**
+     * Draft posts are real files in the repo and nothing more. The index
+     * never lists them and production never routes them. Jon approves a
+     * post by clearing this flag himself.
+     */
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { work, writing };

@@ -1,0 +1,133 @@
+---
+/**
+ * Writing index. Published posts only. Drafts live in the collection as
+ * files and are never listed here; when every post is a draft, this page
+ * says so plainly instead of pretending to be a blog with no posts.
+ */
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Band from "@jononeill/ui/Band.astro";
+import Eyebrow from "@jononeill/ui/Eyebrow.astro";
+import { SITE } from "../components/site";
+
+const posts = (await getCollection("writing", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const dateLabel = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+---
+
+<BaseLayout
+  title={`Writing. ${SITE.name}.`}
+  description="Longform writing by Jon O'Neill on building products, running operations, and learning to engineer."
+  canonicalPath="/writing/"
+>
+  <Band surface="canvas" as="header" class="page-hero writing-hero">
+    <div class="page-inner">
+      <Eyebrow>Writing</Eyebrow>
+      <h1 class="page-title">Notes, at length.</h1>
+      <p class="page-lede">
+        Longform on building products, running the operations they land in, and the work of
+        learning to engineer while the machines do the manufacturing.
+      </p>
+    </div>
+  </Band>
+
+  <Band surface="canvas" as="section" class="page-section">
+    <div class="page-inner">
+      {
+        posts.length > 0 ? (
+          <ul class="post-list" role="list">
+            {posts.map((post) => (
+              <li class="post-row">
+                <Eyebrow>{dateLabel(post.data.date)}</Eyebrow>
+                <h2 class="post-row__title">
+                  <a href={`/writing/${post.id}/`}>{post.data.title}</a>
+                </h2>
+                <p class="post-row__desc">{post.data.description}</p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="page-body writing-empty">
+            The first essay is in draft. It lands here when it is ready, and not before.
+          </p>
+        )
+      }
+      <p class="hero-actions">
+        <a href="/">Home</a>
+        <span aria-hidden="true"> · </span>
+        <a href="/projects/">Projects</a>
+        <span aria-hidden="true"> · </span>
+        <a href="/#contact">Contact</a>
+      </p>
+    </div>
+  </Band>
+</BaseLayout>
+
+<style>
+  .writing-hero {
+    padding-block-start: calc(
+      var(--nav-stack-height, var(--nav-height-mobile, var(--nav-height))) +
+        var(--s-6)
+    );
+  }
+
+  @media (min-width: 60.0625rem) {
+    .writing-hero {
+      padding-block-start: calc(
+        var(--nav-stack-height, var(--nav-height)) + var(--s-8)
+      );
+    }
+  }
+
+  .post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-16);
+  }
+
+  .post-row {
+    border-block-start: var(--hairline) solid var(--hairline-color);
+    padding-block-start: var(--s-4);
+  }
+
+  .post-row__title {
+    margin-block-start: var(--s-3);
+    font-size: var(--t-h3);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--ls-heading);
+  }
+
+  .post-row__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .post-row__title a:hover {
+    color: var(--accent);
+  }
+
+  .post-row__desc {
+    margin-block-start: var(--s-4);
+    max-width: var(--measure);
+    font-size: var(--t-body-lg);
+    line-height: var(--lh-body);
+    color: var(--fg-secondary);
+  }
+
+  .hero-actions {
+    margin-block-start: var(--s-16);
+    font-size: var(--t-proof);
+    line-height: 1.6;
+  }
+
+  .hero-actions a {
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+    padding-block: var(--s-2);
+  }
+</style>
