@@ -38,7 +38,7 @@ function level(count: number): number {
 const GREEN = ["#9be9a8", "#40c463", "#30a14e", "#216e39"];
 function ssrColor(count: number): string {
   const l = level(count);
-  return l === 0 ? "var(--c-n-100)" : GREEN[l - 1];
+  return l === 0 ? "var(--c-n-100)" : (GREEN[l - 1] ?? "#9be9a8");
 }
 
 /** Group flat days into Sunday first weeks for the server render. */
@@ -48,10 +48,14 @@ interface Cell {
   weekday: number;
 }
 const weeks: Cell[][] = [];
+let currentWeek: Cell[] = [];
 for (const day of days.slice(-365)) {
   const weekday = new Date(`${day.date}T12:00:00Z`).getUTCDay();
-  if (weekday === 0 || weeks.length === 0) weeks.push([]);
-  weeks[weeks.length - 1].push({ ...day, weekday });
+  if (weekday === 0 || currentWeek.length === 0) {
+    currentWeek = [];
+    weeks.push(currentWeek);
+  }
+  currentWeek.push({ ...day, weekday });
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -83,6 +87,10 @@ function statsFor(rangeDays: Day[]) {
 const initialStats = statsFor(days.slice(-365));
 
 const publicTotal = contributions.publicRepos.reduce((a, r) => a + r.total, 0);
+const publicReposView = contributions.publicRepos.map((repo) => ({
+  ...repo,
+  short: repo.repo.split("/")[1] ?? repo.repo,
+}));
 ---
 
 <section class="cb" id="contributions-board" aria-label="GitHub contributions">
@@ -120,24 +128,28 @@ const publicTotal = contributions.publicRepos.reduce((a, r) => a + r.total, 0);
     </div>
     <div class="cb__grid" data-cb-grid>
       {
-        weeks.map((week) => (
-          <>
-            {week[0].weekday > 0 &&
-              Array.from({ length: week[0].weekday }).map(() => (
-                <span class="cb__cell cb__cell--pad" aria-hidden="true" />
+        weeks.map((week) => {
+          const first = week[0];
+          if (!first) return null;
+          return (
+            <>
+              {first.weekday > 0 &&
+                Array.from({ length: first.weekday }).map(() => (
+                  <span class="cb__cell cb__cell--pad" aria-hidden="true" />
+                ))}
+              {week.map((cell) => (
+                <button
+                  type="button"
+                  class="cb__cell"
+                  style={`background:${ssrColor(cell.count)}`}
+                  data-date={cell.date}
+                  data-count={cell.count}
+                  aria-label={`${cell.count} contributions on ${cell.date}`}
+                />
               ))}
-            {week.map((cell) => (
-              <button
-                type="button"
-                class="cb__cell"
-                style={`background:${ssrColor(cell.count)}`}
-                data-date={cell.date}
-                data-count={cell.count}
-                aria-label={`${cell.count} contributions on ${cell.date}`}
-              />
-            ))}
-          </>
-        ))
+            </>
+          );
+        })
       }
     </div>
   </div>
@@ -173,10 +185,10 @@ const publicTotal = contributions.publicRepos.reduce((a, r) => a + r.total, 0);
         </span>
       </li>
       {
-        contributions.publicRepos.map((repo) => (
+        publicReposView.map((repo) => (
           <li class="cb__repo">
             <a href={repo.url} target="_blank" rel="noopener noreferrer">
-              {repo.repo.split("/")[1]}
+              {repo.short}
             </a>
             <span class="cb__repo-meta">
               <strong>{repo.total}</strong>

@@ -35,7 +35,7 @@ const dateLabel = post.data.date.toLocaleDateString("en-US", {
   description={post.data.description}
   canonicalPath={`/writing/${post.id}/`}
 >
-  <Band surface="canvas" as="article" class="page-hero post">
+  <Band surface="canvas" as="section" class="page-hero post">
     <div class="page-inner">
       <Eyebrow>{dateLabel} · Writing</Eyebrow>
       <h1 class="page-title">{post.data.title}</h1>
