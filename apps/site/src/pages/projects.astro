@@ -1,0 +1,127 @@
+---
+/**
+ * Projects. The full showcase list. Data lives in src/data/projects.ts so
+ * this page and the home featured cards can never drift apart.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Band from "@jononeill/ui/Band.astro";
+import Eyebrow from "@jononeill/ui/Eyebrow.astro";
+import { PROJECTS } from "../data/projects";
+import { SITE } from "../components/site";
+---
+
+<BaseLayout
+  title={`Projects. ${SITE.name}.`}
+  description="The things Jon O'Neill builds: dispatch software, church software, an AI answering service, and open source tooling for the trades."
+  canonicalPath="/projects/"
+>
+  <Band surface="canvas" as="header" class="page-hero projects-hero">
+    <div class="page-inner">
+      <Eyebrow>Projects</Eyebrow>
+      <h1 class="page-title">Things I build.</h1>
+      <p class="page-lede">
+        The job history is on the home page. This is the other list: software I build and run,
+        some of it for work, some of it on the side, one piece of it open source.
+      </p>
+    </div>
+  </Band>
+
+  <Band surface="canvas" as="section" class="page-section">
+    <div class="page-inner">
+      <ul class="project-list" role="list">
+        {
+          PROJECTS.map((project) => (
+            <li class="project-row" id={project.slug}>
+              <Eyebrow>{project.tag}</Eyebrow>
+              <h2 class="project-row__name">{project.name}</h2>
+              <p class="project-row__blurb">{project.blurb}</p>
+              {project.link && (
+                <p class="project-row__link">
+                  <a href={project.link.href} target="_blank" rel="noopener noreferrer">
+                    {project.link.label}
+                  </a>
+                </p>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+      <p class="hero-actions">
+        <a href="/">Home</a>
+        <span aria-hidden="true"> · </span>
+        <a href="/#experience">Experience</a>
+        <span aria-hidden="true"> · </span>
+        <a href="/#contact">Contact</a>
+      </p>
+    </div>
+  </Band>
+</BaseLayout>
+
+<style>
+  .projects-hero {
+    padding-block-start: calc(
+      var(--nav-stack-height, var(--nav-height-mobile, var(--nav-height))) +
+        var(--s-6)
+    );
+  }
+
+  @media (min-width: 60.0625rem) {
+    .projects-hero {
+      padding-block-start: calc(
+        var(--nav-stack-height, var(--nav-height)) + var(--s-8)
+      );
+    }
+  }
+
+  .project-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-16);
+  }
+
+  .project-row {
+    border-block-start: var(--hairline) solid var(--hairline-color);
+    padding-block-start: var(--s-4);
+  }
+
+  .project-row__name {
+    margin-block-start: var(--s-3);
+    font-size: var(--t-h3);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--ls-heading);
+  }
+
+  .project-row__blurb {
+    margin-block-start: var(--s-4);
+    max-width: var(--measure);
+    font-size: var(--t-body-lg);
+    line-height: var(--lh-body);
+    color: var(--fg-secondary);
+  }
+
+  .project-row__link {
+    margin-block-start: var(--s-4);
+    font-size: var(--t-proof);
+  }
+
+  .project-row__link a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.2em;
+  }
+
+  .hero-actions {
+    margin-block-start: var(--s-16);
+    font-size: var(--t-proof);
+    line-height: 1.6;
+  }
+
+  .hero-actions a {
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+    padding-block: var(--s-2);
+  }
+</style>
