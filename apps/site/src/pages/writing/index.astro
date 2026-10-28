@@ -5,10 +5,10 @@
  * says so plainly instead of pretending to be a blog with no posts.
  */
 import { getCollection } from "astro:content";
-import BaseLayout from "../layouts/BaseLayout.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 import Band from "@jononeill/ui/Band.astro";
 import Eyebrow from "@jononeill/ui/Eyebrow.astro";
-import { SITE } from "../components/site";
+import { SITE } from "../../components/site";
 
 const posts = (await getCollection("writing", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
