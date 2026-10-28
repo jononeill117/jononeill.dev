@@ -1,0 +1,558 @@
+---
+/**
+ * CONTRIBUTIONS BOARD. The GitHub green dot board, on site tokens.
+ *
+ * Data comes from src/data/contributions.json, written by
+ * scripts/fetch-contributions.mjs. The full year is rendered on the server
+ * so the board is real content in the initial HTML; the inline script then
+ * owns range and theme changes.
+ *
+ * The five colour themes are the board's own data palette, carried over
+ * from the standalone prototype. Level zero stays on the site neutral ramp
+ * so an empty day reads as ground, not as a hole. Private contributions are
+ * one aggregate because GitHub will not break them down by repo; the split
+ * below says exactly that.
+ */
+import contributions from "../data/contributions.json";
+
+interface Day {
+  date: string;
+  count: number;
+}
+
+const days: Day[] = contributions.days;
+const maxCount = Math.max(...days.map((d) => d.count));
+
+const THEME_ORDER = ["green", "ocean", "grape", "sunset", "mono"] as const;
+
+/** Quartile level, same rule as the standalone board. */
+function level(count: number): number {
+  if (count === 0) return 0;
+  const q = count / maxCount;
+  if (q <= 0.25) return 1;
+  if (q <= 0.5) return 2;
+  if (q <= 0.75) return 3;
+  return 4;
+}
+
+const GREEN = ["#9be9a8", "#40c463", "#30a14e", "#216e39"];
+function ssrColor(count: number): string {
+  const l = level(count);
+  return l === 0 ? "var(--c-n-100)" : GREEN[l - 1];
+}
+
+/** Group flat days into Sunday first weeks for the server render. */
+interface Cell {
+  date: string;
+  count: number;
+  weekday: number;
+}
+const weeks: Cell[][] = [];
+for (const day of days.slice(-365)) {
+  const weekday = new Date(`${day.date}T12:00:00Z`).getUTCDay();
+  if (weekday === 0 || weeks.length === 0) weeks.push([]);
+  weeks[weeks.length - 1].push({ ...day, weekday });
+}
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const monthLabels = weeks.map((week) => {
+  const first = week[0];
+  if (!first) return "";
+  const prev = weeks[weeks.indexOf(week) - 1]?.[0];
+  const month = Number(first.date.slice(5, 7)) - 1;
+  const prevMonth = prev ? Number(prev.date.slice(5, 7)) - 1 : -1;
+  return month !== prevMonth ? MONTHS[month] : "";
+});
+
+function statsFor(rangeDays: Day[]) {
+  let streak = 0;
+  let current = 0;
+  let best = 0;
+  for (const d of rangeDays) {
+    current = d.count > 0 ? current + 1 : 0;
+    streak = Math.max(streak, current);
+    best = Math.max(best, d.count);
+  }
+  return {
+    total: rangeDays.reduce((a, d) => a + d.count, 0),
+    active: rangeDays.filter((d) => d.count > 0).length,
+    streak,
+    best,
+  };
+}
+const initialStats = statsFor(days.slice(-365));
+
+const publicTotal = contributions.publicRepos.reduce((a, r) => a + r.total, 0);
+---
+
+<section class="cb" id="contributions-board" aria-label="GitHub contributions">
+  <p class="cb__total">
+    <span data-cb-total>{initialStats.total.toLocaleString("en-US")}</span> contributions in the
+    last year · <a href={contributions.profileUrl} target="_blank" rel="noopener noreferrer"
+      >@{contributions.user} on GitHub</a
+    >
+  </p>
+
+  <div class="cb__controls">
+    <div class="cb__seg" role="group" aria-label="Range" data-cb-range>
+      <button type="button" data-r="365" class="is-on">Year</button>
+      <button type="button" data-r="182">6 mo</button>
+      <button type="button" data-r="90">90 d</button>
+      <button type="button" data-r="30">30 d</button>
+    </div>
+    <div class="cb__swatches" role="group" aria-label="Colour theme" data-cb-themes>
+      {
+        THEME_ORDER.map((name, i) => (
+          <button
+            type="button"
+            class:list={["cb__sw", i === 0 && "is-on"]}
+            data-t={name}
+            aria-label={`${name} theme`}
+          />
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="cb__scroll">
+    <div class="cb__months" data-cb-months aria-hidden="true">
+      {monthLabels.map((label) => <span>{label}</span>)}
+    </div>
+    <div class="cb__grid" data-cb-grid>
+      {
+        weeks.map((week) => (
+          <>
+            {week[0].weekday > 0 &&
+              Array.from({ length: week[0].weekday }).map(() => (
+                <span class="cb__cell cb__cell--pad" aria-hidden="true" />
+              ))}
+            {week.map((cell) => (
+              <button
+                type="button"
+                class="cb__cell"
+                style={`background:${ssrColor(cell.count)}`}
+                data-date={cell.date}
+                data-count={cell.count}
+                aria-label={`${cell.count} contributions on ${cell.date}`}
+              />
+            ))}
+          </>
+        ))
+      }
+    </div>
+  </div>
+  <p class="cb__tip" data-cb-tip aria-live="polite">Showing the last 12 months. Tap a square for the day.</p>
+
+  <dl class="cb__stats">
+    <div>
+      <dt>In range</dt>
+      <dd data-cb-stat="total">{initialStats.total.toLocaleString("en-US")}</dd>
+    </div>
+    <div>
+      <dt>Active days</dt>
+      <dd data-cb-stat="active">{initialStats.active}</dd>
+    </div>
+    <div>
+      <dt>Longest streak</dt>
+      <dd data-cb-stat="streak">{initialStats.streak}</dd>
+    </div>
+    <div>
+      <dt>Best day</dt>
+      <dd data-cb-stat="best">{initialStats.best}</dd>
+    </div>
+  </dl>
+
+  <div class="cb__split">
+    <h3 class="cb__split-title">Where the work lands</h3>
+    <ul class="cb__repos" role="list">
+      <li class="cb__repo">
+        <span>Private work · client and company repos</span>
+        <span class="cb__repo-meta">
+          <strong>{contributions.privateTotal.toLocaleString("en-US")}</strong>
+          <span class="cb__badge">Private</span>
+        </span>
+      </li>
+      {
+        contributions.publicRepos.map((repo) => (
+          <li class="cb__repo">
+            <a href={repo.url} target="_blank" rel="noopener noreferrer">
+              {repo.repo.split("/")[1]}
+            </a>
+            <span class="cb__repo-meta">
+              <strong>{repo.total}</strong>
+              <span class="cb__badge cb__badge--pub">Open source</span>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="cb__note">
+      GitHub's API breaks down public repos by name only. Private contributions arrive as one
+      total, {contributions.privateTotal.toLocaleString("en-US")} of {contributions.totalContributions.toLocaleString("en-US")},
+      which is most of the board. Data pulled {contributions.generatedAt} · {publicTotal} of the
+      public count is commits and pull requests.
+    </p>
+  </div>
+</section>
+
+<style>
+  .cb {
+    --cell: 12px;
+    --cell-gap: 3px;
+    margin-block-start: var(--s-8);
+  }
+
+  .cb__total {
+    font-size: var(--t-body-lg);
+    line-height: var(--lh-body);
+    max-width: var(--measure);
+  }
+
+  .cb__total [data-cb-total] {
+    font-weight: var(--fw-semibold);
+  }
+
+  .cb__total a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.2em;
+  }
+
+  .cb__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-4) var(--s-6);
+    margin-block-start: var(--s-6);
+  }
+
+  .cb__seg {
+    display: flex;
+    border: var(--hairline) solid var(--hairline-color);
+    border-radius: var(--radius-1);
+    overflow: hidden;
+  }
+
+  .cb__seg button {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--fg-muted);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    padding: var(--s-2) var(--s-3);
+    cursor: pointer;
+  }
+
+  .cb__seg button.is-on {
+    background: var(--accent);
+    color: var(--accent-fg);
+    font-weight: var(--fw-bold);
+  }
+
+  .cb__swatches {
+    display: flex;
+    gap: var(--s-2);
+  }
+
+  .cb__sw {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: var(--hairline) solid var(--hairline-color);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .cb__sw[data-t="green"] { background: #40c463; }
+  .cb__sw[data-t="ocean"] { background: #388bfd; }
+  .cb__sw[data-t="grape"] { background: #a371f7; }
+  .cb__sw[data-t="sunset"] { background: #f0883e; }
+  .cb__sw[data-t="mono"] { background: var(--c-n-400); }
+
+  .cb__sw.is-on {
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--fg);
+  }
+
+  .cb__scroll {
+    overflow-x: auto;
+    padding-block: var(--s-4) var(--s-2);
+    margin-block-start: var(--s-4);
+  }
+
+  .cb__months {
+    display: flex;
+    width: max-content;
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    color: var(--fg-muted);
+    margin-block-end: var(--s-1);
+  }
+
+  .cb__months span {
+    width: calc(var(--cell) + var(--cell-gap));
+    flex: none;
+  }
+
+  .cb__grid {
+    display: grid;
+    grid-template-rows: repeat(7, var(--cell));
+    grid-auto-flow: column;
+    gap: var(--cell-gap);
+    width: max-content;
+  }
+
+  .cb__cell {
+    width: var(--cell);
+    height: var(--cell);
+    border-radius: 2px;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    appearance: none;
+  }
+
+  .cb__cell--pad {
+    background: transparent;
+    cursor: default;
+  }
+
+  .cb__cell[data-count]:hover,
+  .cb__cell[data-count]:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: 1px;
+  }
+
+  .cb__tip {
+    min-height: 1.4em;
+    margin-block-start: var(--s-3);
+    font-family: var(--font-label);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-mono);
+    color: var(--fg-muted);
+  }
+
+  .cb__tip strong {
+    color: var(--fg);
+  }
+
+  .cb__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--s-4);
+    margin: var(--s-8) 0 0;
+  }
+
+  @media (min-width: 48rem) {
+    .cb__stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .cb__stats div {
+    border-block-start: var(--hairline) solid var(--hairline-color);
+    padding-block-start: var(--s-3);
+  }
+
+  .cb__stats dt {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  .cb__stats dd {
+    margin: var(--s-1) 0 0;
+    font-size: var(--t-stat);
+    font-weight: var(--fw-semibold);
+  }
+
+  .cb__split {
+    margin-block-start: var(--s-12);
+  }
+
+  .cb__split-title {
+    font-size: var(--t-h4);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--ls-heading);
+  }
+
+  .cb__repos {
+    list-style: none;
+    margin: var(--s-4) 0 0;
+    padding: 0;
+  }
+
+  .cb__repo {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-4);
+    padding-block: var(--s-3);
+    border-block-end: var(--hairline) solid var(--hairline-color);
+    font-size: var(--t-body);
+  }
+
+  .cb__repo a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.2em;
+  }
+
+  .cb__repo-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    flex: none;
+  }
+
+  .cb__badge {
+    font-family: var(--font-label);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    border: var(--hairline) solid var(--hairline-color);
+    border-radius: 99px;
+    padding: var(--s-1) var(--s-2);
+  }
+
+  .cb__badge--pub {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .cb__note {
+    margin-block-start: var(--s-4);
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    color: var(--fg-muted);
+    max-width: var(--measure);
+  }
+</style>
+
+<script define:vars={{ CB_DATA: contributions }}>
+  const THEMES = {
+    green: ["#9be9a8", "#40c463", "#30a14e", "#216e39"],
+    ocean: ["#a5d6ff", "#388bfd", "#1f6feb", "#0d419d"],
+    grape: ["#d8b9ff", "#a371f7", "#8957e5", "#5e2ca5"],
+    sunset: ["#ffc69b", "#f0883e", "#d1600f", "#8a3a08"],
+    mono: ["#8a837a", "#b8afa3", "#e0d8cc", "#f2ebe1"],
+  };
+  const EMPTY = "#1f1d1b";
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const root = document.getElementById("contributions-board");
+  if (root) {
+    const allDays = CB_DATA.days;
+    const maxCount = Math.max.apply(null, allDays.map((d) => d.count));
+    let theme = THEMES.green;
+    let range = 365;
+
+    const grid = root.querySelector("[data-cb-grid]");
+    const monthsEl = root.querySelector("[data-cb-months]");
+    const tip = root.querySelector("[data-cb-tip]");
+
+    function lvl(count) {
+      if (count === 0) return 0;
+      const q = count / maxCount;
+      if (q <= 0.25) return 1;
+      if (q <= 0.5) return 2;
+      if (q <= 0.75) return 3;
+      return 4;
+    }
+    function colorFor(count) {
+      const l = lvl(count);
+      return l === 0 ? EMPTY : theme[l - 1];
+    }
+    function fmt(iso) {
+      return new Date(iso + "T12:00:00").toLocaleDateString(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    }
+
+    function render() {
+      const days = allDays.slice(-range);
+      grid.innerHTML = "";
+      monthsEl.innerHTML = "";
+      const firstWeekday = new Date(days[0].date + "T12:00:00Z").getUTCDay();
+      for (let i = 0; i < firstWeekday; i++) {
+        const pad = document.createElement("span");
+        pad.className = "cb__cell cb__cell--pad";
+        grid.appendChild(pad);
+      }
+      let lastMonth = -1;
+      days.forEach((d, i) => {
+        const date = new Date(d.date + "T12:00:00Z");
+        if (date.getUTCDay() === 0 || i === 0) {
+          const span = document.createElement("span");
+          const m = date.getUTCMonth();
+          if (m !== lastMonth) {
+            span.textContent = MONTHS[m];
+            lastMonth = m;
+          }
+          monthsEl.appendChild(span);
+        }
+        const el = document.createElement("button");
+        el.type = "button";
+        el.className = "cb__cell";
+        el.style.background = colorFor(d.count);
+        el.dataset.date = d.date;
+        el.dataset.count = d.count;
+        el.setAttribute("aria-label", d.count + " contributions on " + d.date);
+        grid.appendChild(el);
+      });
+      let streak = 0, cur = 0, best = 0, total = 0, active = 0;
+      days.forEach((d) => {
+        total += d.count;
+        if (d.count > 0) active++;
+        cur = d.count > 0 ? cur + 1 : 0;
+        streak = Math.max(streak, cur);
+        best = Math.max(best, d.count);
+      });
+      root.querySelector("[data-cb-total]").textContent = total.toLocaleString("en-US");
+      root.querySelector('[data-cb-stat="total"]').textContent = total.toLocaleString("en-US");
+      root.querySelector('[data-cb-stat="active"]').textContent = active;
+      root.querySelector('[data-cb-stat="streak"]').textContent = streak;
+      root.querySelector('[data-cb-stat="best"]').textContent = best;
+      tip.textContent =
+        range === 365 ? "Showing the last 12 months. Tap a square for the day." : "Showing the last " + range + " days. Tap a square for the day.";
+    }
+
+    root.querySelector("[data-cb-range]").addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      root.querySelectorAll("[data-cb-range] button").forEach((b) => b.classList.remove("is-on"));
+      btn.classList.add("is-on");
+      range = Number(btn.dataset.r);
+      render();
+    });
+
+    root.querySelector("[data-cb-themes]").addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      root.querySelectorAll("[data-cb-themes] .cb__sw").forEach((b) => b.classList.remove("is-on"));
+      btn.classList.add("is-on");
+      theme = THEMES[btn.dataset.t];
+      render();
+    });
+
+    grid.addEventListener("click", (e) => {
+      const cellEl = e.target.closest("[data-date]");
+      if (!cellEl) return;
+      tip.innerHTML = "";
+      const strong = document.createElement("strong");
+      strong.textContent = cellEl.dataset.count + " contributions";
+      tip.appendChild(strong);
+      tip.appendChild(document.createTextNode(" on " + fmt(cellEl.dataset.date)));
+    });
+  }
+</script>
