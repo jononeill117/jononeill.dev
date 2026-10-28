@@ -43,6 +43,8 @@ export const EMAIL_HOST = "gmail.com";
 export const NAV_LINKS = [
   { label: "Experience", href: "#experience" },
   { label: "Portfolio", href: "#ecclesio" },
+  { label: "Projects", href: "/projects/" },
+  { label: "Writing", href: "/writing/" },
   { label: "About", href: "#about" },
   { label: "Resume", href: "#resume", resume: true },
   { label: "Contact", href: "#contact" },
